@@ -10,7 +10,7 @@ FILE *fi, *fo;
 int main(int argc, char *argv[]) {
 	if (argc == 1)
 		printf("\n"
-			"128sna2rom, generates ZXUno ROM from 128K SNA file. Aitor Gomez Garcia 2016-10-04\n\n"
+			"128sna2rom, generates ZXUno ROM from 128K SNA file. Aitor Gomez Garcia (spark2k06) 2016-10-04\n\n"
 			"  128sna2rom <input_file> <output_file> <48Krom_slot>\n\n"
 			"  <input_file>  SNA input file\n"
 			"  <output_file> ROM output file\n"
