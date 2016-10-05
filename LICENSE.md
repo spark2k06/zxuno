@@ -2,4 +2,4 @@ https://github.com/antoniovillena/zxuno -> Nuevas funcionalidades desarrolladas 
 
 http://zxuno.com
 
-Licencia bajo Creative Commons by SA.
+License is Creative Commons by SA
