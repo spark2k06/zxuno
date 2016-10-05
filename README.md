@@ -8,7 +8,7 @@ Desde la VRAM se mueven todos los bloques de 16Kb al lugar que les corresponde, 
 
 pasa el control al PC del Snapshot.
 
-128sna2rom por su parte se utiliza para crear la "ROM" parcheando datos de "loader128k".
+128sna2rom por su parte se utiliza para crear la "ROM" parcheando datos de loader128k.
 
 
 Idea desarrollada a partir del siguiente hilo:
