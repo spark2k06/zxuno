@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	memcpy(temp + 0xe0, image + 0xc01b, 2); // Parcheamos PC	
 	unsigned char port0x7ffd = image[0xc01d];
 	temp[0x80] = port0x7ffd; // Parcheamos puerto 0x7ffd	
-	temp[0x64] = CHECK_BIT(port0x7ffd, 4) ? 0x09 : 0x08; // Parcheamos lectura de banco en SPI Flash en funcion de la pagina de ROM paginada
+	temp[0x64] = CHECK_BIT(port0x7ffd, 4) ? 0x09 : 0x08; // Parcheamos lectura de banco en SPI Flash en funcion de la ROM paginada
 	unsigned char page = (unsigned char)(port0x7ffd << 5) >> 5;
 
 
