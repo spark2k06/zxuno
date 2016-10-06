@@ -11,6 +11,6 @@ pasa el control al PC del Snapshot.
 128sna2rom por su parte se utiliza para crear la "ROM" parcheando datos de loader128k.
 
 
-Idea desarrollada a partir del siguiente hilo:
+Idea desarrollada a partir del siguiente hilo con ayuda de Antonio Villena y el emulador ZEsarUX de Cesar Hernández:
 
 http://www.zxuno.com/forum/viewtopic.php?f=12&t=530
