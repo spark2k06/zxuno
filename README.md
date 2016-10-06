@@ -1,6 +1,6 @@
 # loader128k y 128sna2rom
 
-Cargador de "ROMs" para ZXUno a partir snapshots de 128K, para utilizar desde el menu del firmware. 
+Cargador de "ROMs" para ZXUno a partir snapshots de 128K, para utilizar desde el menú del firmware. 
 
 Por un lado tenemos el cargador loader128k, que se autocopia en la VRAM para despues pasar el control a la misma. 
 
