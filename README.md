@@ -2,7 +2,7 @@
 
 Cargador de "ROMs" para ZXUno a partir snapshots de 128K, para utilizar desde el menú del firmware. 
 
-Por un lado tenemos el cargador loader128k, que se autocopia en la VRAM para despues pasar el control a la misma. 
+Por un lado tenemos el cargador loader128k, que se autocopia en la VRAM para despues pasar el control al mismo. 
 
 Desde la VRAM se mueven todos los bloques de 16Kb al lugar que les corresponde, se restauran los registros y por último se 
 
