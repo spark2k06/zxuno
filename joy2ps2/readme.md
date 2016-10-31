@@ -2,9 +2,9 @@
 
 Código arduino para el interface de Joystick de 6 botones basado en Kempston de conector DB9, los botones adicionales serían los siguientes:
 
-Boton 4 -> Arriba + Abajo
+Boton 4 -> Arriba + Abajo + Izquierda + Derecha
 Boton Select -> Izquierda + Derecha
-Boton Start -> Arriba + Abajo + Izquierda + Derecha
+Boton Start -> Arriba + Abajo
 
 El mapeo al teclado del ZXUno es el siguiente:
 
@@ -24,8 +24,8 @@ El mapeo al teclado del ZXUno es el siguiente:
 * F2 (Start + Boton 3)
   
 * NMI (Start + Boton 1) -> se cambia el mapeo del pad a Cursores
-* Load 128K (Start + Boton 2)
-* Load 48K (Start + Boton 3)
+* Load 128K (Start + Izquierda)
+* Load 48K (Start + Derecha)
 * Reset (Select + Arriba) -> se cambia el mapeo del pad a Cursores
 * MasterReset (Select + Abajo) -> se cambia el mapeo del pad a Cursores
 
