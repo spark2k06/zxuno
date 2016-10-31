@@ -294,8 +294,7 @@ void Cursors()
 }
 
 int main()
-{
-		
+{		
 	// Setup		
 	CPU_PRESCALE(0);
 	ps2Init();
