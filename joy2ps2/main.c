@@ -320,13 +320,13 @@ int main()
 			if (temp == 0b11110000 && DB9_PINPrev == 0b11110011) { PressKey('4'); ReleasePad(); } // 4 (Select + Boton 4)
 
 			if (temp == 0b11111111 && DB9_PINPrev == 0b11110011) { PressKey(27); ReleasePad(); } // ESC (Select)
-			if (temp == 0b11111111 && DB9_PINPrev == 0b11110000) { PressKey(13); ReleasePad(); } // Intro (Start)
-			if (temp == 0b10110000 && DB9_PINPrev == 0b11110000) { PressKey(113); ReleasePad(); } // F2 (Start + Boton 3)
-			if (temp == 0b11111111 && DB9_PINPrev == 0b11111100) { ChangeKeys(); ReleasePad(); } // Cambio de teclado (Boton 4)
+			if (temp == 0b11111111 && DB9_PINPrev == 0b11111100) { PressKey(13); ReleasePad(); } // Intro (Start)
+			if (temp == 0b10111100 && DB9_PINPrev == 0b11111100) { PressKey(113); ReleasePad(); } // F2 (Start + Boton 3)
+			if (temp == 0b11111111 && DB9_PINPrev == 0b11110000) { ChangeKeys(); ReleasePad(); } // Cambio de teclado (Boton 4)
 
-			if (temp == 0b11100000 && DB9_PINPrev == 0b11110000) { NMI(); ReleasePad(); } // NMI (Start + Boton 1)
-			if (temp == 0b11010000 && DB9_PINPrev == 0b11110000) { LOAD128(); ReleasePad(); } // Load 128K (Start + Boton 2)
-			//if (temp == 0b10110000 && DB9_PINPrev == 0b11110000) { LOAD48(); ReleasePad(); } // Load 48K (Start + Boton 3) -> Hay que buscarle otra combinacion
+			if (temp == 0b11101100 && DB9_PINPrev == 0b11111100) { NMI(); ReleasePad(); } // NMI (Start + Boton 1)
+			if (temp == 0b11111000 && DB9_PINPrev == 0b11111100) { LOAD128(); ReleasePad(); } // Load 128K (Start + Izquierda)
+			if (temp == 0b11110100 && DB9_PINPrev == 0b11111100) { LOAD48(); ReleasePad(); } // Load 48K (Start + Derecha)
 			if (temp == 0b11110010 && DB9_PINPrev == 0b11110011) { Reset(); ReleasePad(); } // Reset (Select + Arriba)
 			if (temp == 0b11110001 && DB9_PINPrev == 0b11110011) { MasterReset(); ReleasePad(); } // MasterReset (Select + Abajo)
 
