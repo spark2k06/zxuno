@@ -46,7 +46,7 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 
 void ps2Init()
 {
-	//ponemos en alto ambas señales
+	//ponemos en alto ambas seÃ±ales
 	PS2_PORT &= ~_BV(PS2_DAT); //A 0
 	PS2_PORT &= ~_BV(PS2_CLK); //A 0
 	ps2Mode(PS2_DAT, HI);
@@ -73,16 +73,16 @@ uint8_t ps2Stat()
 void sendPS2(unsigned char code)
 {
 
-	//Para continuar las líneas deben estar en alto
+	//Para continuar las lÃ­neas deben estar en alto
 	if (ps2Stat())
 		return;
 
-	// while (1) {} // Aqui vamos a comprobar con un polímetro que realmente están en alto.
+	// while (1) {} // Aqui vamos a comprobar con un polÃ­metro que realmente estÃ¡n en alto.
 
 	unsigned char parity = 1;
 	unsigned char i = 0;
 
-	//iniciamos transmisión
+	//iniciamos transmisiÃ³n
 	ps2Mode(PS2_DAT, LO);
 	_delay_us(CK1);
 
@@ -301,8 +301,9 @@ int main()
 	ps2Init();
 	DB9_PINAux = 0xFF; // Estado inicial del joystick definido como ninguna entrada activada
 
-					   // Entrada desde DB9, activamos resistencias internas pullup en pines digitales 0 a 7
+	// Entrada desde DB9, activamos resistencias internas pullup en pines digitales 0 a 7
 	PORTD = 0xFF;
+	temp = DB9_PIN;
 	DDRD = 0; // Input pullup 
 	DB9_PINChanges = 0;
 
@@ -326,7 +327,7 @@ int main()
 
 			if (temp == 0b11100000 && DB9_PINPrev == 0b11110000) { NMI(); ReleasePad(); } // NMI (Start + Boton 1)
 			if (temp == 0b11010000 && DB9_PINPrev == 0b11110000) { LOAD128(); ReleasePad(); } // Load 128K (Start + Boton 2)
-			if (temp == 0b10110000 && DB9_PINPrev == 0b11110000) { LOAD48(); ReleasePad(); } // Load 48K (Start + Boton 3)
+			//if (temp == 0b10110000 && DB9_PINPrev == 0b11110000) { LOAD48(); ReleasePad(); } // Load 48K (Start + Boton 3) -> Hay que buscarle otra combinacion
 			if (temp == 0b11110010 && DB9_PINPrev == 0b11110011) { Reset(); ReleasePad(); } // Reset (Select + Arriba)
 			if (temp == 0b11110001 && DB9_PINPrev == 0b11110011) { MasterReset(); ReleasePad(); } // MasterReset (Select + Abajo)
 
