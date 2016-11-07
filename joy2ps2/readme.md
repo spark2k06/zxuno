@@ -1,4 +1,4 @@
-# joy2ps2
+# joy2ps2 (pendiente de actualizar el código para ofrecer compatibilidad con DB15)
 
 Código arduino para el interface de Joystick de 6 botones basado en Kempston de conector DB9, los botones adicionales serían los siguientes:
 
