@@ -24,7 +24,7 @@ El mapeo al teclado del ZXUno es el siguiente:
 * Intro (Start)
 * F2 (Select + Derecha)
   
-* NMI (Start + Boton 1) -> se cambia el mapeo del pad a Cursores
+* NMI (Start + Boton 1)
 * Load 128K (Start + Izquierda)
 * Load 48K (Start + Derecha)
 * Reset (Select + Arriba) -> se cambia el mapeo del pad a Cursores
