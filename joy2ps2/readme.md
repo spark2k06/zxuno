@@ -10,9 +10,10 @@ El mapeo al teclado del ZXUno es el siguiente:
 * N (Boton 4)
 * G (Boton 5)
 * H (Boton 6)
+
 * Cambio de mapeo especial de las direcciones del PAD -> OPQA - Cursores (Boton KeyMapper + Boton 4)
-* Cambio de mapeo de todos los botones (Boton KeyMapper)
   * Al inicio, se mapea en Cursores por defecto
+* Cambio de mapeo de todos los botones (Boton KeyMapper)
 
 * 1 (Select + Boton 1) 
 * 2 (Select + Boton 2)
