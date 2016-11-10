@@ -4,6 +4,8 @@ Código arduino para el interface de Joystick de 6 botones + select + start, bas
 
 El mapeo al teclado del ZXUno es el siguiente:
 
+* Cambio de mapeo especial de las direcciones del PAD -> OPQA - Cursores (Boton KeyMapper + Boton 4)
+  * Al inicio, se mapea en Cursores por defecto
 * Espacio (Boton 1)
 * V (Boton 2)
 * B (Boton 3)
@@ -11,8 +13,6 @@ El mapeo al teclado del ZXUno es el siguiente:
 * G (Boton 5)
 * H (Boton 6)
 
-* Cambio de mapeo especial de las direcciones del PAD -> OPQA - Cursores (Boton KeyMapper + Boton 4)
-  * Al inicio, se mapea en Cursores por defecto
 * Cambio de mapeo de todos los botones (Boton KeyMapper) -> Hasta 4 mapeos diferentes, de momento solo definido el principal para usar en el ZXUno.
 
 * 1 (Select + Boton 1) 
