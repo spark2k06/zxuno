@@ -1,19 +1,17 @@
-# joy2ps2 (pendiente de actualizar el código para ofrecer compatibilidad con DB15 Neogeo)
+# joy2ps2
 
-Código arduino para el interface de Joystick de 6 botones basado en Kempston de conector DB9, los botones adicionales serían los siguientes:
-
-Boton 4 -> Arriba + Abajo + Izquierda + Derecha
-
-Boton Select -> Izquierda + Derecha
-
-Boton Start -> Arriba + Abajo
+Código arduino para el interface de Joystick de 10 botones + select + start, basado en la norma Atari Extendida de conector DB15 Neogeo, los botones adicionales serían los siguientes:
 
 El mapeo al teclado del ZXUno es el siguiente:
 
 * Espacio (Boton 1)
 * V (Boton 2)
 * B (Boton 3)
-* Cambio de mapeo del PAD -> OPQA - Cursores (Boton 4)
+* N (Boton 4)
+* G (Boton 5)
+* H (Boton 6)
+* Cambio de mapeo especial de las direcciones del PAD -> OPQA - Cursores (Boton KeyMapper + Boton 4)
+* Cambio de mapeo de todos los botones (Boton KeyMapper)
   * Al inicio, se mapea en Cursores por defecto
 
 * 1 (Select + Boton 1) 
@@ -23,7 +21,7 @@ El mapeo al teclado del ZXUno es el siguiente:
   
 * ESC (Select)
 * Intro (Start)
-* F2 (Start + Boton 3)
+* F2 (Select + Derecha)
   
 * NMI (Start + Boton 1) -> se cambia el mapeo del pad a Cursores
 * Load 128K (Start + Izquierda)
