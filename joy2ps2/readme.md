@@ -13,7 +13,7 @@ El mapeo al teclado del ZXUno es el siguiente:
 
 * Cambio de mapeo especial de las direcciones del PAD -> OPQA - Cursores (Boton KeyMapper + Boton 4)
   * Al inicio, se mapea en Cursores por defecto
-* Cambio de mapeo de todos los botones (Boton KeyMapper)
+* Cambio de mapeo de todos los botones (Boton KeyMapper) -> Hasta 4 mapeos diferentes, de momento solo definido el principal para usar en el ZXUno.
 
 * 1 (Select + Boton 1) 
 * 2 (Select + Boton 2)
