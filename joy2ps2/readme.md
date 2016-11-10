@@ -1,6 +1,6 @@
 # joy2ps2
 
-Código arduino para el interface de Joystick de 6 botones + select + start, basado en la norma Atari Extendida de conector DB15 Neogeo, los botones adicionales serían los siguientes:
+Código arduino para el interface de Joystick de 6 botones + select + start, basado en la norma Atari Extendida de conector DB15 Neogeo.
 
 El mapeo al teclado del ZXUno es el siguiente:
 
