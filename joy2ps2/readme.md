@@ -1,6 +1,6 @@
 # joy2ps2
 
-Código C para microcontroladores Atmega168/328 y controlar un interface de Joystick de 6 botones + select + start, basado en la norma Atari Extendida de conector DB15 Neogeo.
+Código C para microcontroladores Atmega168/328 que permite mapear a scancodes de teclado PS/2 un interface de Joystick de 6 botones + select + start, basado en la norma Atari Extendida de conector DB15 Neogeo.
 
 El mapeo al teclado del ZXUno es el siguiente:
 
