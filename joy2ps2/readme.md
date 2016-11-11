@@ -30,7 +30,7 @@ El mapeo al teclado del ZXUno es el siguiente:
 * Reset (Select + Arriba) -> se cambia el mapeo del pad a Cursores
 * MasterReset (Select + Abajo) -> se cambia el mapeo del pad a Cursores
 
-Idea desarrollada a partir del siguiente hilo, utilizando como base el código uart2ps2 de @Quest, y con la ayuda de otros miembros del foro:
+Idea desarrollada a partir del siguiente hilo, utilizando como base el código uart2ps2 de @Quest, así como la colaboración y aporte de ideas de otros miembros del foro:
 
 http://www.zxuno.com/forum/viewtopic.php?f=35&p=9840
 
