@@ -310,7 +310,7 @@ int main()
 									// Cambio de mapeo en bucle
 			if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1110111111111111) // Se ha pulsado y soltado KeyMapper
 			{
-				if (mapper > 3) // Disponemos de cuatro mapeos
+				if (mapper > 2) // Disponemos de cuatro mapeos
 				{
 					mapper = 0;
 				}
