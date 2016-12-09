@@ -4,7 +4,7 @@ Código C para microcontroladores Atmega168/328 que permite mapear a scancodes d
 
 El mapeo al teclado del ZXUno es el siguiente:
 
-* Cambio de mapeo especial de las direcciones del PAD -> OPQA - Cursores (Boton KeyMapper + Boton 4)
+* Cambio de mapeo especial de las direcciones del PAD -> OPQA - Cursores (Botones Select + Start)
   * Al inicio, se mapea en Cursores por defecto
 * Espacio (Boton 1)
 * V (Boton 2)
