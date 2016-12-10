@@ -322,25 +322,25 @@ int main()
 			}
 
 			// Combinaciones para todos los mapeos
-			if (DB15_PIN == 0b1110111111101111 && DB15PINPrev == 0b1110111111111111) { mapper = 0; return; } // Mapper 0 (KeyMapper + Boton 1) -> Inicial
-			if (DB15_PIN == 0b1110111111011111 && DB15PINPrev == 0b1110111111111111) { mapper = 1; return; } // Mapper 1 (KeyMapper + Boton 2)
-			if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; return; } // Mapper 2 (KeyMapper + Boton 3)
-			if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; return; } // Mapper 3 (KeyMapper + Boton 4)
+			if (DB15_PIN == 0b1110111111101111 && DB15PINPrev == 0b1110111111111111) { mapper = 0; _delay_ms(200); return; } // Mapper 0 (KeyMapper + Boton 1) -> Inicial
+			if (DB15_PIN == 0b1110111111011111 && DB15PINPrev == 0b1110111111111111) { mapper = 1; _delay_ms(200); return; } // Mapper 1 (KeyMapper + Boton 2)
+			if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; _delay_ms(200); return; } // Mapper 2 (KeyMapper + Boton 3)
+			if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; _delay_ms(200); return; } // Mapper 3 (KeyMapper + Boton 4)
 
-			if (DB15_PIN == 0b1111101111101111 && DB15PINPrev == 0b1111101111111111) { PressKey('1'); return; } // 1 (Select + Boton 1)
-			if (DB15_PIN == 0b1111101111011111 && DB15PINPrev == 0b1111101111111111) { PressKey('2'); return; } // 2 (Select + Boton 2)
-			if (DB15_PIN == 0b1111101110111111 && DB15PINPrev == 0b1111101111111111) { PressKey('3'); return; } // 3 (Select + Boton 3)
-			if (DB15_PIN == 0b1111101101111111 && DB15PINPrev == 0b1111101111111111) { PressKey('4'); return; } // 4 (Select + Boton 4)
-			if (DB15_PIN == 0b1111001111111111 && DB15PINPrev == 0b1111101111111111) { ChangeKeys(); return; } // (Select + Start) Cursor <-> OQPA desde keyup, keydown, keyleft y keyright en los mapeos que lo utilicen
+			if (DB15_PIN == 0b1111101111101111 && DB15PINPrev == 0b1111101111111111) { PressKey('1'); _delay_ms(200); return; } // 1 (Select + Boton 1)
+			if (DB15_PIN == 0b1111101111011111 && DB15PINPrev == 0b1111101111111111) { PressKey('2'); _delay_ms(200); return; } // 2 (Select + Boton 2)
+			if (DB15_PIN == 0b1111101110111111 && DB15PINPrev == 0b1111101111111111) { PressKey('3'); _delay_ms(200); return; } // 3 (Select + Boton 3)
+			if (DB15_PIN == 0b1111101101111111 && DB15PINPrev == 0b1111101111111111) { PressKey('4'); _delay_ms(200); return; } // 4 (Select + Boton 4)
+			if (DB15_PIN == 0b1111001111111111 && DB15PINPrev == 0b1111101111111111) { ChangeKeys(); _delay_ms(200); return; } // (Select + Start) Cursor <-> OQPA desde keyup, keydown, keyleft y keyright en los mapeos que lo utilicen
 
-			if (DB15_PIN == 0b1111101111110111 && DB15PINPrev == 0b1111101111111111) { PressKey(113); _delay_ms(200); return; } // F2 (Select + Derecha) -> Retardo para evitar pulsacion ESC por equivocacion
-			if (DB15_PIN == 0b1111101111111011 && DB15PINPrev == 0b1111101111111111) { PressKey(20); return; } // BloqMayus (Select + Izquierda)
-			if (DB15_PIN == 0b1111101111111110 && DB15PINPrev == 0b1111101111111111) { Reset(); return; } // Reset (Select + Arriba)
-			if (DB15_PIN == 0b1111101111111101 && DB15PINPrev == 0b1111101111111111) { MasterReset(); return; } // MasterReset (Select + Abajo)
+			if (DB15_PIN == 0b1111101111110111 && DB15PINPrev == 0b1111101111111111) { PressKey(113); _delay_ms(200); return; } // F2 (Select + Derecha)
+			if (DB15_PIN == 0b1111101111111011 && DB15PINPrev == 0b1111101111111111) { PressKey(20); _delay_ms(200); return; } // BloqMayus (Select + Izquierda)
+			if (DB15_PIN == 0b1111101111111110 && DB15PINPrev == 0b1111101111111111) { Reset(); _delay_ms(200); return; } // Reset (Select + Arriba)
+			if (DB15_PIN == 0b1111101111111101 && DB15PINPrev == 0b1111101111111111) { MasterReset(); _delay_ms(200); return; } // MasterReset (Select + Abajo)
 
-			if (DB15_PIN == 0b1111011111111011 && DB15PINPrev == 0b1111011111111111) { LOAD128(); return; } // Load 128K (Start + Izquierda)
-			if (DB15_PIN == 0b1111011111110111 && DB15PINPrev == 0b1111011111111111) { LOAD48(); return; } // Load 48K (Start + Derecha)
-			if (DB15_PIN == 0b1111011111101111 && DB15PINPrev == 0b1111011111111111) { NMI(); return; } // NMI (Start + Boton 1)              
+			if (DB15_PIN == 0b1111011111111011 && DB15PINPrev == 0b1111011111111111) { LOAD128(); _delay_ms(200); return; } // Load 128K (Start + Izquierda)
+			if (DB15_PIN == 0b1111011111110111 && DB15PINPrev == 0b1111011111111111) { LOAD48(); _delay_ms(200); return; } // Load 48K (Start + Derecha)
+			if (DB15_PIN == 0b1111011111101111 && DB15PINPrev == 0b1111011111111111) { NMI(); _delay_ms(200); return; } // NMI (Start + Boton 1)              
 
 			if (mapper == 0) // Mapa 0 (inicial) -> Cursores/OPQA y botones Espacio, V, B, N, G, H. Select -> ESC, Start -> Intro
 			{
