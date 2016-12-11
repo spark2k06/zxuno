@@ -23,6 +23,7 @@ El mapeo al teclado del ZXUno es el siguiente:
 * ESC (Select)
 * Intro (Start)
 * F2 (Select + Derecha)
+* BloqMayus (Select + Izquierda)
   
 * NMI (Start + Boton 1)
 * Load 128K (Start + Izquierda)
