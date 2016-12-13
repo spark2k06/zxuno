@@ -549,8 +549,8 @@ http://www.bourns.com/data/global/pdfs/7914.pdf</description>
 <pad name="AREF" x="15.24" y="-33.02" drill="0.8" diameter="1.778"/>
 <pad name="3V3" x="15.24" y="-35.56" drill="0.8" diameter="1.778"/>
 <pad name="D13" x="15.24" y="-38.1" drill="0.8" diameter="1.778"/>
-<text x="-0.762" y="2.286" size="1.27" layer="25">Name</text>
-<text x="-1.27" y="-44.704" size="1.27" layer="25">Value</text>
+<text x="-0.762" y="2.286" size="1.27" layer="25">ARDUINO</text>
+<text x="-1.27" y="-44.704" size="1.27" layer="25"></text>
 <hole x="0" y="0" drill="1.778"/>
 <hole x="0" y="-40.64" drill="1.778"/>
 <hole x="15.24" y="-40.64" drill="1.778"/>
