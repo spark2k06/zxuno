@@ -1,6 +1,6 @@
 # joy2ps2
 
-Código C para microcontroladores Atmega168/328 que permite mapear a scancodes de teclado PS/2 un interface de Joystick de 6 botones + select + start, basado en la norma Atari Extendida de conector DB15 Neogeo. Diseñado inicialmente para ser utilizador con un ZXUno, puede ser utilizado igualmente en cualquier otro sistema con conector PS/2.
+Código C para microcontroladores Atmega168/328 que permite mapear a scancodes de teclado PS/2 un interface de Joystick de 6 botones + select + start, basado en la norma Atari Extendida de conector DB15 Neogeo. Diseñado inicialmente para ser utilizador con un ZXUno (reloj/semireloj a 240/480), puede ser utilizado igualmente en cualquier otro sistema con conector PS/2 estableciendo el reloj/semireloj a tiempos normales 20/40.
 
 El mapeo al teclado del ZXUno es el siguiente:
 
