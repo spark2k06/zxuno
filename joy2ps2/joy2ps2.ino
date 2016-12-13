@@ -308,8 +308,6 @@ void sendPS2(unsigned char code)
   if (ps2Stat())
     return;
 
-  // while (1) {} // Aqui vamos a comprobar con un polímetro que realmente están en alto.
-
   unsigned char parity = 1;
   unsigned char i = 0;
 
