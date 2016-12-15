@@ -290,7 +290,7 @@ int main()
 	DB15_PIN01 = 0xFF; // Ponemos en alto pines 0 - 7
 	DB15_PIN02 = DB15_PIN02 | 0b00011111; // Ponemos en alto los pines 8 - 12, respetamos el contenido del resto ya que nos los utilzaremos
 	DB15_PORT01 = 0; // Input pullup 0 - 7 
-	DB15_PORT02 = 0; // Input pullup 8 - 12
+	DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
 
 	DB15_PINAux = 0xFFFF; // Estado inicial del joystick
 	
