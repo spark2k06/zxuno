@@ -305,7 +305,7 @@ int main()
 			DB15PINPrev = DB15_PINAux; // Almacenamos estado anterior del joystick
 			DB15_PINAux = DB15_PIN; // Almacenamos en auxiliar el estado actual para esperar despues un cambio del estado del joystick
 
-									// Cambio de mapeo en bucle
+			// Cambio de mapeo en bucle
 			if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1110111111111111) // Se ha pulsado y soltado KeyMapper
 			{
 				if (mapper > 2) // Disponemos de cuatro mapeos
