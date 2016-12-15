@@ -358,8 +358,8 @@ int main()
 					if (CHECK_BIT(DB15_PINChanges, 5)) sendCodeMR(KEY_V, CHECK_BIT(DB15_PIN, 5));
 					if (CHECK_BIT(DB15_PINChanges, 6)) sendCodeMR(KEY_B, CHECK_BIT(DB15_PIN, 6));
 					if (CHECK_BIT(DB15_PINChanges, 7)) sendCodeMR(KEY_N, CHECK_BIT(DB15_PIN, 7));
-					if (CHECK_BIT(DB15_PINChanges, 6)) sendCodeMR(KEY_B, CHECK_BIT(DB15_PIN, 8));
-					if (CHECK_BIT(DB15_PINChanges, 7)) sendCodeMR(KEY_N, CHECK_BIT(DB15_PIN, 9));
+					if (CHECK_BIT(DB15_PINChanges, 8)) sendCodeMR(KEY_B, CHECK_BIT(DB15_PIN, 8));
+					if (CHECK_BIT(DB15_PINChanges, 9)) sendCodeMR(KEY_N, CHECK_BIT(DB15_PIN, 9));
 				}
 
 			}
