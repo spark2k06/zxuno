@@ -370,7 +370,7 @@ void sendPS2(unsigned char code)
 }
 
 //codifica envio de caracteres ps/2 
-void sendCodeMR(unsigned char key, uint8_t release)
+void sendCodeMR(unsigned char key, uint16_t release)
 {
   uint8_t extn = 0;
 
@@ -588,9 +588,8 @@ void loop()
           if (CHECK_BIT(DB15_PINChanges, 5)) sendCodeMR(KEY_V, CHECK_BIT(DB15_PIN, 5));
           if (CHECK_BIT(DB15_PINChanges, 6)) sendCodeMR(KEY_B, CHECK_BIT(DB15_PIN, 6));
           if (CHECK_BIT(DB15_PINChanges, 7)) sendCodeMR(KEY_N, CHECK_BIT(DB15_PIN, 7));
-          // Parece que la parte alta de DB15_PINChanges o DB15_PIN no se está detectando al liberarse, hay que averiguar el motivo
-          if (CHECK_BIT(DB15_PINChanges, 8)) { PressKey('G'); return; } // Usamos presskey hasta que averiguemos por qué no detecta la liberación de este pin
-          if (CHECK_BIT(DB15_PINChanges, 9)) { PressKey('H'); return; } // Usamos presskey hasta que averiguemos por qué no detecta la liberación de este pin  
+					if (CHECK_BIT(DB15_PINChanges, 8)) sendCodeMR(KEY_B, CHECK_BIT(DB15_PIN, 8));
+					if (CHECK_BIT(DB15_PINChanges, 9)) sendCodeMR(KEY_N, CHECK_BIT(DB15_PIN, 9));  
         }
 
       }
