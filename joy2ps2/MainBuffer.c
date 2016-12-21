@@ -80,7 +80,7 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 
 void ps2Init()
 {
-	//ponemos en alto ambas señales
+	//ponemos en alto ambas seÃ±ales
 	PS2_PORT &= ~_BV(PS2_DAT); //A 0
 	PS2_PORT &= ~_BV(PS2_CLK); //A 0
 	ps2Mode(PS2_DAT, HI);
@@ -107,13 +107,13 @@ uint8_t ps2Stat()
 void sendPS2fromqueue(unsigned char code)
 {
 
-	//Para continuar las líneas deben estar en alto, esperamos a que se encuentren en dicho estado.
+	//Para continuar las lÃ­neas deben estar en alto, esperamos a que se encuentren en dicho estado.
 	while (!ps2Stat()) {}
 
 	unsigned char parity = 1;
 	unsigned char i = 0;
 
-	//iniciamos transmisión
+	//iniciamos transmisiÃ³n
 	ps2Mode(PS2_DAT, LO);
 	_delay_us(CK1);
 
@@ -203,7 +203,7 @@ void sendCodeMR(unsigned char key, uint16_t release)
 
 	if (extn)
 	{
-		if (QueueIn == ((QueueOut - 3 + QUEUE_SIZE) % QUEUE_SIZE)) // Ignoramos scancodes si supera el tamaño del buffer
+		if (QueueIn == ((QueueOut - 3 + QUEUE_SIZE) % QUEUE_SIZE)) // Ignoramos scancodes si supera el tamaÃ±o del buffer
 		{
 			sendPS2(0xE0);
 		}
@@ -215,7 +215,7 @@ void sendCodeMR(unsigned char key, uint16_t release)
 
 	if (key && release)
 	{
-		if (QueueIn == ((QueueOut - 2 + QUEUE_SIZE) % QUEUE_SIZE)) // Ignoramos scancodes si supera el tamaño del buffer
+		if (QueueIn == ((QueueOut - 2 + QUEUE_SIZE) % QUEUE_SIZE)) // Ignoramos scancodes si supera el tamaÃ±o del buffer
 		{
 			sendPS2(0xF0);
 		}
@@ -227,7 +227,7 @@ void sendCodeMR(unsigned char key, uint16_t release)
 
 	if (key)
 	{
-		if (QueueIn == ((QueueOut - 1 + QUEUE_SIZE) % QUEUE_SIZE)) // Ignoramos scancodes si supera el tamaño del buffer
+		if (QueueIn == ((QueueOut - 1 + QUEUE_SIZE) % QUEUE_SIZE)) // Ignoramos scancodes si supera el tamaÃ±o del buffer
 		{
 			sendPS2(key);
 		}
@@ -359,7 +359,7 @@ int main()
 	while (1) {
 
 
-		if (QueueIn != QueueOut) // Liberamos buffer de scancodes
+		if (QueueIn != QueueOut && ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
 		{
 			sendcode = QueueGet();
 			
