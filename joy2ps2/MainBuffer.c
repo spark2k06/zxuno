@@ -359,7 +359,7 @@ int main()
 	while (1) {
 
 
-		if (QueueIn != QueueOut && ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
+		if (QueueIn != QueueOut) // Liberamos buffer de scancodes si las lineas estan en alto
 		{
 			if (ps2Stat())
 			{
