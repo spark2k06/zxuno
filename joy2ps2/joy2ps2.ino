@@ -265,6 +265,7 @@ uint16_t DB15_PINChanges, DB15PINPrev;
 uint8_t keyup, keydown, keyleft, keyright;
 uint8_t mapper;
 
+uint8_t test;
 void ps2Mode(uint8_t pin, uint8_t mode)
 {
   if (mode) { //high
@@ -278,8 +279,8 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 //En us, reloj y semireloj, para los flancos
 //zxuno v2 test15: CK1 = 240, CK2 = 480. Uso normal: CK1 = 20, CK2 = 40 microsegundos
 //(revertir a normal cuando el core ps/2 del ZX-UNO se mejore)
-#define CK1 240 
-#define CK2 480
+#define CK1 20 
+#define CK2 40
 
 void ps2Init()
 {
@@ -364,9 +365,9 @@ void sendPS2(unsigned char code)
   ps2Mode(PS2_CLK, HI);
   _delay_us(CK1);
 
-  _delay_us(CK2 * 3); //fin
-
-
+  //_delay_us(CK2 * 3); //fin
+  _delay_us(2500);
+  
 }
 
 //codifica envio de caracteres ps/2 
@@ -410,6 +411,7 @@ void PressKey(unsigned char key)
   _delay_ms(100);
   sendCodeMR(keymapVB[key], 1); //Release
 }
+
 
 void LOAD128() // LOAD "" en BASIC 128
 {
@@ -521,6 +523,8 @@ void setup()
   DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
     
   DB15_PINAux = 0xFFFF; // Estado inicial del joystick
+
+  test = 0;
 
 }
 
