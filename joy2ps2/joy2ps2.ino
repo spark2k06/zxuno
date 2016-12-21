@@ -265,7 +265,6 @@ uint16_t DB15_PINChanges, DB15PINPrev;
 uint8_t keyup, keydown, keyleft, keyright;
 uint8_t mapper;
 
-uint8_t test;
 void ps2Mode(uint8_t pin, uint8_t mode)
 {
   if (mode) { //high
@@ -523,8 +522,6 @@ void setup()
   DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
     
   DB15_PINAux = 0xFFFF; // Estado inicial del joystick
-
-  test = 0;
 
 }
 
