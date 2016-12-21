@@ -359,23 +359,17 @@ int main()
 	while (1) {
 
 
-		if (QueueIn != QueueOut) // Liberamos buffer de scancodes si las lineas estan en alto
-		{
-			if (ps2Stat())
-			{
-				sendcode = QueueGet();
+		if (QueueIn != QueueOut && ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
+		{		
+			sendcode = QueueGet();
 
-				while ((sendcode == 0xE0 || sendcode == 0xF0) && QueueIn != QueueOut)
-				{
-					sendPS2fromqueue(sendcode);
-					sendcode = QueueGet();
-				}
+			while ((sendcode == 0xE0 || sendcode == 0xF0) && QueueIn != QueueOut)
+			{
 				sendPS2fromqueue(sendcode);
+				sendcode = QueueGet();
 			}
-		}
-		else if (QueueIn != 0)
-		{
-			QueueInit();
+			sendPS2fromqueue(sendcode);
+			
 		}
 
 		DB15_PIN = (((uint16_t)DB15_PIN02 << 8) + DB15_PIN01) | 0b1110000000000000; // Organizamos los botones en 16 bits (pines digitales 0 a 12, ignorando el resto)
