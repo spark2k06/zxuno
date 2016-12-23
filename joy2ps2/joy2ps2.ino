@@ -308,7 +308,7 @@ void sendPS2(unsigned char code)
   if (ps2Stat())
     return;
   // CLK debe encontrarse en alto durante al menos 50us
-  delayMicroseconds(50);
+  _delay_us(50);
   if (!(PS2_PIN & (1 << PS2_CLK)))
     return;
 
