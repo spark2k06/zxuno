@@ -308,7 +308,7 @@ void sendPS2(unsigned char code)
   if (ps2Stat())
     return;
   // CLK debe encontrarse en alto durante al menos 50us
-  _delay_us(50);
+  delayMicroseconds(50);
   if (!(PS2_PIN & (1 << PS2_CLK)))
     return;
 
@@ -317,12 +317,12 @@ void sendPS2(unsigned char code)
 
   //iniciamos transmisión
   ps2Mode(PS2_DAT, LO);
-  _delay_us(CK1);
+  delayMicroseconds(CK1);
 
   ps2Mode(PS2_CLK, LO); //bit de comienzo
-  _delay_us(CK2);
+  delayMicroseconds(CK2);
   ps2Mode(PS2_CLK, HI);
-  _delay_us(CK1);
+  delayMicroseconds(CK1);
   //enviamos datos
   for (i = 0; i < 8; ++i)
   {
@@ -331,11 +331,11 @@ void sendPS2(unsigned char code)
     else
       ps2Mode(PS2_DAT, LO);
 
-    _delay_us(CK1);
+    delayMicroseconds(CK1);
     ps2Mode(PS2_CLK, LO);
-    _delay_us(CK2);
+    delayMicroseconds(CK2);
     ps2Mode(PS2_CLK, HI);
-    _delay_us(CK1);
+    delayMicroseconds(CK1);
 
     //paridad
     if ((0b00000001 & code) == 0b00000001)
@@ -354,21 +354,21 @@ void sendPS2(unsigned char code)
   else
     ps2Mode(PS2_DAT, LO);
 
-  _delay_us(CK1);
+  delayMicroseconds(CK1);
   ps2Mode(PS2_CLK, LO);
-  _delay_us(CK2);
+  delayMicroseconds(CK2);
   ps2Mode(PS2_CLK, HI);
-  _delay_us(CK1);
+  delayMicroseconds(CK1);
 
   //Bit de parada
   ps2Mode(PS2_DAT, HI);
-  _delay_us(CK1);
+  delayMicroseconds(CK1);
   ps2Mode(PS2_CLK, LO);
-  _delay_us(CK2);
+  delayMicroseconds(CK2);
   ps2Mode(PS2_CLK, HI);
-  _delay_us(CK1);
+  delayMicroseconds(CK1);
 
-  _delay_us(CK2 * 2); //fin  
+  delayMicroseconds(CK2 * 2); //fin  
   
 }
 
@@ -410,7 +410,7 @@ void sendCodeMR(unsigned char key, uint16_t release)
 void PressKey(unsigned char key)
 {
   sendCodeMR(keymapVB[key], 0); //Make
-  _delay_ms(100);
+  delayMicroseconds(100000);
   sendCodeMR(keymapVB[key], 1); //Release
 }
 
@@ -424,7 +424,7 @@ void LOAD128() // LOAD "" en BASIC 128
   PressKey('D');
   sendPS2(KEY_RSHIFT); // Mantenemos pulsado SHIFT
   PressKey('2');
-  _delay_ms(100);
+  delayMicroseconds(100000);
   PressKey('2');
   sendPS2(0xF0); // Liberamos SHIFT
   sendPS2(KEY_RSHIFT);
@@ -438,7 +438,7 @@ void LOAD48() // LOAD "" en BASIC 48
   PressKey('J');
   sendPS2(KEY_RSHIFT); // Mantenemos pulsado SHIFT
   PressKey('2');
-  _delay_ms(100);
+  delayMicroseconds(100000);
   PressKey('2');
   sendPS2(0xF0); // Liberamos SHIFT
   sendPS2(KEY_RSHIFT);
@@ -458,7 +458,7 @@ void NMI() // CTRL + ALT + F5 (NMI)
   sendPS2(0xF0); // Liberamos LCTRL
   sendPS2(KEY_LCTRL);
   Cursors();
-  _delay_ms(200); // Retardo para evitar pulsacion INTRO por equivocacion
+  delayMicroseconds(200000); // Retardo para evitar pulsacion INTRO por equivocacion
 
 }
 
@@ -489,7 +489,7 @@ void MasterReset() // CTRL + ALT + BackSpace (MasterReset)
   sendPS2(0xF0); // Liberamos LCTRL
   sendPS2(KEY_LCTRL);
   Cursors();
-  _delay_ms(200); // Retardo para evitar pulsacion ESC por equivocacion
+  delayMicroseconds(200000); // Retardo para evitar pulsacion ESC por equivocacion
 
 }
 
@@ -554,25 +554,25 @@ void loop()
       } 
             
       // Combinaciones para todos los mapeos
-      if (DB15_PIN == 0b1110111111101111 && DB15PINPrev == 0b1110111111111111) { mapper = 0; _delay_ms(200); return; } // Mapper 0 (KeyMapper + Boton 1) -> Inicial
-      if (DB15_PIN == 0b1110111111011111 && DB15PINPrev == 0b1110111111111111) { mapper = 1; _delay_ms(200); return; } // Mapper 1 (KeyMapper + Boton 2)
-      if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; _delay_ms(200); return; } // Mapper 2 (KeyMapper + Boton 3)
-      if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; _delay_ms(200); return; } // Mapper 3 (KeyMapper + Boton 4)
+      if (DB15_PIN == 0b1110111111101111 && DB15PINPrev == 0b1110111111111111) { mapper = 0; delayMicroseconds(200000); return; } // Mapper 0 (KeyMapper + Boton 1) -> Inicial
+      if (DB15_PIN == 0b1110111111011111 && DB15PINPrev == 0b1110111111111111) { mapper = 1; delayMicroseconds(200000); return; } // Mapper 1 (KeyMapper + Boton 2)
+      if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; delayMicroseconds(200000); return; } // Mapper 2 (KeyMapper + Boton 3)
+      if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; delayMicroseconds(200000); return; } // Mapper 3 (KeyMapper + Boton 4)
 
-      if (DB15_PIN == 0b1111110111101111 && DB15PINPrev == 0b1111110111111111) { PressKey('1'); _delay_ms(200); return; } // 1 (Select + Boton 1)
-      if (DB15_PIN == 0b1111110111011111 && DB15PINPrev == 0b1111110111111111) { PressKey('2'); _delay_ms(200); return; } // 2 (Select + Boton 2)
-      if (DB15_PIN == 0b1111110110111111 && DB15PINPrev == 0b1111110111111111) { PressKey('3'); _delay_ms(200); return; } // 3 (Select + Boton 3)
-      if (DB15_PIN == 0b1111110101111111 && DB15PINPrev == 0b1111110111111111) { PressKey('4'); _delay_ms(200); return; } // 4 (Select + Boton 4)
-      if (DB15_PIN == 0b1111110011111111 && DB15PINPrev == 0b1111110111111111) { ChangeKeys(); _delay_ms(200); return; } // (Select + Start) Cursor <-> OQPA desde keyup, keydown, keyleft y keyright en los mapeos que lo utilicen
+      if (DB15_PIN == 0b1111110111101111 && DB15PINPrev == 0b1111110111111111) { PressKey('1'); delayMicroseconds(200000); return; } // 1 (Select + Boton 1)
+      if (DB15_PIN == 0b1111110111011111 && DB15PINPrev == 0b1111110111111111) { PressKey('2'); delayMicroseconds(200000); return; } // 2 (Select + Boton 2)
+      if (DB15_PIN == 0b1111110110111111 && DB15PINPrev == 0b1111110111111111) { PressKey('3'); delayMicroseconds(200000); return; } // 3 (Select + Boton 3)
+      if (DB15_PIN == 0b1111110101111111 && DB15PINPrev == 0b1111110111111111) { PressKey('4'); delayMicroseconds(200000); return; } // 4 (Select + Boton 4)
+      if (DB15_PIN == 0b1111110011111111 && DB15PINPrev == 0b1111110111111111) { ChangeKeys(); delayMicroseconds(200000); return; } // (Select + Start) Cursor <-> OQPA desde keyup, keydown, keyleft y keyright en los mapeos que lo utilicen
 
-      if (DB15_PIN == 0b1111110111110111 && DB15PINPrev == 0b1111110111111111) { PressKey(113); _delay_ms(200); return; } // F2 (Select + Derecha)
-      if (DB15_PIN == 0b1111110111111011 && DB15PINPrev == 0b1111110111111111) { PressKey(20); _delay_ms(200); return; } // BloqMayus (Select + Izquierda)
-      if (DB15_PIN == 0b1111110111111110 && DB15PINPrev == 0b1111110111111111) { Reset(); _delay_ms(200); return; } // Reset (Select + Arriba)
-      if (DB15_PIN == 0b1111110111111101 && DB15PINPrev == 0b1111110111111111) { MasterReset(); _delay_ms(200); return; } // MasterReset (Select + Abajo)
+      if (DB15_PIN == 0b1111110111110111 && DB15PINPrev == 0b1111110111111111) { PressKey(113); delayMicroseconds(200000); return; } // F2 (Select + Derecha)
+      if (DB15_PIN == 0b1111110111111011 && DB15PINPrev == 0b1111110111111111) { PressKey(20); delayMicroseconds(200000); return; } // BloqMayus (Select + Izquierda)
+      if (DB15_PIN == 0b1111110111111110 && DB15PINPrev == 0b1111110111111111) { Reset(); delayMicroseconds(200000); return; } // Reset (Select + Arriba)
+      if (DB15_PIN == 0b1111110111111101 && DB15PINPrev == 0b1111110111111111) { MasterReset(); delayMicroseconds(200000); return; } // MasterReset (Select + Abajo)
 
-      if (DB15_PIN == 0b1111111011111011 && DB15PINPrev == 0b1111111011111111) { LOAD128(); _delay_ms(200); return; } // Load 128K (Start + Izquierda)
-      if (DB15_PIN == 0b1111111011110111 && DB15PINPrev == 0b1111111011111111) { LOAD48(); _delay_ms(200); return; } // Load 48K (Start + Derecha)
-      if (DB15_PIN == 0b1111111011101111 && DB15PINPrev == 0b1111111011111111) { NMI(); _delay_ms(200); return; } // NMI (Start + Boton 1)              
+      if (DB15_PIN == 0b1111111011111011 && DB15PINPrev == 0b1111111011111111) { LOAD128(); delayMicroseconds(200000); return; } // Load 128K (Start + Izquierda)
+      if (DB15_PIN == 0b1111111011110111 && DB15PINPrev == 0b1111111011111111) { LOAD48(); delayMicroseconds(200000); return; } // Load 48K (Start + Derecha)
+      if (DB15_PIN == 0b1111111011101111 && DB15PINPrev == 0b1111111011111111) { NMI(); delayMicroseconds(200000); return; } // NMI (Start + Boton 1)              
 
       if (mapper == 0) // Mapa 0 (inicial) -> Cursores/OPQA y botones Espacio, V, B, N, G, H. Select -> ESC, Start -> Intro
       {
