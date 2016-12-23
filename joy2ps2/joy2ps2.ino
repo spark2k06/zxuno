@@ -278,8 +278,8 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 //En us, reloj y semireloj, para los flancos
 //zxuno v2 test15: CK1 = 240, CK2 = 480. Uso normal: CK1 = 20, CK2 = 40 microsegundos
 //(revertir a normal cuando el core ps/2 del ZX-UNO se mejore)
-#define CK1 20 
-#define CK2 40
+#define CK1 15 
+#define CK2 30
 
 void ps2Init()
 {
@@ -306,6 +306,10 @@ void sendPS2(unsigned char code)
 
   //Para continuar las líneas deben estar en alto
   if (ps2Stat())
+    return;
+  // CLK debe encontrarse en alto durante al menos 50us
+  _delay_us(50);
+  if (!(PS2_PIN & (1 << PS2_CLK)))
     return;
 
   unsigned char parity = 1;
@@ -364,8 +368,7 @@ void sendPS2(unsigned char code)
   ps2Mode(PS2_CLK, HI);
   _delay_us(CK1);
 
-  //_delay_us(CK2 * 3); //fin
-  _delay_us(2500);
+  _delay_us(CK2 * 2); //fin  
   
 }
 
