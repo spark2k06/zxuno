@@ -278,7 +278,7 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 //En us, reloj y semireloj, para los flancos
 //zxuno v2 test15: CK1 = 240, CK2 = 480. Uso normal: CK1 = 20, CK2 = 40 microsegundos
 //(revertir a normal cuando el core ps/2 del ZX-UNO se mejore)
-#define CK1 4 
+#define CK1 4
 #define CK2 8
 
 void ps2Init()
@@ -303,15 +303,26 @@ uint8_t ps2Stat()
 //envio de datos ps/2 simulando reloj con delays.
 void sendPS2(unsigned char code)
 {
+  sendPS2(code, true);
+}
 
-  //Para continuar las líneas deben estar en alto
+
+//envio de datos ps/2 simulando reloj con delays.
+void sendPS2(unsigned char code, bool wait)
+{
+
+  //Para continuar las líneas deben estar en alto  
   if (ps2Stat())
     return;
-  // CLK debe encontrarse en alto durante al menos 50us
-  _delay_us(50);
-  if (!(PS2_PIN & (1 << PS2_CLK)))
-    return;
 
+  if (wait)
+  {
+    // CLK debe encontrarse en alto durante al menos 50us
+    _delay_us(50);
+    if (!(PS2_PIN & (1 << PS2_CLK)))
+      return;
+  }
+  
   unsigned char parity = 1;
   unsigned char i = 0;
 
@@ -368,8 +379,10 @@ void sendPS2(unsigned char code)
   ps2Mode(PS2_CLK, HI);
   _delay_us(CK1);
 
-  _delay_us(50); //fin  
-  
+  if (wait)
+  {
+    _delay_us(50); //fin  
+  }
 }
 
 //codifica envio de caracteres ps/2 
@@ -395,16 +408,25 @@ void sendCodeMR(unsigned char key, uint16_t release)
   }
   //secuencia  
 
+    //Para continuar las líneas deben estar en alto
+  while (ps2Stat()) { }
+  
+  // CLK debe encontrarse en alto durante al menos 50us
+  _delay_us(50);
+  while (!(PS2_PIN & (1 << PS2_CLK))) { }
+
   if (extn)
-    sendPS2(0xE0);
+    sendPS2(0xE0, false);
 
   if (key && release)
-    sendPS2(0xF0);
+    sendPS2(0xF0, false);
 
   if (key)
-    sendPS2(key);
+    sendPS2(key, false);
 
   //fin secuencia
+  _delay_us(50); //fin 
+  
 }
 
 void PressKey(unsigned char key)
