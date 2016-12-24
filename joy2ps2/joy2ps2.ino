@@ -379,10 +379,6 @@ void sendPS2(unsigned char code, bool wait)
   ps2Mode(PS2_CLK, HI);
   _delay_us(CK1);
 
-  if (wait)
-  {
-    _delay_us(50); //fin  
-  }
 }
 
 //codifica envio de caracteres ps/2 
@@ -424,8 +420,6 @@ void sendCodeMR(unsigned char key, uint16_t release)
   if (key)
     sendPS2(key, false);
 
-  //fin secuencia
-  _delay_us(50); //fin 
   
 }
 
