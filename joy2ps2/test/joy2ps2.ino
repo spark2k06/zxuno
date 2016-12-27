@@ -311,8 +311,8 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 //En us, reloj y semireloj, para los flancos
 //zxuno v2 test15: CK1 = 240, CK2 = 480. Uso normal: CK1 = 20, CK2 = 40 microsegundos
 //(revertir a normal cuando el core ps/2 del ZX-UNO se mejore)
-#define CK1 20 
-#define CK2 40
+#define CK1 4
+#define CK2 8
 
 void ps2Init()
 {
@@ -333,13 +333,21 @@ uint8_t ps2Stat()
   return 0;
 }
 
+// guardamos en un buffer las peticiones de envio de scancodes al puerto PS/2
+void sendPS2(unsigned char code)
+{
+  QueuePut(code);
+}
+
+
 //envio de datos ps/2 simulando reloj con delays.
 void sendPS2fromqueue(unsigned char code)
 {
 
-  //Para continuar las líneas deben estar en alto, esperamos a que se encuentren en dicho estado.
-  while (!ps2Stat()) {}
-
+  //Para continuar las líneas deben estar en alto  
+  if (ps2Stat())
+    return;
+  
   unsigned char parity = 1;
   unsigned char i = 0;
 
@@ -396,16 +404,6 @@ void sendPS2fromqueue(unsigned char code)
   ps2Mode(PS2_CLK, HI);
   _delay_us(CK1);
 
-  //_delay_us(CK2 * 3); //fin
-  _delay_us(2500);
-
-
-}
-
-// guardamos en un buffer las peticiones de envio de scancodes al puerto PS/2
-void sendPS2(unsigned char code)
-{
-  QueuePut(code);
 }
 
 //codifica envio de caracteres ps/2 
@@ -440,14 +438,49 @@ void sendCodeMR(unsigned char key, uint16_t release)
   if (key)
     sendPS2(key);
 
-  //fin secuencia
+  
+}
+
+//codifica envio de caracteres ps/2 
+void sendCodeMRKey(unsigned char key, uint16_t release)
+{
+  uint8_t extn = 0;
+
+  //checkeamos si es una tecla con scancode extendido (E0)
+  switch (key) {
+  case KEY_LEFT:
+  case KEY_DOWN:
+  case KEY_RIGHT:
+  case KEY_UP:
+  case KEY_HOME:
+  case KEY_END:
+  case KEY_PDN:
+  case KEY_PUP:
+    extn = 1;
+    break;
+  default:
+    extn = 0;
+    break;
+  }
+  //secuencia  
+
+  if (extn)
+    sendPS2fromqueue(0xE0);
+
+  if (key && release)
+    sendPS2fromqueue(0xF0);
+
+  if (key)
+    sendPS2fromqueue(key);
+
+  
 }
 
 void PressKey(unsigned char key)
 {
-  sendCodeMR(keymapVB[key], 0); //Make
+  sendCodeMRKey(keymapVB[key], 0); //Make
   _delay_ms(100);
-  sendCodeMR(keymapVB[key], 1); //Release
+  sendCodeMRKey(keymapVB[key], 1); //Release
 }
 
 
@@ -458,12 +491,12 @@ void LOAD128() // LOAD "" en BASIC 128
   PressKey('O');
   PressKey('A');
   PressKey('D');
-  sendPS2(KEY_RSHIFT); // Mantenemos pulsado SHIFT
+  sendPS2fromqueue(KEY_RSHIFT); // Mantenemos pulsado SHIFT
   PressKey('2');
   _delay_ms(100);
   PressKey('2');
-  sendPS2(0xF0); // Liberamos SHIFT
-  sendPS2(KEY_RSHIFT);
+  sendPS2fromqueue(0xF0); // Liberamos SHIFT
+  sendPS2fromqueue(KEY_RSHIFT);
   PressKey(0x0D); // ENTER (13)
 
 }
@@ -472,12 +505,12 @@ void LOAD48() // LOAD "" en BASIC 48
 {
 
   PressKey('J');
-  sendPS2(KEY_RSHIFT); // Mantenemos pulsado SHIFT
+  sendPS2fromqueue(KEY_RSHIFT); // Mantenemos pulsado SHIFT
   PressKey('2');
   _delay_ms(100);
   PressKey('2');
-  sendPS2(0xF0); // Liberamos SHIFT
-  sendPS2(KEY_RSHIFT);
+  sendPS2fromqueue(0xF0); // Liberamos SHIFT
+  sendPS2fromqueue(KEY_RSHIFT);
   PressKey(0x0D); // ENTER (13)
 
 }
@@ -485,14 +518,14 @@ void LOAD48() // LOAD "" en BASIC 48
 void NMI() // CTRL + ALT + F5 (NMI)
 {
 
-  sendPS2(KEY_LCTRL); // Mantenemos pulsado LCTRL
-  sendPS2(KEY_LALT); // Mantenemos pulsado LALT
+  sendPS2fromqueue(KEY_LCTRL); // Mantenemos pulsado LCTRL
+  sendPS2fromqueue(KEY_LALT); // Mantenemos pulsado LALT
   PressKey(0x74); // F5 (116)
 
-  sendPS2(0xF0); // Liberamos LALT
-  sendPS2(KEY_LALT);
-  sendPS2(0xF0); // Liberamos LCTRL
-  sendPS2(KEY_LCTRL);
+  sendPS2fromqueue(0xF0); // Liberamos LALT
+  sendPS2fromqueue(KEY_LALT);
+  sendPS2fromqueue(0xF0); // Liberamos LCTRL
+  sendPS2fromqueue(KEY_LCTRL);
   Cursors();
   _delay_ms(200); // Retardo para evitar pulsacion INTRO por equivocacion
 
@@ -501,14 +534,14 @@ void NMI() // CTRL + ALT + F5 (NMI)
 void Reset() // CTRL + ALT + Supr (Reset)
 {
 
-  sendPS2(KEY_LCTRL); // Mantenemos pulsado LCTRL
-  sendPS2(KEY_LALT); // Mantenemos pulsado LALT
+  sendPS2fromqueue(KEY_LCTRL); // Mantenemos pulsado LCTRL
+  sendPS2fromqueue(KEY_LALT); // Mantenemos pulsado LALT
   PressKey(46); // Supr
 
-  sendPS2(0xF0); // Liberamos LALT
-  sendPS2(KEY_LALT);
-  sendPS2(0xF0); // Liberamos LCTRL
-  sendPS2(KEY_LCTRL);
+  sendPS2fromqueue(0xF0); // Liberamos LALT
+  sendPS2fromqueue(KEY_LALT);
+  sendPS2fromqueue(0xF0); // Liberamos LCTRL
+  sendPS2fromqueue(KEY_LCTRL);
   Cursors();
 
 }
@@ -516,14 +549,14 @@ void Reset() // CTRL + ALT + Supr (Reset)
 void MasterReset() // CTRL + ALT + BackSpace (MasterReset)
 {
 
-  sendPS2(KEY_LCTRL); // Mantenemos pulsado LCTRL
-  sendPS2(KEY_LALT); // Mantenemos pulsado LALT
+  sendPS2fromqueue(KEY_LCTRL); // Mantenemos pulsado LCTRL
+  sendPS2fromqueue(KEY_LALT); // Mantenemos pulsado LALT
   PressKey(8); // BackSpace
 
-  sendPS2(0xF0); // Liberamos LALT
-  sendPS2(KEY_LALT);
-  sendPS2(0xF0); // Liberamos LCTRL
-  sendPS2(KEY_LCTRL);
+  sendPS2fromqueue(0xF0); // Liberamos LALT
+  sendPS2fromqueue(KEY_LALT);
+  sendPS2fromqueue(0xF0); // Liberamos LCTRL
+  sendPS2fromqueue(KEY_LCTRL);
   Cursors();
   _delay_ms(200); // Retardo para evitar pulsacion ESC por equivocacion
 
@@ -561,27 +594,44 @@ void setup()
   DB15_PORT01 = 0; // Input pullup 0 - 7 
   DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
     
-  DB15_PINAux = 0xFFFF; // Estado inicial del joystick  
+  DB15_PINAux = 0xFFFF; // Estado inicial del joystick
 
 }
 
 void loop() 
 {  
 
-  
-    if (QueueIn != QueueOut && ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
+    while (QueueIn != QueueOut && !ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
     {   
-      sendcode = QueueGet();
 
-      while ((sendcode == 0xE0 || sendcode == 0xF0) && QueueIn != QueueOut)
+      // CLK debe encontrarse en alto durante al menos 50us
+      _delay_us(50);
+      if (!(PS2_PIN & (1 << PS2_CLK))) 
       {
+         break;
+      }
+  
+      sendcode = QueueGet();
+      
+      while ((sendcode == 0xE0 || sendcode == 0xF0))
+      {        
         sendPS2fromqueue(sendcode);
-        sendcode = QueueGet();
+        if (QueueIn != QueueOut)
+        {
+          sendcode = QueueGet();
+        }
+        else
+        {
+          goto salir;
+        }
+        
       }
       sendPS2fromqueue(sendcode);
+      break;
       
     }
-
+    salir:
+        
     DB15_PIN = (((uint16_t)DB15_PIN02 << 8) + DB15_PIN01) | 0b1110000000000000; // Organizamos los botones en 16 bits (pines digitales 0 a 12, ignorando el resto)
     
     if ((DB15_PINChanges = DB15_PIN ^ DB15_PINAux) != 0) // Esperamos a un cambio de estado del joystick
