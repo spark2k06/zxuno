@@ -622,7 +622,7 @@ void loop()
         }
         else
         {
-          goto salir;
+          goto exit;
         }
         
       }
@@ -630,7 +630,7 @@ void loop()
       break;
       
     }
-    salir:
+    exit:
         
     DB15_PIN = (((uint16_t)DB15_PIN02 << 8) + DB15_PIN01) | 0b1110000000000000; // Organizamos los botones en 16 bits (pines digitales 0 a 12, ignorando el resto)
     
