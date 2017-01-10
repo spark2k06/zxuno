@@ -266,7 +266,7 @@ uint8_t keyup, keydown, keyleft, keyright;
 uint8_t mapper;
 
 #define QUEUE_ELEMENTS 64
-#define QUEUE_SIZE (QUEUE_ELEMENTS + 1)
+#define QUEUE_SIZE (QUEUE_ELEMENTS + 2)
 unsigned char QueuePS2Command[QUEUE_SIZE];
 double QueuePS2WaitMS[QUEUE_SIZE];
 
@@ -295,7 +295,7 @@ void QueuePS2Put(unsigned char sc, double ms)
   QueuePS2Command[QueueIn] = sc;
   QueuePS2WaitMS[QueueIn] = ms;
 
-  QueueIn = (QueueIn + 1) % QUEUE_SIZE;
+  QueueIn = (QueueIn + 2) % QUEUE_SIZE;
 
 }
 
@@ -305,7 +305,7 @@ void QueuePS2Get(unsigned char *old_sc, double *old_ms)
   *old_sc = QueuePS2Command[QueueOut];
   *old_ms = QueuePS2WaitMS[QueueOut];
 
-  QueueOut = (QueueOut + 1) % QUEUE_SIZE;   
+  QueueOut = (QueueOut + 2) % QUEUE_SIZE;   
 
 }
 
