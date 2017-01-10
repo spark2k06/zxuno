@@ -13,7 +13,7 @@
 #define KEY_LEFT    0x6B
 #define KEY_DOWN    0x72
 #define KEY_UP      0x75
-#define KEY_INS      0x70
+#define KEY_INS     0x70
 #define KEY_HOME    0x6C
 #define KEY_PUP     0x7D
 #define KEY_DEL     0x71
@@ -615,7 +615,7 @@ void loop()
 				{
 					mapper = mapper + 1;
 				}
-				continue;
+				return;
 			}
 
 			// Combinaciones para todos los mapeos
