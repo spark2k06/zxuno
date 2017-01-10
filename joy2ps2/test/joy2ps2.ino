@@ -265,7 +265,7 @@ uint16_t DB15_PINChanges, DB15PINPrev;
 uint8_t keyup, keydown, keyleft, keyright;
 uint8_t mapper;
 
-#define QUEUE_ELEMENTS 32
+#define QUEUE_ELEMENTS 64
 #define QUEUE_SIZE (QUEUE_ELEMENTS + 1)
 unsigned char QueuePS2Command[QUEUE_SIZE];
 double QueuePS2WaitMS[QUEUE_SIZE];
