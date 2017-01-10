@@ -47,6 +47,15 @@ uint8_t QueueIn, QueueOut;
 unsigned char sendcode;
 double wait_ms;
 
+void my_delay_ms_10ms_steps(int ms)
+{
+	while (0 < ms)
+	{
+		_delay_ms(10);
+		ms -= 10;
+	}
+}
+
 void QueuePS2Init(void)
 {
 	QueueIn = QueueOut = 0;	
@@ -360,7 +369,7 @@ int main()
 
 			}
 			sendPS2fromqueue(sendcode);
-			_delay_ms(wait_ms);
+			my_delay_ms_10ms_steps(wait_ms);
 			break;
 
 		}
