@@ -38,7 +38,7 @@ uint8_t keyup, keydown, keyleft, keyright;
 uint8_t mapper;
 
 #define QUEUE_ELEMENTS 64
-#define QUEUE_SIZE (QUEUE_ELEMENTS + 1)
+#define QUEUE_SIZE (QUEUE_ELEMENTS + 2)
 unsigned char QueuePS2Command[QUEUE_SIZE];
 double QueuePS2WaitMS[QUEUE_SIZE];
 
