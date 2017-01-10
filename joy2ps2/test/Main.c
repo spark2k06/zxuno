@@ -67,7 +67,7 @@ void QueuePS2Put(unsigned char sc, double ms)
 	QueuePS2Command[QueueIn] = sc;
 	QueuePS2WaitMS[QueueIn] = ms;
 
-	QueueIn = (QueueIn + 1) % QUEUE_SIZE;
+	QueueIn = (QueueIn + 2) % QUEUE_SIZE;
 
 }
 
@@ -77,7 +77,7 @@ void QueuePS2Get(unsigned char *old_sc, double *old_ms)
 	*old_sc = QueuePS2Command[QueueOut];
 	*old_ms = QueuePS2WaitMS[QueueOut];
 
-	QueueOut = (QueueOut + 1) % QUEUE_SIZE;		
+	QueueOut = (QueueOut + 2) % QUEUE_SIZE;		
 
 }
 
