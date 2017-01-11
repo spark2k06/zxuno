@@ -109,136 +109,75 @@
 #define KEYPAD_DEL 0x71
 #define KEYPAD_NUM 0x77
 
-//Mapa caracteres desde uart, para programa ejemplo Visual Basic
-const unsigned char keymapVB[] = {
-  0,      //00  
-  0,      //01  
-  0,    //02 
-  0,    //03
-  0,    //04 
-  0,    //05 
-  0,    //06 
-  0,    //07 
-  KEY_DELETE, //08 
-  KEY_TAB,  //09 
-  0,    //10 
-  0,    //11 
-  0,    //12 
-  KEY_ENTER,  //13 
-  0,    //14 
-  0,    //15 
-  KEY_LSHIFT, //16 
-  KEY_LCTRL,  //17 
-  KEY_LALT, //18 
-  0,    //19 
-  KEY_CAPS, //20 
-  0,    //21 
-  0,    //22 
-  0,    //23 
-  0,    //24 
-  0,    //25 
-  0,    //26 
-  KEY_ESCAPE, //27 
-  0,    //28 
-  0,    //29 
-  0,    //30 
-  0,    //31 
-  KEY_SPACE,  //32 
-  KEY_PUP,  //33 
-  KEY_PDN,  //34 
-  KEY_END,  //35 
-  KEY_HOME, //36 
-  KEY_LEFT, //37 
-  KEY_UP,   //38 
-  KEY_RIGHT,      //39
-  KEY_DOWN, //40
-  0,    //41
-  0,    //42
-  0,    //43
-  0,    //44
-  KEY_INS,        //45
-  KEY_DEL,  //46
-  KEY_BAR,  //47
-  KEY_0,    //48
-  KEY_1,    //49
-  KEY_2,    //50
-  KEY_3,    //51
-  KEY_4,    //52
-  KEY_5,    //53
-  KEY_6,    //54
-  KEY_7,    //55
-  KEY_8,    //56
-  KEY_9,    //57
-  KEY_PERIOD, //58  //VB
-  KEY_COMMA,  //59  //VB
-  KEY_BAR,  //60  //VB
-  KEY_COLON,  //61  //VB
-  0x4E,   //62  //VB
-  KEY_TLD,  //63  //VB
-  0x52,   //64  //?
-  KEY_A,    //65
-  KEY_B,    //66
-  KEY_C,    //67
-  KEY_D,    //68
-  KEY_E,    //69
-  KEY_F,    //70
-  KEY_G,    //71
-  KEY_H,    //72
-  KEY_I,    //73
-  KEY_J,    //74
-  KEY_K,    //75
-  KEY_L,    //76
-  KEY_M,    //77
-  KEY_N,    //78
-  KEY_O,    //79
-  KEY_P,    //80
-  KEY_Q,    //81
-  KEY_R,    //82
-  KEY_S,    //83
-  KEY_T,    //84
-  KEY_U,    //85
-  KEY_V,    //86
-  KEY_W,    //87
-  KEY_X,    //88
-  KEY_Y,    //89
-  KEY_Z,    //90
-  0x54,   //91 //vb
-  0x5b,   //92 //vb
-  0x55,   //93 //vb
-  0,    //94
-  0,    //95
-  KEYPAD_0, //96
-  KEYPAD_1, //97
-  KEYPAD_2, //98
-  KEYPAD_3, //99
-  KEYPAD_4, //100
-  KEYPAD_5, //101
-  KEYPAD_6, //102
-  KEYPAD_7, //103
-  KEYPAD_8, //104
-  KEYPAD_9, //105
-  KEYPAD_STAR,  //106
-  KEYPAD_PLUS,  //107
-  KEYPAD_ENT, //108
-  KEYPAD_MIN, //109
-  KEYPAD_DEL, //110
-  KEYPAD_BAR, //111
-  KEY_F1,   //112
-  KEY_F2,   //113
-  KEY_F3,   //114
-  KEY_F4,   //115
-  KEY_F5,   //116
-  KEY_F6,   //117
-  KEY_F7,   //118
-  KEY_F8,   //119
-  KEY_F9,   //120
-  KEY_F10,  //121
-  KEY_F11,  //122
-  KEY_F12,  //123
-  0,    //124
-  0,    //125
-  0,    //126
-  0   //127
+// Mapas del joystick
+
+const unsigned char inimap[] = {
+
+	'J', 'O', 'Y', '2', 'P', 'S', '2'
+
+};
+
+const unsigned char Map0[] = { // Mapa por defecto al iniciar
+	KEY_Q,       //00  UP
+	KEY_A,       //01  DOWN
+	KEY_O,       //02  LEFT
+	KEY_P,       //03  RIGHT
+	KEY_ESCAPE,  //04  SELECT
+	KEY_ENTER,   //05  START
+	KEY_SPACE,   //06  BUTTON 1
+	KEY_V,       //07  BUTTON 2
+	KEY_B,       //08  BUTTON 3
+	KEY_N,       //09  BUTTON 4
+	KEY_G,       //10  BUTTON 5
+	KEY_H        //11  BUTTON 6
+
+};
+
+const unsigned char Map1[] = { // Mapa por defecto al iniciar
+	0,       //00  UP
+	0,       //01  DOWN
+	0,       //02  LEFT
+	0,       //03  RIGHT
+	0,       //04  SELECT
+	0,       //05  START
+	0,       //06  BUTTON 1
+	0,       //07  BUTTON 2
+	0,       //08  BUTTON 3
+	0,       //09  BUTTON 4
+	0,       //10  BUTTON 5
+	0        //11  BUTTON 6
+
+};
+
+const unsigned char Map2[] = { // Mapa por defecto al iniciar
+	0,       //00  UP
+	0,       //01  DOWN
+	0,       //02  LEFT
+	0,       //03  RIGHT
+	0,       //04  SELECT
+	0,       //05  START
+	0,       //06  BUTTON 1
+	0,       //07  BUTTON 2
+	0,       //08  BUTTON 3
+	0,       //09  BUTTON 4
+	0,       //10  BUTTON 5
+	0        //11  BUTTON 6
+
+};
+
+const unsigned char Map3[] = { // Mapa por defecto al iniciar
+	0,       //00  UP
+	0,       //01  DOWN
+	0,       //02  LEFT
+	0,       //03  RIGHT
+	0,       //04  SELECT
+	0,       //05  START
+	0,       //06  BUTTON 1
+	0,       //07  BUTTON 2
+	0,       //08  BUTTON 3
+	0,       //09  BUTTON 4
+	0,       //10  BUTTON 5
+	0        //11  BUTTON 6
 
 };
 
@@ -275,48 +214,51 @@ uint8_t QueueIn, QueueOut;
 unsigned char sendcode;
 double wait_ms;
 
+unsigned char KeyMap[12];
+uint8_t imap;
+
 void my_delay_ms_10ms_steps(int ms)
 {
-  while (0 < ms)
-  {  
-    _delay_ms(10);
-    ms -= 10;
-  }
+	while (0 < ms)
+	{
+		_delay_ms(10);
+		ms -= 10;
+	}
 }
 
 void QueuePS2Init(void)
 {
-  QueueIn = QueueOut = 0; 
+	QueueIn = QueueOut = 0;	
 }
 
 void QueuePS2Put(unsigned char sc, double ms)
 {
 
-  QueuePS2Command[QueueIn] = sc;
-  QueuePS2WaitMS[QueueIn] = ms;
+	QueuePS2Command[QueueIn] = sc;
+	QueuePS2WaitMS[QueueIn] = ms;
 
-  QueueIn = (QueueIn + 2) % QUEUE_SIZE;
+	QueueIn = (QueueIn + 2) % QUEUE_SIZE;
 
 }
 
 void QueuePS2Get(unsigned char *old_sc, double *old_ms)
 {
-  
-  *old_sc = QueuePS2Command[QueueOut];
-  *old_ms = QueuePS2WaitMS[QueueOut];
+	
+	*old_sc = QueuePS2Command[QueueOut];
+	*old_ms = QueuePS2WaitMS[QueueOut];
 
-  QueueOut = (QueueOut + 2) % QUEUE_SIZE;   
+	QueueOut = (QueueOut + 2) % QUEUE_SIZE;		
 
 }
 
 void ps2Mode(uint8_t pin, uint8_t mode)
 {
-  if (mode) { //high
-    PS2_DDR &= ~_BV(pin); //input (Truco DDR. Como input sin estado, se pone en modo Hi-Z)
-  }
-  else { //low
-    PS2_DDR |= _BV(pin); //output (Truco DDR. Como output, se pone a 0v)
-  }
+	if (mode) { //high
+		PS2_DDR &= ~_BV(pin); //input (Truco DDR. Como input sin estado, se pone en modo Hi-Z)
+	}
+	else { //low
+		PS2_DDR |= _BV(pin); //output (Truco DDR. Como output, se pone a 0v)
+	}
 }
 
 //En us, reloj y semireloj, para los flancos
@@ -327,27 +269,27 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 
 void ps2Init()
 {
-  //ponemos en alto ambas señales
-  PS2_PORT &= ~_BV(PS2_DAT); //A 0
-  PS2_PORT &= ~_BV(PS2_CLK); //A 0
-  ps2Mode(PS2_DAT, HI);
-  ps2Mode(PS2_CLK, HI);
+	//ponemos en alto ambas señales
+	PS2_PORT &= ~_BV(PS2_DAT); //A 0
+	PS2_PORT &= ~_BV(PS2_CLK); //A 0
+	ps2Mode(PS2_DAT, HI);
+	ps2Mode(PS2_CLK, HI);
 }
 
 uint8_t ps2Stat()
 {
-  if (!(PS2_PIN & (1 << PS2_CLK)))
-    return 1;
-  if (!(PS2_PIN & (1 << PS2_DAT)))
-    return 1;
+	if (!(PS2_PIN & (1 << PS2_CLK)))
+		return 1;
+	if (!(PS2_PIN & (1 << PS2_DAT)))
+		return 1;
 
-  return 0;
+	return 0;
 }
 
 // guardamos en un buffer las peticiones de envio de scancodes al puerto PS/2
 void sendPS2(unsigned char code, double ms)
 {
-  QueuePS2Put(code, ms);
+	QueuePS2Put(code, ms);
 }
 
 
@@ -355,334 +297,343 @@ void sendPS2(unsigned char code, double ms)
 void sendPS2fromqueue(unsigned char code)
 {
 
-  //Para continuar las líneas deben estar en alto  
-  if (ps2Stat())
-    return;
+	//Para continuar las líneas deben estar en alto  
+	if (ps2Stat())
+		return;
 
-  unsigned char parity = 1;
-  unsigned char i = 0;
+	unsigned char parity = 1;
+	unsigned char i = 0;
 
-  //iniciamos transmisión
-  ps2Mode(PS2_DAT, LO);
-  _delay_us(CK1);
+	//iniciamos transmisión
+	ps2Mode(PS2_DAT, LO);
+	_delay_us(CK1);
 
-  ps2Mode(PS2_CLK, LO); //bit de comienzo
-  _delay_us(CK2);
-  ps2Mode(PS2_CLK, HI);
-  _delay_us(CK1);
-  //enviamos datos
-  for (i = 0; i < 8; ++i)
-  {
-    if ((0b00000001 & code))
-      ps2Mode(PS2_DAT, HI);
-    else
-      ps2Mode(PS2_DAT, LO);
+	ps2Mode(PS2_CLK, LO); //bit de comienzo
+	_delay_us(CK2);
+	ps2Mode(PS2_CLK, HI);
+	_delay_us(CK1);
+	//enviamos datos
+	for (i = 0; i < 8; ++i)
+	{
+		if ((0b00000001 & code))
+			ps2Mode(PS2_DAT, HI);
+		else
+			ps2Mode(PS2_DAT, LO);
 
-    _delay_us(CK1);
-    ps2Mode(PS2_CLK, LO);
-    _delay_us(CK2);
-    ps2Mode(PS2_CLK, HI);
-    _delay_us(CK1);
+		_delay_us(CK1);
+		ps2Mode(PS2_CLK, LO);
+		_delay_us(CK2);
+		ps2Mode(PS2_CLK, HI);
+		_delay_us(CK1);
 
-    //paridad
-    if ((0b00000001 & code) == 0b00000001)
-    {
-      if (!parity)
-        parity = 1;
-      else
-        parity = 0;
-    }
-    code = code >> 1;
-  }
+		//paridad
+		if ((0b00000001 & code) == 0b00000001)
+		{
+			if (!parity)
+				parity = 1;
+			else
+				parity = 0;
+		}
+		code = code >> 1;
+	}
 
-  // Enviamos bit de paridad
-  if (parity)
-    ps2Mode(PS2_DAT, HI);
-  else
-    ps2Mode(PS2_DAT, LO);
+	// Enviamos bit de paridad
+	if (parity)
+		ps2Mode(PS2_DAT, HI);
+	else
+		ps2Mode(PS2_DAT, LO);
 
-  _delay_us(CK1);
-  ps2Mode(PS2_CLK, LO);
-  _delay_us(CK2);
-  ps2Mode(PS2_CLK, HI);
-  _delay_us(CK1);
+	_delay_us(CK1);
+	ps2Mode(PS2_CLK, LO);
+	_delay_us(CK2);
+	ps2Mode(PS2_CLK, HI);
+	_delay_us(CK1);
 
-  //Bit de parada
-  ps2Mode(PS2_DAT, HI);
-  _delay_us(CK1);
-  ps2Mode(PS2_CLK, LO);
-  _delay_us(CK2);
-  ps2Mode(PS2_CLK, HI);
-  _delay_us(CK1);
+	//Bit de parada
+	ps2Mode(PS2_DAT, HI);
+	_delay_us(CK1);
+	ps2Mode(PS2_CLK, LO);
+	_delay_us(CK2);
+	ps2Mode(PS2_CLK, HI);
+	_delay_us(CK1);
 
-  
+	
 
 }
 
 //codifica envio de caracteres ps/2 
 void sendCodeMR(unsigned char key, uint16_t release, double ms)
 {
-  uint8_t extn = 0;
+	uint8_t extn = 0;
 
-  //checkeamos si es una tecla con scancode extendido (E0)
-  switch (key) {
-  case KEY_LEFT:
-  case KEY_DOWN:
-  case KEY_RIGHT:
-  case KEY_UP:
-  case KEY_HOME:
-  case KEY_END:
-  case KEY_PDN:
-  case KEY_PUP:
-    extn = 1;
-    break;
-  default:
-    extn = 0;
-    break;
-  }
-  //secuencia  
+	//checkeamos si es una tecla con scancode extendido (E0)
+	switch (key) {
+	case KEY_LEFT:
+	case KEY_DOWN:
+	case KEY_RIGHT:
+	case KEY_UP:
+	case KEY_HOME:
+	case KEY_END:
+	case KEY_PDN:
+	case KEY_PUP:
+		extn = 1;
+		break;
+	default:
+		extn = 0;
+		break;
+	}
+	//secuencia  
 
-  if (extn)
-    sendPS2(0xE0, 0);
+	if (extn)
+		sendPS2(0xE0, 0);
 
-  if (key && release)
-    sendPS2(0xF0, 0);
+	if (key && release)
+		sendPS2(0xF0, 0);
 
-  if (key)
-    sendPS2(key, ms);
+	if (key)
+		sendPS2(key, ms);
 
 
 }
 
 void PressKey(unsigned char key, double ms)
 {
-  sendCodeMR(keymapVB[key], 0, 100); //Make 
-  sendCodeMR(keymapVB[key], 1, ms); //Release
+	sendCodeMR(key, 0, 100); //Make	
+	sendCodeMR(key, 1, ms); //Release
 }
 
 void Cursors()
 {
-  keyup = KEY_UP;
-  keydown = KEY_DOWN;
-  keyleft = KEY_LEFT;
-  keyright = KEY_RIGHT;
+	keyup = KEY_UP;
+	keydown = KEY_DOWN;
+	keyleft = KEY_LEFT;
+	keyright = KEY_RIGHT;
 }
 
 void LOAD128() // LOAD "" en BASIC 128
 {
 
-  PressKey('L', 0);
-  PressKey('O', 0);
-  PressKey('A', 0);
-  PressKey('D', 0);
-  sendPS2fromqueue(KEY_RSHIFT); // Mantenemos pulsado SHIFT
-  PressKey('2', 100); 
-  PressKey('2', 0);
-  sendPS2(0xF0, 0); // Liberamos SHIFT
-  sendPS2(KEY_RSHIFT, 0);
-  PressKey(0x0D, 0); // ENTER (13)
+	PressKey(KEY_L, 0);
+	PressKey(KEY_O, 0);
+	PressKey(KEY_A, 0);
+	PressKey(KEY_D, 0);
+	sendPS2fromqueue(KEY_RSHIFT); // Mantenemos pulsado SHIFT
+	PressKey(KEY_2, 100);
+	PressKey(KEY_2, 0);
+	sendPS2(0xF0, 0); // Liberamos SHIFT
+	sendPS2(KEY_RSHIFT, 0);
+	PressKey(KEY_ENTER, 0); // ENTER (13)
 
 }
 
 void LOAD48() // LOAD "" en BASIC 48
 {
 
-  PressKey('J', 0);
-  sendPS2(KEY_RSHIFT, 0); // Mantenemos pulsado SHIFT
-  PressKey('2', 100); 
-  PressKey('2', 0);
-  sendPS2(0xF0, 0); // Liberamos SHIFT
-  sendPS2(KEY_RSHIFT, 0);
-  PressKey(0x0D, 0); // ENTER (13)
+	PressKey(KEY_J, 0);
+	sendPS2(KEY_RSHIFT, 0); // Mantenemos pulsado SHIFT
+	PressKey(KEY_2, 100);
+	PressKey(KEY_2, 0);
+	sendPS2(0xF0, 0); // Liberamos SHIFT
+	sendPS2(KEY_RSHIFT, 0);
+	PressKey(KEY_ENTER, 0); // ENTER (13)
 
 }
 
 void NMI() // CTRL + ALT + F5 (NMI)
 {
 
-  sendPS2(KEY_LCTRL, 0); // Mantenemos pulsado LCTRL
-  sendPS2(KEY_LALT, 0); // Mantenemos pulsado LALT
-  PressKey(0x74, 0); // F5 (116)
+	sendPS2(KEY_LCTRL, 0); // Mantenemos pulsado LCTRL
+	sendPS2(KEY_LALT, 0); // Mantenemos pulsado LALT
+	PressKey(KEY_F5, 0); // F5 (116)
 
-  sendPS2(0xF0, 0); // Liberamos LALT
-  sendPS2(KEY_LALT, 0);
-  sendPS2(0xF0, 0); // Liberamos LCTRL
-  sendPS2(KEY_LCTRL, 0);
-  Cursors();  
+	sendPS2(0xF0, 0); // Liberamos LALT
+	sendPS2(KEY_LALT, 0);
+	sendPS2(0xF0, 0); // Liberamos LCTRL
+	sendPS2(KEY_LCTRL, 0);
+	Cursors();	
 
 }
 
 void Reset() // CTRL + ALT + Supr (Reset)
 {
 
-  sendPS2(KEY_LCTRL, 0); // Mantenemos pulsado LCTRL
-  sendPS2(KEY_LALT, 0); // Mantenemos pulsado LALT
-  PressKey(46, 0); // Supr
+	sendPS2(KEY_LCTRL, 0); // Mantenemos pulsado LCTRL
+	sendPS2(KEY_LALT, 0); // Mantenemos pulsado LALT
+	PressKey(KEY_DEL, 0); // Supr
 
-  sendPS2(0xF0, 0); // Liberamos LALT
-  sendPS2(KEY_LALT, 0);
-  sendPS2(0xF0, 0); // Liberamos LCTRL
-  sendPS2(KEY_LCTRL, 0);
-  Cursors();
+	sendPS2(0xF0, 0); // Liberamos LALT
+	sendPS2(KEY_LALT, 0);
+	sendPS2(0xF0, 0); // Liberamos LCTRL
+	sendPS2(KEY_LCTRL, 0);
+	Cursors();
 
 }
 
 void MasterReset() // CTRL + ALT + BackSpace (MasterReset)
 {
 
-  sendPS2(KEY_LCTRL, 0); // Mantenemos pulsado LCTRL
-  sendPS2(KEY_LALT, 0); // Mantenemos pulsado LALT
-  PressKey(8, 0); // BackSpace
+	sendPS2(KEY_LCTRL, 0); // Mantenemos pulsado LCTRL
+	sendPS2(KEY_LALT, 0); // Mantenemos pulsado LALT
+	PressKey(KEY_DELETE, 0); // BackSpace
 
-  sendPS2(0xF0, 0); // Liberamos LALT
-  sendPS2(KEY_LALT, 0);
-  sendPS2(0xF0, 0); // Liberamos LCTRL
-  sendPS2(KEY_LCTRL, 0);
-  Cursors();  
+	sendPS2(0xF0, 0); // Liberamos LALT
+	sendPS2(KEY_LALT, 0);
+	sendPS2(0xF0, 0); // Liberamos LCTRL
+	sendPS2(KEY_LCTRL, 0);
+	Cursors();	
 
 }
 
 void ChangeKeys()
 {
-  keyup = keyup == KEY_UP ? KEY_Q : KEY_UP;
-  keydown = keydown == KEY_DOWN ? KEY_A : KEY_DOWN;
-  keyleft = keyleft == KEY_LEFT ? KEY_O : KEY_LEFT;
-  keyright = keyright == KEY_RIGHT ? KEY_P : KEY_RIGHT;
+	if (mapper == 0) // El cambio entre cursores y teclas solo disponible para el mapa 0
+	{
+		KeyMap[0] = KeyMap[0] == KEY_UP ? Map0[0] : KEY_UP;
+		KeyMap[1] = KeyMap[1] == KEY_DOWN ? Map0[1] : KEY_DOWN;
+		KeyMap[2] = KeyMap[2] == KEY_LEFT ? Map0[2] : KEY_LEFT;
+		KeyMap[3] = KeyMap[3] == KEY_RIGHT ? Map0[3] : KEY_RIGHT;
+	}
 }
 
 void setup()
 {  
 
-  CPU_PRESCALE(0);
-  ps2Init();
-  QueuePS2Init();
-  mapper = 0; // Mapa por defecto al inicio
-  Cursors(); // Direcciones del joystick como cursores por defecto al inicio
+	CPU_PRESCALE(0);
+	ps2Init();
+	QueuePS2Init();
+	mapper = 0; // Mapa por defecto al inicio
+	for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map0[imap];
+	Cursors(); // Direcciones del joystick como cursores por defecto al inicio
 
-         // Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
-  DB15_PIN01 = 0xFF; // Ponemos en alto pines 0 - 7
-  DB15_PIN02 = DB15_PIN02 | 0b00011111; // Ponemos en alto los pines 8 - 12, respetamos el contenido del resto ya que nos los utilzaremos
-  DB15_PORT01 = 0; // Input pullup 0 - 7 
-  DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
+	// Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
+	DB15_PIN01 = 0xFF; // Ponemos en alto pines 0 - 7
+	DB15_PIN02 = DB15_PIN02 | 0b00011111; // Ponemos en alto los pines 8 - 12, respetamos el contenido del resto ya que nos los utilzaremos
+	DB15_PORT01 = 0; // Input pullup 0 - 7 
+	DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
 
-  DB15_PINAux = 0xFFFF; // Estado inicial del joystick
+	DB15_PINAux = 0xFFFF; // Estado inicial del joystick
 
 }
 
 void loop() 
 {  
 
-  while (QueueIn != QueueOut && !ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
-  {
+	while (QueueIn != QueueOut && !ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
+	{
 
-    // CLK debe encontrarse en alto durante al menos 50us
-    _delay_us(50);
-    if (!(PS2_PIN & (1 << PS2_CLK)))
-    {
-      break;
-    }
+		// CLK debe encontrarse en alto durante al menos 50us
+		_delay_us(50);
+		if (!(PS2_PIN & (1 << PS2_CLK)))
+		{
+			break;
+		}
 
-    QueuePS2Get(&sendcode, &wait_ms);
+		QueuePS2Get(&sendcode, &wait_ms);
 
-    while ((sendcode == 0xE0 || sendcode == 0xF0))
-    {
-      sendPS2fromqueue(sendcode);
-      if (QueueIn != QueueOut)
-      {
-        QueuePS2Get(&sendcode, &wait_ms);
-      }
-      else
-      {
-        goto exit;
-      }
+        while ((sendcode == 0xE0 || sendcode == 0xF0))
+		{
+			sendPS2fromqueue(sendcode);
+			if (QueueIn != QueueOut)
+			{
+				QueuePS2Get(&sendcode, &wait_ms);
+			}
+			else
+			{
+				goto exit;
+			}
 
-    }
-    sendPS2fromqueue(sendcode);
-    my_delay_ms_10ms_steps(wait_ms);
-    break;
+		}
+		sendPS2fromqueue(sendcode);
+		my_delay_ms_10ms_steps(wait_ms);
+		break;
 
-  }
+	}
 
-  exit:
+	exit:
 
-    DB15_PIN = (((uint16_t)DB15_PIN02 << 8) + DB15_PIN01) | 0b1110000000000000; // Organizamos los botones en 16 bits (pines digitales 0 a 12, ignorando el resto)
+	DB15_PIN = (((uint16_t)DB15_PIN02 << 8) + DB15_PIN01) | 0b1110000000000000; // Organizamos los botones en 16 bits (pines digitales 0 a 12, ignorando el resto)
 
-    if ((DB15_PINChanges = DB15_PIN ^ DB15_PINAux) != 0) // Esperamos a un cambio de estado del joystick
-    {
+	if ((DB15_PINChanges = DB15_PIN ^ DB15_PINAux) != 0) // Esperamos a un cambio de estado del joystick
+	{
 
-      DB15PINPrev = DB15_PINAux; // Almacenamos estado anterior del joystick
-      DB15_PINAux = DB15_PIN; // Almacenamos en auxiliar el estado actual para esperar despues un cambio del estado del joystick
+		DB15PINPrev = DB15_PINAux; // Almacenamos estado anterior del joystick
+		DB15_PINAux = DB15_PIN; // Almacenamos en auxiliar el estado actual para esperar despues un cambio del estado del joystick
+									// Cambio de mapeo en bucle
+		if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1110111111111111) // Se ha pulsado y soltado KeyMapper
+		{
+			if (mapper > 2) // Disponemos de cuatro mapeos
+			{
+				mapper = 0;
+			}
+			else
+			{
+				mapper = mapper + 1;
+			}
+			switch (mapper)
+			{
+				case 0:
+					for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map0[imap];
+					break;
+				case 1:
+					for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map1[imap];
+					break;
+				case 2:
+					for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map2[imap];
+					break;
+				case 3:
+					for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map3[imap];
+					break;
+				default:
+					break;			
+			}
+			return;
+		}
 
-                  // Cambio de mapeo en bucle
-      if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1110111111111111) // Se ha pulsado y soltado KeyMapper
-      {
-        if (mapper > 2) // Disponemos de cuatro mapeos
-        {
-          mapper = 0;
-        }
-        else
-        {
-          mapper = mapper + 1;
-        }
-        return;
-      }
+		// Combinaciones para todos los mapeos
+		if (DB15_PIN == 0b1110111111101111 && DB15PINPrev == 0b1110111111111111) { mapper = 0; _delay_ms(200); return; } // Mapper 0 (KeyMapper + Boton 1) -> Inicial
+		if (DB15_PIN == 0b1110111111011111 && DB15PINPrev == 0b1110111111111111) { mapper = 1; _delay_ms(200); return; } // Mapper 1 (KeyMapper + Boton 2)
+		if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; _delay_ms(200); return; } // Mapper 2 (KeyMapper + Boton 3)
+		if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; _delay_ms(200); return; } // Mapper 3 (KeyMapper + Boton 4)
 
-      // Combinaciones para todos los mapeos
-      if (DB15_PIN == 0b1110111111101111 && DB15PINPrev == 0b1110111111111111) { mapper = 0; _delay_ms(200); return; } // Mapper 0 (KeyMapper + Boton 1) -> Inicial
-      if (DB15_PIN == 0b1110111111011111 && DB15PINPrev == 0b1110111111111111) { mapper = 1; _delay_ms(200); return; } // Mapper 1 (KeyMapper + Boton 2)
-      if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; _delay_ms(200); return; } // Mapper 2 (KeyMapper + Boton 3)
-      if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; _delay_ms(200); return; } // Mapper 3 (KeyMapper + Boton 4)
+		if (DB15_PIN == 0b1111110111101111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_1, 0); _delay_ms(200); return; } // 1 (Select + Boton 1)
+		if (DB15_PIN == 0b1111110111011111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_2, 0); _delay_ms(200); return; } // 2 (Select + Boton 2)
+		if (DB15_PIN == 0b1111110110111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_3, 0); _delay_ms(200); return; } // 3 (Select + Boton 3)
+		if (DB15_PIN == 0b1111110101111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_4, 0); _delay_ms(200); return; } // 4 (Select + Boton 4)
+		if (DB15_PIN == 0b1111100111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_5, 0); _delay_ms(200); return; } // 5 (Select + Boton 5)
+		if (DB15_PIN == 0b1111010111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_6, 0); _delay_ms(200); return; } // 6 (Select + Boton 6)
 
-      if (DB15_PIN == 0b1111110111101111 && DB15PINPrev == 0b1111110111111111) { PressKey('1', 0); _delay_ms(200); return; } // 1 (Select + Boton 1)
-      if (DB15_PIN == 0b1111110111011111 && DB15PINPrev == 0b1111110111111111) { PressKey('2', 0); _delay_ms(200); return; } // 2 (Select + Boton 2)
-      if (DB15_PIN == 0b1111110110111111 && DB15PINPrev == 0b1111110111111111) { PressKey('3', 0); _delay_ms(200); return; } // 3 (Select + Boton 3)
-      if (DB15_PIN == 0b1111110101111111 && DB15PINPrev == 0b1111110111111111) { PressKey('4', 0); _delay_ms(200); return; } // 4 (Select + Boton 4)
-      if (DB15_PIN == 0b1111110011111111 && DB15PINPrev == 0b1111110111111111) { ChangeKeys(); _delay_ms(200); return; } // (Select + Start) Cursor <-> OQPA desde keyup, keydown, keyleft y keyright en los mapeos que lo utilicen
+		if (DB15_PIN == 0b1111110011111111 && DB15PINPrev == 0b1111110111111111) { ChangeKeys(); _delay_ms(200); return; } // (Select + Start) Cursor <-> Map0[0,1,2,3] desde keyup, keydown, keyleft y keyright en el mapa principal
 
-      if (DB15_PIN == 0b1111110111110111 && DB15PINPrev == 0b1111110111111111) { PressKey(113, 0); _delay_ms(200); return; } // F2 (Select + Derecha)
-      if (DB15_PIN == 0b1111110111111011 && DB15PINPrev == 0b1111110111111111) { PressKey(20, 0); _delay_ms(200); return; } // BloqMayus (Select + Izquierda)
-      if (DB15_PIN == 0b1111110111111110 && DB15PINPrev == 0b1111110111111111) { Reset(); _delay_ms(200); return; } // Reset (Select + Arriba)
-      if (DB15_PIN == 0b1111110111111101 && DB15PINPrev == 0b1111110111111111) { MasterReset(); _delay_ms(200); return; } // MasterReset (Select + Abajo)
+		// Combinaciones para ZXUno
+		if (DB15_PIN == 0b1111110111110111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_F2, 0); _delay_ms(200); return; } // F2 (Select + Derecha)
+		if (DB15_PIN == 0b1111110111111011 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_CAPS, 0); _delay_ms(200); return; } // BloqMayus (Select + Izquierda)
+		if (DB15_PIN == 0b1111110111111110 && DB15PINPrev == 0b1111110111111111) { Reset(); _delay_ms(200); return; } // Reset (Select + Arriba)
+		if (DB15_PIN == 0b1111110111111101 && DB15PINPrev == 0b1111110111111111) { MasterReset(); _delay_ms(200); return; } // MasterReset (Select + Abajo)
 
-      if (DB15_PIN == 0b1111111011111011 && DB15PINPrev == 0b1111111011111111) { LOAD128(); _delay_ms(200); return; } // Load 128K (Start + Izquierda)
-      if (DB15_PIN == 0b1111111011110111 && DB15PINPrev == 0b1111111011111111) { LOAD48(); _delay_ms(200); return; } // Load 48K (Start + Derecha)
-      if (DB15_PIN == 0b1111111011101111 && DB15PINPrev == 0b1111111011111111) { NMI(); _delay_ms(200); return; } // NMI (Start + Boton 1)              
+		if (DB15_PIN == 0b1111111011111011 && DB15PINPrev == 0b1111111011111111) { LOAD128(); _delay_ms(200); return; } // Load 128K (Start + Izquierda)
+		if (DB15_PIN == 0b1111111011110111 && DB15PINPrev == 0b1111111011111111) { LOAD48(); _delay_ms(200); return; } // Load 48K (Start + Derecha)
+		if (DB15_PIN == 0b1111111011101111 && DB15PINPrev == 0b1111111011111111) { NMI(); _delay_ms(200); return; } // NMI (Start + Boton 1)              
+			
+		// Select y Start son especiales para una mejor integracion con las combinaciones, actuan al ser pulsados y despues soltados.
+		if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111111011111111) { PressKey(KeyMap[5], 0); return; } // Start
+		if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KeyMap[4], 0); return; } // Select
 
-      if (mapper == 0) // Mapa 0 (inicial) -> Cursores/OPQA y botones Espacio, V, B, N, G, H. Select -> ESC, Start -> Intro
-      {
-        // Select y Start son especiales para una mejor integracion con las combinaciones, actuan al ser pulsados y despues soltados.
-        if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111111011111111) { PressKey(13, 0); return; } // Intro (Start)
-        if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(27, 0); return; } // ESC (Select)
-
-        if (CHECK_BIT(DB15_PIN, 8) && CHECK_BIT(DB15_PIN, 9) &&
-          CHECK_BIT(DB15PINPrev, 8) && CHECK_BIT(DB15PINPrev, 9)) // Ignoramos si son pulsados o recien soltados los botones Select o Start
-        {
-          // Para el resto, se envia pulsacion o liberacion de tecla segun el estado de los mismos.
-          if (CHECK_BIT(DB15_PINChanges, 0)) sendCodeMR(keyup, CHECK_BIT(DB15_PIN, 0), 0);
-          if (CHECK_BIT(DB15_PINChanges, 1)) sendCodeMR(keydown, CHECK_BIT(DB15_PIN, 1), 0);
-          if (CHECK_BIT(DB15_PINChanges, 2)) sendCodeMR(keyleft, CHECK_BIT(DB15_PIN, 2), 0);
-          if (CHECK_BIT(DB15_PINChanges, 3)) sendCodeMR(keyright, CHECK_BIT(DB15_PIN, 3), 0);
-          if (CHECK_BIT(DB15_PINChanges, 4)) sendCodeMR(KEY_SPACE, CHECK_BIT(DB15_PIN, 4), 0);
-          if (CHECK_BIT(DB15_PINChanges, 5)) sendCodeMR(KEY_V, CHECK_BIT(DB15_PIN, 5), 0);
-          if (CHECK_BIT(DB15_PINChanges, 6)) sendCodeMR(KEY_B, CHECK_BIT(DB15_PIN, 6), 0);
-          if (CHECK_BIT(DB15_PINChanges, 7)) sendCodeMR(KEY_N, CHECK_BIT(DB15_PIN, 7), 0);
-          if (CHECK_BIT(DB15_PINChanges, 10)) sendCodeMR(KEY_G, CHECK_BIT(DB15_PIN, 10), 0);
-          if (CHECK_BIT(DB15_PINChanges, 11)) sendCodeMR(KEY_H, CHECK_BIT(DB15_PIN, 11), 0);
-        }
-
-      }
-
-      /*
-      if (mapper == 1) // Mapa 1 ->
-      {
-      }
-      if (mapper == 2) // Mapa 2 ->
-      {
-      }
-      if (mapper == 3) // Mapa 3 ->
-      {
-      }
-      */
-    }
+		if (CHECK_BIT(DB15_PIN, 8) && CHECK_BIT(DB15_PIN, 9) &&
+			CHECK_BIT(DB15PINPrev, 8) && CHECK_BIT(DB15PINPrev, 9)) // Ignoramos si son pulsados o recien soltados los botones Select o Start
+		{
+			// Para el resto, se envia pulsacion o liberacion de tecla segun el estado de los mismos.
+			if (CHECK_BIT(DB15_PINChanges, 0)) sendCodeMR(KeyMap[0], CHECK_BIT(DB15_PIN, 0), 0);
+			if (CHECK_BIT(DB15_PINChanges, 1)) sendCodeMR(KeyMap[1], CHECK_BIT(DB15_PIN, 1), 0);
+			if (CHECK_BIT(DB15_PINChanges, 2)) sendCodeMR(KeyMap[2], CHECK_BIT(DB15_PIN, 2), 0);
+			if (CHECK_BIT(DB15_PINChanges, 3)) sendCodeMR(KeyMap[3], CHECK_BIT(DB15_PIN, 3), 0);
+			if (CHECK_BIT(DB15_PINChanges, 4)) sendCodeMR(KeyMap[6], CHECK_BIT(DB15_PIN, 4), 0);
+			if (CHECK_BIT(DB15_PINChanges, 5)) sendCodeMR(KeyMap[7], CHECK_BIT(DB15_PIN, 5), 0);
+			if (CHECK_BIT(DB15_PINChanges, 6)) sendCodeMR(KeyMap[8], CHECK_BIT(DB15_PIN, 6), 0);
+			if (CHECK_BIT(DB15_PINChanges, 7)) sendCodeMR(KeyMap[9], CHECK_BIT(DB15_PIN, 7), 0);
+			if (CHECK_BIT(DB15_PINChanges, 10)) sendCodeMR(KeyMap[10], CHECK_BIT(DB15_PIN, 10), 0);
+			if (CHECK_BIT(DB15_PINChanges, 11)) sendCodeMR(KeyMap[11], CHECK_BIT(DB15_PIN, 11), 0);
+		}
+				
+	}
     
 }
