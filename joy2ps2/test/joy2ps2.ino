@@ -201,7 +201,6 @@ const unsigned char Map3[] = { // Mapa por defecto al iniciar
 uint16_t DB15_PIN, DB15_PINAux;
 uint16_t DB15_PINChanges, DB15PINPrev;
 
-uint8_t keyup, keydown, keyleft, keyright;
 uint8_t mapper;
 
 #define QUEUE_ELEMENTS 64
@@ -404,10 +403,10 @@ void PressKey(unsigned char key, double ms)
 
 void Cursors()
 {
-	keyup = KEY_UP;
-	keydown = KEY_DOWN;
-	keyleft = KEY_LEFT;
-	keyright = KEY_RIGHT;
+	KeyMap[0] = KEY_UP;
+	KeyMap[1] = KEY_DOWN;
+	KeyMap[2] = KEY_LEFT;
+	KeyMap[3] = KEY_RIGHT;
 }
 
 void LOAD128() // LOAD "" en BASIC 128
