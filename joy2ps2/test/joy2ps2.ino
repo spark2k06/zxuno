@@ -417,7 +417,7 @@ void LOAD128() // LOAD "" en BASIC 128
 	PressKey(KEY_O, 0);
 	PressKey(KEY_A, 0);
 	PressKey(KEY_D, 0);
-	sendPS2fromqueue(KEY_RSHIFT); // Mantenemos pulsado SHIFT
+	sendPS2(KEY_RSHIFT, 0); // Mantenemos pulsado SHIFT
 	PressKey(KEY_2, 100);
 	PressKey(KEY_2, 0);
 	sendPS2(0xF0, 0); // Liberamos SHIFT
