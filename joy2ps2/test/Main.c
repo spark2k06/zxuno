@@ -318,12 +318,15 @@ void MasterReset() // CTRL + ALT + BackSpace (MasterReset)
 
 void ChangeKeys()
 {
+	unsigned char KeyMapAux[12];
+	for (imap = 0; imap < 12; imap++) KeyMapAux[imap] = Map0[imap];
+
 	if (mapper == 0) // El cambio entre cursores y teclas solo disponible para el mapa 0
 	{
-		KeyMap[0] = KeyMap[0] == KEY_UP ? Map0[0] : KEY_UP;
-		KeyMap[1] = KeyMap[1] == KEY_DOWN ? Map0[1] : KEY_DOWN;
-		KeyMap[2] = KeyMap[2] == KEY_LEFT ? Map0[2] : KEY_LEFT;
-		KeyMap[3] = KeyMap[3] == KEY_RIGHT ? Map0[3] : KEY_RIGHT;
+		KeyMapAux[0] = KeyMapAux[0] == KEY_UP ? Map0[0] : KEY_UP;
+		KeyMapAux[1] = KeyMapAux[1] == KEY_DOWN ? Map0[1] : KEY_DOWN;
+		KeyMapAux[2] = KeyMapAux[2] == KEY_LEFT ? Map0[2] : KEY_LEFT;
+		KeyMapAux[3] = KeyMapAux[3] == KEY_LEFT ? Map0[3] : KEY_LEFT;		
 	}
 }
 
@@ -336,9 +339,13 @@ int main()
 	QueuePS2Init();
 	mapper = 0; // Mapa por defecto al inicio	
 	for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map0[imap];
-	Cursors(); // Direcciones del joystick como cursores por defecto al inicio
+	
+	if (db15)
+	{
+		Cursors(); // Direcciones del joystick como cursores por defecto al inicio en DB15
+	}
 
-			   // Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
+	// Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
 	DB15_PIN01 = 0xFF; // Ponemos en alto pines 0 - 7
 	DB15_PIN02 = DB15_PIN02 | 0b00011111; // Ponemos en alto los pines 8 - 12, respetamos el contenido del resto ya que nos los utilzaremos
 	DB15_PORT01 = 0; // Input pullup 0 - 7 
@@ -427,29 +434,31 @@ int main()
 			if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; _delay_ms(200); continue; } // Mapper 2 (KeyMapper + Boton 3)
 			if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; _delay_ms(200); continue; } // Mapper 3 (KeyMapper + Boton 4)
 
-			if (DB15_PIN == 0b1111110111101111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_1, 0); _delay_ms(200); continue; } // 1 (Select + Boton 1)
-			if (DB15_PIN == 0b1111110111011111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_2, 0); _delay_ms(200); continue; } // 2 (Select + Boton 2)
-			if (DB15_PIN == 0b1111110110111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_3, 0); _delay_ms(200); continue; } // 3 (Select + Boton 3)
-			if (DB15_PIN == 0b1111110101111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_4, 0); _delay_ms(200); continue; } // 4 (Select + Boton 4)
-			if (DB15_PIN == 0b1111100111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_5, 0); _delay_ms(200); continue; } // 5 (Select + Boton 5)
-			if (DB15_PIN == 0b1111010111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_6, 0); _delay_ms(200); continue; } // 6 (Select + Boton 6)
+			if (db15) // Solo con el conector DB15 tenemos acceso a funciones extendidas en combinacion con Select y/o Start
+			{
+				if (DB15_PIN == 0b1111110111101111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_1, 0); _delay_ms(200); continue; } // 1 (Select + Boton 1)
+				if (DB15_PIN == 0b1111110111011111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_2, 0); _delay_ms(200); continue; } // 2 (Select + Boton 2)
+				if (DB15_PIN == 0b1111110110111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_3, 0); _delay_ms(200); continue; } // 3 (Select + Boton 3)
+				if (DB15_PIN == 0b1111110101111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_4, 0); _delay_ms(200); continue; } // 4 (Select + Boton 4)
+				if (DB15_PIN == 0b1111100111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_5, 0); _delay_ms(200); continue; } // 5 (Select + Boton 5)
+				if (DB15_PIN == 0b1111010111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_6, 0); _delay_ms(200); continue; } // 6 (Select + Boton 6)
 
-			if (DB15_PIN == 0b1111110011111111 && DB15PINPrev == 0b1111110111111111) { ChangeKeys(); _delay_ms(200); continue; } // (Select + Start) Cursor <-> Map0[0,1,2,3] desde keyup, keydown, keyleft y keyright en el mapa principal
+				if (DB15_PIN == 0b1111110011111111 && DB15PINPrev == 0b1111110111111111) { ChangeKeys(); _delay_ms(200); continue; } // (Select + Start) Cursor <-> Map0[0,1,2,3] desde keyup, keydown, keyleft y keyright en el mapa principal
 
-			// Combinaciones para ZXUno
-			if (DB15_PIN == 0b1111110111110111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_F2, 0); _delay_ms(200); continue; } // F2 (Select + Derecha)
-			if (DB15_PIN == 0b1111110111111011 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_CAPS, 0); _delay_ms(200); continue; } // BloqMayus (Select + Izquierda)
-			if (DB15_PIN == 0b1111110111111110 && DB15PINPrev == 0b1111110111111111) { Reset(); _delay_ms(200); continue; } // Reset (Select + Arriba)
-			if (DB15_PIN == 0b1111110111111101 && DB15PINPrev == 0b1111110111111111) { MasterReset(); _delay_ms(200); continue; } // MasterReset (Select + Abajo)
+				// Combinaciones para ZXUno
+				if (DB15_PIN == 0b1111110111110111 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_F2, 0); _delay_ms(200); continue; } // F2 (Select + Derecha)
+				if (DB15_PIN == 0b1111110111111011 && DB15PINPrev == 0b1111110111111111) { PressKey(KEY_CAPS, 0); _delay_ms(200); continue; } // BloqMayus (Select + Izquierda)
+				if (DB15_PIN == 0b1111110111111110 && DB15PINPrev == 0b1111110111111111) { Reset(); _delay_ms(200); continue; } // Reset (Select + Arriba)
+				if (DB15_PIN == 0b1111110111111101 && DB15PINPrev == 0b1111110111111111) { MasterReset(); _delay_ms(200); continue; } // MasterReset (Select + Abajo)
 
-			if (DB15_PIN == 0b1111111011111011 && DB15PINPrev == 0b1111111011111111) { LOAD128(); _delay_ms(200); continue; } // Load 128K (Start + Izquierda)
-			if (DB15_PIN == 0b1111111011110111 && DB15PINPrev == 0b1111111011111111) { LOAD48(); _delay_ms(200); continue; } // Load 48K (Start + Derecha)
-			if (DB15_PIN == 0b1111111011101111 && DB15PINPrev == 0b1111111011111111) { NMI(); _delay_ms(200); continue; } // NMI (Start + Boton 1)              
-
-			
-			// Select y Start son especiales para una mejor integracion con las combinaciones, actuan al ser pulsados y despues soltados.
-			if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111111011111111) { PressKey(KeyMap[5], 0); continue; } // Start
-			if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KeyMap[4], 0); continue; } // Select
+				if (DB15_PIN == 0b1111111011111011 && DB15PINPrev == 0b1111111011111111) { LOAD128(); _delay_ms(200); continue; } // Load 128K (Start + Izquierda)
+				if (DB15_PIN == 0b1111111011110111 && DB15PINPrev == 0b1111111011111111) { LOAD48(); _delay_ms(200); continue; } // Load 48K (Start + Derecha)
+				if (DB15_PIN == 0b1111111011101111 && DB15PINPrev == 0b1111111011111111) { NMI(); _delay_ms(200); continue; } // NMI (Start + Boton 1)              
+				
+				// Select y Start son especiales para una mejor integracion con las combinaciones, actuan al ser pulsados y despues soltados.
+				if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111111011111111) { PressKey(KeyMap[5], 0); continue; } // Start
+				if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(KeyMap[4], 0); continue; } // Select
+			}
 
 			if (CHECK_BIT(DB15_PIN, 8) && CHECK_BIT(DB15_PIN, 9) &&
 				CHECK_BIT(DB15PINPrev, 8) && CHECK_BIT(DB15PINPrev, 9)) // Ignoramos si son pulsados o recien soltados los botones Select o Start
@@ -463,6 +472,11 @@ int main()
 				if (CHECK_BIT(DB15_PINChanges, 5)) sendCodeMR(KeyMap[7], CHECK_BIT(DB15_PIN, 5), 0);
 				if (CHECK_BIT(DB15_PINChanges, 6)) sendCodeMR(KeyMap[8], CHECK_BIT(DB15_PIN, 6), 0);
 				if (CHECK_BIT(DB15_PINChanges, 7)) sendCodeMR(KeyMap[9], CHECK_BIT(DB15_PIN, 7), 0);
+				if (!db15) // Si es DB9 x 2, funcionan igual que el resto.
+				{
+					if (CHECK_BIT(DB15_PINChanges, 8)) sendCodeMR(KeyMap[5], CHECK_BIT(DB15_PIN, 8), 0);
+					if (CHECK_BIT(DB15_PINChanges, 9)) sendCodeMR(KeyMap[4], CHECK_BIT(DB15_PIN, 9), 0);
+				}
 				if (CHECK_BIT(DB15_PINChanges, 10)) sendCodeMR(KeyMap[10], CHECK_BIT(DB15_PIN, 10), 0);
 				if (CHECK_BIT(DB15_PINChanges, 11)) sendCodeMR(KeyMap[11], CHECK_BIT(DB15_PIN, 11), 0);
 			}
