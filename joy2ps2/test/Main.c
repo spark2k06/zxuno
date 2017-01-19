@@ -318,15 +318,15 @@ void MasterReset() // CTRL + ALT + BackSpace (MasterReset)
 
 void ChangeKeys()
 {
-	unsigned char KeyMapAux[12];
-	for (imap = 0; imap < 12; imap++) KeyMapAux[imap] = Map0[imap];
-
 	if (mapper == 0) // El cambio entre cursores y teclas solo disponible para el mapa 0
 	{
-		KeyMapAux[0] = KeyMapAux[0] == KEY_UP ? Map0[0] : KEY_UP;
-		KeyMapAux[1] = KeyMapAux[1] == KEY_DOWN ? Map0[1] : KEY_DOWN;
-		KeyMapAux[2] = KeyMapAux[2] == KEY_LEFT ? Map0[2] : KEY_LEFT;
-		KeyMapAux[3] = KeyMapAux[3] == KEY_LEFT ? Map0[3] : KEY_LEFT;		
+		unsigned char KeyMapAux[12];
+		for (imap = 0; imap < 12; imap++) KeyMapAux[imap] = Map0[imap];
+
+		KeyMap[0] = KeyMap[0] == KEY_UP ? KeyMapAux[0] : KEY_UP;
+		KeyMap[1] = KeyMap[1] == KEY_DOWN ? KeyMapAux[1] : KEY_DOWN;
+		KeyMap[2] = KeyMap[2] == KEY_LEFT ? KeyMapAux[2] : KEY_LEFT;
+		KeyMap[3] = KeyMap[3] == KEY_RIGHT ? KeyMapAux[3] : KEY_RIGHT;
 	}
 }
 
