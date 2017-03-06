@@ -101,8 +101,10 @@ architecture rtl of ZXUNO_A2601 is
   signal buttons    : std_logic_vector(1 downto 0);
 --  signal joy0       : std_logic_vector(7 downto 0);
 --  signal joy1       : std_logic_vector(7 downto 0);
+  signal joykeys    : std_logic_vector(15 downto 0);
   signal joy_a_0    : std_logic_vector(15 downto 0);
   signal joy_a_1    : std_logic_vector(15 downto 0);
+  
 --  signal status     : std_logic_vector(7 downto 0);
   signal ascii_new  : std_logic;
   signal ascii_code : STD_LOGIC_VECTOR(6 DOWNTO 0);
@@ -185,6 +187,9 @@ MyCtrlModule : entity work.CtrlModule
 		--ROM size
 		size => size,
 		
+		-- JOY Keystrokes
+		joykeys => joykeys,
+		
 		-- Control signals
 		host_divert_keyboard => host_divert_keyboard,
 		host_divert_sdcard => host_divert_sdcard,
@@ -241,18 +246,18 @@ overlay : entity work.OSD_Overlay
       O_VIDEO_G => vga_green_i(7 downto 2),
       O_VIDEO_B => vga_blue_i(7 downto 2),
       res => not(host_reset_n),
-      p_l => P_L,
-      p_r => P_R,
-      p_a => P_A,
+      p_l => P_L and not(joykeys(2)),
+      p_r => P_R and not(joykeys(3)),
+      p_a => P_A and not(joykeys(4)),
       p_b => '1',
-      p_u => P_U,
-      p_d => P_D,
-      p2_l => p2_l,
-      p2_r => p2_r,
-      p2_a => p2_a,
-      p2_b => p2_b,
-      p2_u => p2_u,
-      p2_d => p2_d,
+      p_u => P_U and not(joykeys(0)),
+      p_d => P_D and not(joykeys(1)),
+      p2_l => not(joykeys(10)),
+      p2_r => not(joykeys(11)),
+      p2_a => not(joykeys(12)),
+      p2_b => '1',
+      p2_u => not(joykeys(8)),
+      p2_d => not(joykeys(9)),
       paddle_0 => joy_a_0(15 downto 8),
       paddle_1 => joy_a_0(7 downto 0),
       paddle_2 => joy_a_1(15 downto 8),
@@ -274,12 +279,12 @@ overlay : entity work.OSD_Overlay
   LED <= '0';
 
 -- TO-DO: Player 2 controls
-  p2_l <= '1';
-  p2_r <= '1';
-  p2_a <= '1';
-  p2_b <= '1';
-  p2_u <= '1';
-  p2_d <= '1';
+--  p2_l <= '1';
+--  p2_r <= '1';
+--  p2_a <= '1';
+--  p2_b <= '1';
+--  p2_u <= '1';
+--  p2_d <= '1';
   P_tr <= 'Z';
 
 -- -----------------------------------------------------------------------
