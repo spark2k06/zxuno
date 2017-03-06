@@ -9,6 +9,9 @@
 /* Host Boot Data register */
 #define REG_HOST_BOOTDATA 0x08
 
+/* JOY Keystrokes register */
+#define REG_HOST_JOYKEY 0x0D
+
 /* Host control register */
 #define REG_HOST_CONTROL 0x0C
 #define HOST_CONTROL_RESET 1
