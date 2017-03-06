@@ -39,6 +39,9 @@ entity CtrlModule is
 		dipswitches : out std_logic_vector(15 downto 0);
 		size : out std_logic_vector(15 downto 0);
 		
+		-- JOY Keystrokes
+		joykeys : out std_logic_vector(15 downto 0);
+		
 		-- Host control signals
 		host_divert_sdcard : out std_logic;
 		host_divert_keyboard : out std_logic;
@@ -320,6 +323,10 @@ begin
 							host_divert_sdcard<=mem_write(2);
 							host_select<=mem_write(3);
 							host_start<=mem_write(4);
+							
+						when X"ED" => -- JOY Keystrokes
+							mem_busy<='0';
+							joykeys<=mem_write(15 downto 0);
 							
 						when X"F8" => -- ROM Size
 							mem_busy<='0';
