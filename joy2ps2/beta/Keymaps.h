@@ -104,76 +104,47 @@
 #define KEYPAD_DEL 0x71
 #define KEYPAD_NUM 0x77
 
-// Mapas del joystick
+#define DB15_PIN01   PIND
+#define DB15_PIN02   PINB
+#define DB15_PORT01   DDRD
+#define DB15_PORT02   DDRB
+#define PS2_PORT  PORTC
+#define PS2_DDR   DDRC
+#define PS2_PIN   PINC
 
-const unsigned char inimap[] = {
+#define PS2_DAT   PC3
+#define PS2_CLK   PC2
 
-	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '1', 'b'
+#define PINRX0	PC4
+#define PINTX1	PC5
 
-};
+#define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
+#define CHECKUP (!(PINC & (1 << PINRX0)) | !(DB15_PIN01 & (1 << 0)))
+#define CHECKDOWN (!(PINC & (1 << PINTX1)) | !(DB15_PIN01 & (1 << 1)))
 
-const unsigned char db15 = 1;
+#define HI 1
+#define LO 0
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
-const unsigned char Map0[] = { // Mapa 0 -> Por defecto al iniciar
-	KEY_Q,       	//DB15 00  UP		DB9_1 00  UP
-	KEY_A,       	//DB15 01  DOWN		DB9_1 01  DOWN
-	KEY_O,       	//DB15 02  LEFT		DB9_1 02  LEFT
-	KEY_P,       	//DB15 03  RIGHT	DB9_1 03  RIGHT
-	KEY_ESCAPE,     //DB15 04  SELECT	DB9_1 04  BUTTON 1
-	KEY_ENTER,      //DB15 05  START	DB9_1 05  BUTTON 2
-	KEY_SPACE,      //DB15 06  BUTTON 1	DB9_2 06  UP
-	KEY_V,       	//DB15 07  BUTTON 2	DB9_2 07  DOWN
-	KEY_B,       	//DB15 08  BUTTON 3	DB9_2 08  LEFT
-	KEY_N,       	//DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	KEY_G,       	//DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	KEY_H        	//DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
+//En us, reloj y semireloj, para los flancos
+//zxuno v2 test15: CK1 = 240, CK2 = 480. Uso normal: CK1 = 20, CK2 = 40 microsegundos
+//(revertir a normal cuando el core ps/2 del ZX-UNO se mejore)
+#define CK1 4
+#define CK2 8
 
-};
+uint16_t DB15_PIN;
 
-const unsigned char Map1[] = { // Mapa 1
-	0,       //DB15 00  UP			DB9_1 00  UP
-	0,       //DB15 01  DOWN		DB9_1 01  DOWN
-	0,       //DB15 02  LEFT		DB9_1 02  LEFT
-	0,       //DB15 03  RIGHT		DB9_1 03  RIGHT
-	0,       //DB15 04  SELECT		DB9_1 04  BUTTON 1
-	0,       //DB15 05  START		DB9_1 05  BUTTON 2
-	0,       //DB15 06  BUTTON 1	DB9_2 06  UP
-	0,       //DB15 07  BUTTON 2	DB9_2 07  DOWN
-	0,       //DB15 08  BUTTON 3	DB9_2 08  LEFT
-	0,       //DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	0,       //DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	0        //DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
+uint8_t mapper;
 
-};
+#define QUEUE_ELEMENTS 64
+#define QUEUE_SIZE (QUEUE_ELEMENTS + 2)
+unsigned char QueuePS2Command[QUEUE_SIZE];
+double QueuePS2WaitMS[QUEUE_SIZE];
 
-const unsigned char Map2[] = { // Mapa 2
-	0,       //DB15 00  UP			DB9_1 00  UP
-	0,       //DB15 01  DOWN		DB9_1 01  DOWN
-	0,       //DB15 02  LEFT		DB9_1 02  LEFT
-	0,       //DB15 03  RIGHT		DB9_1 03  RIGHT
-	0,       //DB15 04  SELECT		DB9_1 04  BUTTON 1
-	0,       //DB15 05  START		DB9_1 05  BUTTON 2
-	0,       //DB15 06  BUTTON 1	DB9_2 06  UP
-	0,       //DB15 07  BUTTON 2	DB9_2 07  DOWN
-	0,       //DB15 08  BUTTON 3	DB9_2 08  LEFT
-	0,       //DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	0,       //DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	0        //DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
+uint8_t QueueIn, QueueOut;
 
-};
+unsigned char sendcode;
+double wait_ms;
 
-const unsigned char Map3[] = { // Mapa 3
-	0,       //DB15 00  UP			DB9_1 00  UP
-	0,       //DB15 01  DOWN		DB9_1 01  DOWN
-	0,       //DB15 02  LEFT		DB9_1 02  LEFT
-	0,       //DB15 03  RIGHT		DB9_1 03  RIGHT
-	0,       //DB15 04  SELECT		DB9_1 04  BUTTON 1
-	0,       //DB15 05  START		DB9_1 05  BUTTON 2
-	0,       //DB15 06  BUTTON 1	DB9_2 06  UP
-	0,       //DB15 07  BUTTON 2	DB9_2 07  DOWN
-	0,       //DB15 08  BUTTON 3	DB9_2 08  LEFT
-	0,       //DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	0,       //DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	0        //DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
-
-};
+unsigned char KeyMap[12];
+uint8_t imap;
