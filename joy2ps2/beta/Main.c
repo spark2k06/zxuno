@@ -15,6 +15,8 @@
 
 static	report_t		p1, p1prev;
 static	report_t		p2, p2prev;
+static  uchar			p1selectnesclon, p1startnesclon;
+static  uchar			p2selectnesclon, p2startnesclon;
 
 int main()
 {
@@ -25,7 +27,12 @@ int main()
 	QueuePS2Init();
 	mapper = 0; // Mapa por defecto al inicio
 	SetMap(0);
-	
+
+	p1selectnesclon = 0;
+	p1startnesclon = 0;
+	p2selectnesclon = 0;
+	p2startnesclon = 0;
+
 	if (CheckDB15())
 	{
 		Cursors(); // Direcciones del joystick como cursores y ENTER por defecto al inicio en DB15
@@ -39,10 +46,10 @@ int main()
 	PressKey(KEY_ENTER, 0);
 	
 	// Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
-	DDRC &= ~(1 << PINRX0);	//set UP_BUTTON		as input -> Analogic Pin 4 <-> Digital 0
-	DDRC &= ~(1 << PINTX1);	//set DOWN_BUTTON	as input -> Analogic Pin 5 <-> Digital 1
-	PORTC |= (1 << PINRX0);	//set UP_BUTTON 	pull up on -> Analogic Pin 4 <-> Digital 0
-	PORTC |= (1 << PINTX1);	//set DOWN_BUTTON 	pull up on -> Analogic Pin 5 <-> Digital 1
+	DDRC &= ~(1 << 4);	//set UP_BUTTON		as input -> Analogic Pin 4 <-> Digital 0
+	DDRC &= ~(1 << 5);	//set DOWN_BUTTON	as input -> Analogic Pin 5 <-> Digital 1
+	PORTC |= (1 << 4);	//set UP_BUTTON 	pull up on -> Analogic Pin 4 <-> Digital 0
+	PORTC |= (1 << 5);	//set DOWN_BUTTON 	pull up on -> Analogic Pin 5 <-> Digital 1
 	
 	DB15_PIN01 = 0b11111111; // Ponemos en alto pines 0 - 7
 	DB15_PIN02 = DB15_PIN02 | 0b00011111; // Ponemos en alto los pines 8 - 12, respetamos el contenido del resto ya que nos los utilzaremos
@@ -69,29 +76,40 @@ int main()
 		p1prev.button3 = p1.button3; p2prev.button3 = p2.button3;
 		p1prev.button4 = p1.button4; p2prev.button4 = p2.button4;
 		p1prev.button5 = p1.button5; p2prev.button5 = p2.button5;
-		p1prev.button6 = p1.button6; p2prev.button6 = p2.button6;
-				
-		ReadGenesisP1(&p1);
-		ReadGenesisP2(&p2);					
+		p1prev.button6 = p1.button6; p2prev.button6 = p2.button6;			
 		
-		// Player 1
+		if (CheckDB15())
+		{
+			// Player 1
+			ReadDB9P1(&p1);
+			ReadDB15(&p1);
+		}
+		else			
+		{
+			// Player 1
+			ReadDB9P1(&p1);
+			// Player 2
+			ReadDB9P2(&p2);
 
+			//CheckP2SelectStartNesClon();
+		}
+
+		//CheckP1SelectStartNesClon();		
+		
 		if (p1.up != p1prev.up) sendCodeMR(KEY_UP, !p1.up, 0);
 		if (p1.down != p1prev.down) sendCodeMR(KEY_DOWN, !p1.down, 0);
 		if (p1.left != p1prev.left) sendCodeMR(KEY_LEFT, !p1.left, 0);
 		if (p1.right != p1prev.right) sendCodeMR(KEY_RIGHT, !p1.right, 0);
-			
+
 		if ((p1.select != p1prev.select) & !p1.select) PressKey(KEY_5, 200);
 		if ((p1.start != p1prev.start) & !p1.start) PressKey(KEY_1, 200);
-		
+
 		if (p1.button1 != p1prev.button1) sendCodeMR(KEY_Q, !p1.button1, 0);
 		if (p1.button2 != p1prev.button2) sendCodeMR(KEY_W, !p1.button2, 0);
 		if (p1.button3 != p1prev.button3) sendCodeMR(KEY_E, !p1.button3, 0);
 		if (p1.button4 != p1prev.button4) sendCodeMR(KEY_R, !p1.button4, 0);
 		if (p1.button5 != p1prev.button5) sendCodeMR(KEY_T, !p1.button5, 0);
 		if (p1.button6 != p1prev.button6) sendCodeMR(KEY_Y, !p1.button6, 0);
-
-		// Player 2
 
 		if (p2.up != p2prev.up) sendCodeMR(KEY_I, !p2.up, 0);
 		if (p2.down != p2prev.down) sendCodeMR(KEY_K, !p2.down, 0);
@@ -107,7 +125,84 @@ int main()
 		if (p2.button4 != p2prev.button4) sendCodeMR(KEY_F, !p2.button4, 0);
 		if (p2.button5 != p2prev.button5) sendCodeMR(KEY_G, !p2.button5, 0);
 		if (p2.button6 != p2prev.button6) sendCodeMR(KEY_H, !p2.button6, 0);
-
 		
+	}
+}
+
+void CheckP1SelectStartNesClon()
+{
+	if (p1.up & p1.down)
+	{
+		p1.select = 1;
+		p1selectnesclon = 1;
+		p1.up = 0;
+		p1.down = 0;
+	}
+	else
+	{
+		if (p1selectnesclon)
+		{
+			p1.select = 0;
+			p1selectnesclon = 0;
+		}
+		p1.up = p1.up & !p1prev.select;
+		p1.down = p1.down & !p1prev.select;
+	}
+
+	if (p1.left & p1.right)
+	{
+		p1.start = 1;
+		p1startnesclon = 1;
+		p1.left = 0;
+		p1.right = 0;
+	}
+	else
+	{
+		if (p1startnesclon)
+		{
+			p1.start = 0;
+			p1startnesclon = 0;
+		}
+		p1.left = p1.left & !p1prev.start;
+		p1.right = p1.right & !p1prev.right;
+	}
+}
+
+void CheckP2SelectStartNesClon()
+{
+	if (p2.up & p2.down)
+	{
+		p2.select = 1;
+		p2selectnesclon = 1;
+		p2.up = 0;
+		p2.down = 0;
+	}
+	else
+	{
+		if (p2selectnesclon)
+		{
+			p2.select = 0;
+			p2selectnesclon = 0;
+		}
+		p2.up = p2.up & !p2prev.select;
+		p2.down = p2.down & !p2prev.select;
+	}
+
+	if (p2.left & p2.right)
+	{
+		p2.start = 1;
+		p2startnesclon = 1;
+		p2.left = 0;
+		p2.right = 0;
+	}
+	else
+	{
+		if (p2startnesclon)
+		{
+			p2.start = 0;
+			p2startnesclon = 0;
+		}
+		p2.left = p2.left & !p2prev.start;
+		p2.right = p2.right & !p2prev.right;
 	}
 }

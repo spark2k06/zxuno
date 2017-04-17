@@ -10,7 +10,7 @@ const unsigned charinimap[] = {
 
 };
 
-const unsigned char db15 = 1;
+const unsigned char db15 = 0;
 
 const unsigned char Map0[] = { // Mapa 0 -> Por defecto al iniciar
 	KEY_Q,       	//DB15 00  UP		DB9_1 00  UP
