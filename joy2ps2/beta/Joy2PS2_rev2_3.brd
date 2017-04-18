@@ -162,6 +162,12 @@
 <hole x="59.69" y="3.81" drill="3.2"/>
 <hole x="-11.43" y="63.5" drill="3.2"/>
 <hole x="-11.43" y="3.81" drill="3.2"/>
+<text x="-1.27" y="40.64" size="1.27" layer="25" rot="R270">PS/2 01</text>
+<text x="-1.27" y="22.86" size="1.27" layer="25" rot="R270">PS/2 02</text>
+<text x="25.25" y="44.15" size="1.27" layer="25">NANO V3</text>
+<text x="1.27" y="52.705" size="1.27" layer="25">DB9 - PLAYER 1</text>
+<text x="34.29" y="52.705" size="1.27" layer="25">DB9 - PLAYER 2</text>
+<text x="49.25" y="22.86" size="1.27" layer="25" rot="R90">DB15 - PLAYER 1</text>
 </plain>
 <libraries>
 <library name="connect">
