@@ -91,10 +91,10 @@ int main()
 			// Player 2
 			ReadDB9P2(&p2);
 
-			//CheckP2SelectStartNesClon();
+			CheckP2SelectStartNesClon();
 		}
 
-		//CheckP1SelectStartNesClon();		
+		CheckP1SelectStartNesClon();		
 		
 		if (p1.up != p1prev.up) sendCodeMR(KEY_UP, !p1.up, 0);
 		if (p1.down != p1prev.down) sendCodeMR(KEY_DOWN, !p1.down, 0);
@@ -164,7 +164,7 @@ void CheckP1SelectStartNesClon()
 			p1startnesclon = 0;
 		}
 		p1.left = p1.left & !p1prev.start;
-		p1.right = p1.right & !p1prev.right;
+		p1.right = p1.right & !p1prev.start;
 	}
 }
 
@@ -203,6 +203,6 @@ void CheckP2SelectStartNesClon()
 			p2startnesclon = 0;
 		}
 		p2.left = p2.left & !p2prev.start;
-		p2.right = p2.right & !p2prev.right;
+		p2.right = p2.right & !p2prev.start;
 	}
 }
