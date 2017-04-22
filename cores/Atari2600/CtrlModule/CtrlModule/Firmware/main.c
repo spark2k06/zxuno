@@ -10,6 +10,9 @@
 
 fileTYPE file;
 
+extern int keys_p1[];
+extern int keys_p2[];
+
 
 int OSD_Puts(char *str)
 {
@@ -161,6 +164,62 @@ void Start(int row)
 	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_DIVERT_KEYBOARD;
 }
 
+void MegaDelay()
+{
+	
+	
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();Delay();
+	
+}
+
+
 static struct menu_entry topmenu[]; // Forward declaration.
 /*
 // RGB scaling submenu
@@ -211,20 +270,69 @@ static struct menu_entry loadfailed[]=
 	{MENU_ENTRY_NULL,0,0}
 };
 
+static int LoadKeys()
+{
+	int opened;
+	
+	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_RESET;
+	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_DIVERT_SDCARD; // Release reset but take control of the SD card
+	
+	if((opened=FileOpen(&file,"KEYSP1     \0")))
+	{
+		if(FileRead(&file,sector_buffer))
+		{
+			
+			keys_p1[0] = (int)sector_buffer[0];
+			keys_p1[1] = (int)sector_buffer[1];
+			keys_p1[2] = (int)sector_buffer[2];
+			keys_p1[3] = (int)sector_buffer[3];
+			keys_p1[4] = (int)sector_buffer[4];
+		}		
+	}
+	
+	if((opened=FileOpen(&file,"KEYSP2     \0")))
+	{
+		if(FileRead(&file,sector_buffer))
+		{
+			keys_p2[0] = (int)sector_buffer[0];
+			keys_p2[1] = (int)sector_buffer[1];
+			keys_p2[2] = (int)sector_buffer[2];
+			keys_p2[3] = (int)sector_buffer[3];
+			keys_p2[4] = (int)sector_buffer[4];
+		}		
+	}
+	
+}
+
 
 static int LoadROM(const char *filename)
 {
 	int result=0;
 	int opened;
-
+	
 	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_RESET;
 	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_DIVERT_SDCARD; // Release reset but take control of the SD card
-
+	
 	if((opened=FileOpen(&file,filename)))
 	{
 		int filesize=file.size;
 		unsigned int c=0;
-		int bits;
+		int bits;	
+		
+		if (filesize == 5)
+		{
+			
+			OSD_Puts(filename);
+			MegaDelay();
+			MegaDelay();
+			MegaDelay();
+			MegaDelay();
+			MegaDelay();
+			MegaDelay();
+			Menu_Set(topmenu);
+			return 1;
+			
+		}
 
 		bits=0;
 		c=filesize-1;
@@ -304,6 +412,8 @@ int main(int argc,char **argv)
 //	OSD_Puts("Loading initial ROM...\n");
 
 //	LoadROM("PIC1    RAW");
+
+	LoadKeys();
 
 	FileSelector_SetLoadFunction(LoadROM);
 	
