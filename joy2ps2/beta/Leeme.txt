@@ -1,4 +1,4 @@
-Para utilizar un gamepad de tipo Neogeo Oldstyle desde el conector correspondiente, hay que programar el fichero joy2ps2_db15.hex. En este caso, no se debe utilizar el segundo conector db9 porque los pines son compartidos, pero sí se podría utilizar el primer db9 en lugar del db15.
+Para utilizar un gamepad de tipo Neogeo Oldstyle desde el conector correspondiente, hay que programar el fichero joy2ps2_db15.hex. En este caso, no se debe utilizar el segundo conector db9 porque los pines son compartidos, pero sÃ­ se podrÃ­a utilizar el primer db9 en lugar del db15.
 
 Para utilizar los dos db9 (y no el db15), hay que programar el fichero joy2ps2.hex.
 
@@ -10,24 +10,26 @@ Los conectores db9 admiten por ahora los siguientes gamepads:
 Controles
 ---------
 
-Desde el primer gamepad se puede controlar el ZXUno, así como todo tipo de menús. Al comienzo, éste siempre se encuentra mapeados en modo cursores, primer boton Enter y segundo Escape (modo menú tradicional).
+Desde el primer gamepad se puede controlar el ZXUno, asÃ­ como todo tipo de menÃºs. Al comienzo, Ã©ste siempre se encuentra mapeados en modo cursores, primer boton Enter y segundo Escape (modo menÃº tradicional).
 
 En cualquier momento podremos pasar a un estado especial, al que llamaremos SHIFT. Para acceder a este estado, se puede hacer de cualquiera de las siguientes formas:
 
 1. Pulsando Start + Boton 1
 2. Pulsado Start + Select. En mandos NES clonicos, no funciona bien pulsando al reves, hasta que averigue el motivo. Pero en mandos NeoGeo o Megadrive con boton de Mode (Select), se puede pulsar tambien Select priemro y luego Start
-3. Pulsando y soltando la tecla Keymapper. De momento, solo tiene función de SHIFT en esta version beta. Proximamente se podrá acceder a distintos mapas de teclado.
+3. Pulsando y soltando la tecla Keymapper. De momento, solo tiene funciÃ³n de SHIFT en esta version beta. Proximamente se podrÃ¡ acceder a distintos mapas de teclado.
 
 
-Una vez en el modo SHIFT, parecerá que no funciona ningún boton, pero no es asi. A partir de ahora se puede tomar la siguiente acción, que se llevará a cabo al pulsar el boton 1 del gamepad como evento final (para cancelar, volver a pulsar la combinacion de SHIFT):
+Una vez en el modo SHIFT, parecerÃ¡ que no funciona ningÃºn boton, pero no es asi. A partir de ahora se puede tomar la siguiente acciÃ³n, que se llevarÃ¡ a cabo al pulsar el boton 1 del gamepad como evento final (para cancelar, volver a pulsar la combinacion de SHIFT):
 
 Nota: Las combinaciones abajo expuestas son pulsando y soltando (no mantener botones pulsados), cualquier cambio de direccion resetea el contador de las otras:
 
-1 vez abajo y luego boton 1: Reset
-2 veces abajo y luego boton 1: MasterReset
-3 veces abajo y luego boton 1: MasterReset y entrada a ROMs
-4 veces abajo y luego boton 1: MasterReset y entrada a cores
-5 veces abajo y luego boton 1: MasterReset y entrada a BIOS
+SÃ³lo boton 1: Cambio de cursores a OPQA y viceversa en el joystick 1 (el principal)
+
+1 vez abajo y luego boton 1: Reset (Se cambia automaticamente a cursores)
+2 veces abajo y luego boton 1: MasterReset (Se cambia automaticamente a cursores)
+3 veces abajo y luego boton 1: MasterReset y entrada a ROMs (Se cambia automaticamente a cursores)
+4 veces abajo y luego boton 1: MasterReset y entrada a cores (Se cambia automaticamente a cursores)
+5 veces abajo y luego boton 1: MasterReset y entrada a BIOS (Se cambia automaticamente a cursores)
 6 veces... vuelve al principio.
 
 1 vez arriba y luego boton 1: tecla 'R'
