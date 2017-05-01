@@ -6,7 +6,7 @@
 
 const unsigned charinimap[] = {
 
-	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '4', 'b'
+	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '6', 'b'
 
 };
 
@@ -17,8 +17,8 @@ const unsigned char Map0[] = { // Mapa 0 -> Por defecto al iniciar
 	KEY_A,       	//DB15 01  DOWN		DB9_1 01  DOWN
 	KEY_O,       	//DB15 02  LEFT		DB9_1 02  LEFT
 	KEY_P,       	//DB15 03  RIGHT	DB9_1 03  RIGHT
-	KEY_1,	        //DB15 04  SELECT	DB9_1 04  BUTTON 1
-	KEY_2,		    //DB15 05  START	DB9_1 05  BUTTON 2
+	KEY_5,	        //DB15 04  SELECT	DB9_1 04  BUTTON 1
+	KEY_1,		    //DB15 05  START	DB9_1 05  BUTTON 2
 	KEY_SPACE,      //DB15 06  BUTTON 1	DB9_2 06  UP
 	KEY_V,       	//DB15 07  BUTTON 2	DB9_2 07  DOWN
 	KEY_B,       	//DB15 08  BUTTON 3	DB9_2 08  LEFT
@@ -296,6 +296,7 @@ void Cursors()
 	KeyMap[2] = KEY_LEFT;
 	KeyMap[3] = KEY_RIGHT;
 	KeyMap[6] = KEY_ENTER;
+	KeyMap[7] = KEY_ESCAPE;
 }
 
 void LOAD128() // LOAD "" en BASIC 128
@@ -357,18 +358,34 @@ void Reset() // CTRL + ALT + Supr (Reset)
 
 }
 
-void MasterReset() // CTRL + ALT + BackSpace (MasterReset)
+void MasterReset(int extra) // CTRL + ALT + BackSpace (MasterReset)
 {
 
 	sendPS2(KEY_LCTRL, 0); // Mantenemos pulsado LCTRL
 	sendPS2(KEY_LALT, 0); // Mantenemos pulsado LALT
-	PressKey(KEY_DELETE, 0); // BackSpace
+	PressKey(KEY_DELETE, 500); // BackSpace
 
 	sendPS2(0xF0, 0); // Liberamos LALT
 	sendPS2(KEY_LALT, 0);
 	sendPS2(0xF0, 0); // Liberamos LCTRL
 	sendPS2(KEY_LCTRL, 0);
 	Cursors();
+
+	switch (extra)
+	{
+	case 1: // Entrada a ROMs
+		PressKey(KEY_ESCAPE, 200);
+		break;
+	case 2: // Entrada a cores
+		PressKey(KEY_CAPS, 200);
+		break;
+	case 3: // Entrada a BIOS
+		PressKey(KEY_F2, 200);
+		break;
+	default:
+
+		break;
+	}
 
 }
 
@@ -383,7 +400,8 @@ void ChangeKeys()
 		KeyMap[1] = KeyMap[1] == KEY_DOWN ? KeyMapAux[1] : KEY_DOWN;
 		KeyMap[2] = KeyMap[2] == KEY_LEFT ? KeyMapAux[2] : KEY_LEFT;
 		KeyMap[3] = KeyMap[3] == KEY_RIGHT ? KeyMapAux[3] : KEY_RIGHT;
-		KeyMap[6] = KeyMap[6] == KEY_ENTER ? KeyMapAux[3] : KEY_ENTER;
+		KeyMap[6] = KeyMap[6] == KEY_ENTER ? KeyMapAux[6] : KEY_ENTER;
+		KeyMap[7] = KeyMap[7] == KEY_ESCAPE ? KeyMapAux[7] : KEY_ESCAPE;
 	}
 }
 
