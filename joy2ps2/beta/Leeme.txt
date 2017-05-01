@@ -4,8 +4,9 @@ Para utilizar los dos db9 (y no el db15), hay que programar el fichero joy2ps2.h
 
 Los conectores db9 admiten por ahora los siguientes gamepads:
 
--> Atari 1 o 2 botones
+-> Atari DB9 1 o 2 botones
 -> Megadrive de 3 o 6 botones, con botones Start y Select (Mode)
+-> NES clonico, version de Antonio adaptado a Atari DB9
 
 Controles
 ---------
