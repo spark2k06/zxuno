@@ -5,16 +5,18 @@
 #include "keymaps.h"
 
 void ReadDB9P1(report_t *p1)
-{
+{	
 	// Get D-PAD, B, C buttons state
 	PORTC |= (1 << 0);
 	_delay_us(14);
+		
+	p1->keymapper = !(DB15_PIN02 & (1 << 4));  // Keymapper
 
-	p1->up = !(PINC & (1 << 4));			// Up
-	p1->down = !(PINC & (1 << 5));			// Down
-	p1->left = !(DB15_PIN01 & (1 << 2));	// Left
-	p1->right = !(DB15_PIN01 & (1 << 3));	// Right
-
+	p1->up = CHECKUP;					  // Up
+	p1->down = CHECKDOWN;				  // Down
+	p1->left = !(DB15_PIN01 & (1 << 2));  // Left	
+	p1->right = !(DB15_PIN01 & (1 << 3)); // Right
+	
 	PORTC &= ~(1 << 0);
 	_delay_us(14);
 	if (!(DB15_PIN01 & (1 << 2)) & !(DB15_PIN01 & (1 << 3)))	// if L/R low then Megadrive pad detected
@@ -70,10 +72,9 @@ void ReadDB9P1(report_t *p1)
 
 void ReadDB9P2(report_t *p2)
 {
-
 	// Get P2 D-PAD, B, C buttons state
 	PORTC |= (1 << 1);
-	_delay_us(14);
+	_delay_us(14);		
 
 	p2->up = !(DB15_PIN01 & (1 << 6));		// Up P2
 	p2->down = !(DB15_PIN02 & (1 << 3));	// Down P2
@@ -130,7 +131,8 @@ void ReadDB9P2(report_t *p2)
 	}
 	PORTC |= (1 << 1);
 	_delay_us(14);
-	
+
+
 }
 
 /* --- NeoGeo controller ------------------------------------------------------------------- */

@@ -1,0 +1,51 @@
+Para utilizar un gamepad de tipo Neogeo Oldstyle desde el conector correspondiente, hay que programar el fichero joy2ps2_db15.hex. En este caso, no se debe utilizar el segundo conector db9 porque los pines son compartidos, pero sí se podría utilizar el primer db9 en lugar del db15.
+
+Para utilizar los dos db9 (y no el db15), hay que programar el fichero joy2ps2.hex.
+
+Los conectores db9 admiten por ahora los siguientes gamepads:
+
+-> Atari DB9 1 o 2 botones
+-> Megadrive de 3 o 6 botones, con botones Start y Select (Mode)
+-> NES clonico, version de Antonio adaptado a Atari DB9
+
+Controles
+---------
+
+Desde el primer gamepad se puede controlar el ZXUno, así como todo tipo de menús. Al comienzo, éste siempre se encuentra mapeados en modo cursores, primer boton Enter y segundo Escape (modo menú tradicional).
+
+En cualquier momento podremos pasar a un estado especial, al que llamaremos SHIFT. Para acceder a este estado, se puede hacer de cualquiera de las siguientes formas:
+
+1. Pulsando Start + Boton 1
+2. Pulsado Start + Select. En mandos NES clonicos, no funciona bien pulsando al reves, hasta que averigue el motivo. Pero en mandos NeoGeo o Megadrive con boton de Mode (Select), se puede pulsar tambien Select priemro y luego Start
+3. Pulsando y soltando la tecla Keymapper. De momento, solo tiene función de SHIFT en esta version beta. Proximamente se podrá acceder a distintos mapas de teclado.
+
+
+Una vez en el modo SHIFT, parecerá que no funciona ningún boton, pero no es asi. A partir de ahora se puede tomar la siguiente acción, que se llevará a cabo al pulsar el boton 1 del gamepad como evento final (para cancelar, volver a pulsar la combinacion de SHIFT):
+
+Nota: Las combinaciones abajo expuestas son pulsando y soltando (no mantener botones pulsados), cualquier cambio de direccion resetea el contador de las otras:
+
+Sólo boton 1: Cambio de cursores a OPQA y viceversa en el joystick 1 (el principal)
+
+1 vez abajo y luego boton 1: Reset (Se cambia automaticamente a cursores)
+2 veces abajo y luego boton 1: MasterReset (Se cambia automaticamente a cursores)
+3 veces abajo y luego boton 1: MasterReset y entrada a ROMs (Se cambia automaticamente a cursores)
+4 veces abajo y luego boton 1: MasterReset y entrada a cores (Se cambia automaticamente a cursores)
+5 veces abajo y luego boton 1: MasterReset y entrada a BIOS (Se cambia automaticamente a cursores)
+6 veces... vuelve al principio.
+
+1 vez arriba y luego boton 1: tecla 'R'
+2 veces arriba y luego boton 1: tecla '0'
+... asi sucesivamente hasta tecla '9', luego vuelve al principio
+
+1 vez derecha y luego boton 1: NMI
+2 veces derecha y luego boton 1: teclas 'LOAD ""' (modo 128k)
+3 veces derecha y luego boton 1: teclas 'K ""' (load modo 48k)
+4 veces... vuelve al principio
+
+1 vez iquierda: Escape (necesario si se usa joystick de un solo boton, junto como el boton de keymapper a modo de shift)
+
+
+
+
+
+
