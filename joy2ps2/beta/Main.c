@@ -13,6 +13,7 @@
 #include "PS2Keyboard.h"
 #include "report.h"
 #include "direct.h"
+//#include "millis.h"
 
 const unsigned char MenuOptions[] = { KEY_R, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 };
 
@@ -20,6 +21,7 @@ static	report_t		p1, p1prev;
 static	report_t		p2, p2prev;
 static  uchar			p1selectnesclon, p1startnesclon;
 static  uchar			p2selectnesclon, p2startnesclon;
+//millis_t				milisecs;
 
 void CheckP1SelectStartNesClon()
 {
@@ -145,6 +147,10 @@ int main()
 	PORTC |= (1 << 0);					// Select Player 1 high
 	PORTC |= (1 << 1);					// Select Player 2 high
 	// Loop
+
+	//millis_init();
+	//milisecs = millis();
+
 	while (1) {		
 		
 		FreeKBBuffer();
@@ -164,22 +170,18 @@ int main()
 		
 		if (CheckDB15())
 		{
-			// Player 1
-			ReadDB9P1(&p1);
+			// Player 1	
 			ReadDB15(&p1);
 		}
 		else			
 		{
 			// Player 1
 			ReadDB9P1(&p1);
+			CheckP1SelectStartNesClon();
 			// Player 2
 			ReadDB9P2(&p2);
-
 			CheckP2SelectStartNesClon();
-		}
-
-		CheckP1SelectStartNesClon();
-			
+		}	
 		
 		if 
 		(
@@ -193,10 +195,16 @@ int main()
 			shiftmode = !shiftmode;				
 		
 			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
-			{
-				ReadDB9P1(&p1);
-				if (CheckDB15()) ReadDB15(&p1);
-				CheckP1SelectStartNesClon();
+			{				
+				if (CheckDB15())
+				{
+					ReadDB15(&p1);
+				}
+				else
+				{
+					ReadDB9P1(&p1);
+					CheckP1SelectStartNesClon();
+				}
 				continue;
 			}
 
@@ -205,16 +213,7 @@ int main()
 			resetoption = -1;
 			combioption = -1;
 			escape = 0;
-
-			p1prev.select = 0;
-			p1prev.start = 0;
-			p1prev.button1 = 0;
-			p1prev.up = 0;
-			p1prev.down = 0;
-			p1prev.left = 0;
-			p1prev.right = 0;
-
-		
+	
 			_delay_ms(200);
 
 		}
@@ -223,12 +222,15 @@ int main()
 		{
 
 			// Up -> add menuoption counter
+			//if ((p1prev.up & !p1.up) && millis() - milisecs > 100)
 			if (p1prev.up & !p1.up)
 			{
 				menuoption = menuoption < 10 ? menuoption + 1 : 0;
 				combioption = -1;
 				resetoption = -1;
 				escape = 0;
+				//milisecs = millis();
+				
 			}
 
 			
