@@ -141,18 +141,18 @@ void ReadDB15(report_t *p1) // Solo en modo 1 jugador, ya que el jugador 2 compa
 {		
 	p1->keymapper = !(DB15_PIN02 & (1 << 4));  // Keymapper
 
-	p1->up = CHECKUP;											// Up
-	p1->down = CHECKDOWN;										// Down
-	p1->left = !(DB15_PIN01 & (1 << 2));						// Left	
-	p1->right = !(DB15_PIN01 & (1 << 3));						// Right
-	p1->button1 = !(DB15_PIN01 & (1 << 4));						// Button 1
-	p1->button2 = !(DB15_PIN01 & (1 << 5));						// Button 2
+	p1->up = CHECKUP;							// Up
+	p1->down = CHECKDOWN;						// Down
+	p1->left = !(DB15_PIN01 & (1 << 2));		// Left	
+	p1->right = !(DB15_PIN01 & (1 << 3));		// Right
+	p1->button1 = !(DB15_PIN01 & (1 << 4));		// Button 1
+	p1->button2 = !(DB15_PIN01 & (1 << 5));		// Button 2
 
-	p1->button3 = !(DB15_PIN01 & (1 << 6)) | p1->button3;		// Button 3
-	p1->button4 = !(DB15_PIN01 & (1 << 7)) | p1->button4;		// Button 4
-	p1->start = !(DB15_PIN02 & (1 << 0)) | p1->start;			// Start
-	p1->select = !(DB15_PIN02 & (1 << 1)) | p1->select;			// Select	
-	p1->button5 = !(DB15_PIN02 & (1 << 2)) | p1->button5;		// Button 5
-	p1->button6 = !(DB15_PIN02 & (1 << 3)) | p1->button6;		// Button 6
+	p1->button3 = !(DB15_PIN01 & (1 << 6));		// Button 3
+	p1->button4 = !(DB15_PIN01 & (1 << 7));		// Button 4
+	p1->start = !(DB15_PIN02 & (1 << 0));		// Start
+	p1->select = !(DB15_PIN02 & (1 << 1));		// Select	
+	p1->button5 = !(DB15_PIN02 & (1 << 2));		// Button 5
+	p1->button6 = !(DB15_PIN02 & (1 << 3));		// Button 6
 
 }
