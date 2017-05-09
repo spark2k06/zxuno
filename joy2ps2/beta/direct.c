@@ -139,7 +139,15 @@ void ReadDB9P2(report_t *p2)
 
 void ReadDB15(report_t *p1) // Solo en modo 1 jugador, ya que el jugador 2 comparte distintos eventos con el db9p2
 {		
-	
+	p1->keymapper = !(DB15_PIN02 & (1 << 4));  // Keymapper
+
+	p1->up = CHECKUP;							// Up
+	p1->down = CHECKDOWN;						// Down
+	p1->left = !(DB15_PIN01 & (1 << 2));		// Left	
+	p1->right = !(DB15_PIN01 & (1 << 3));		// Right
+	p1->button1 = !(DB15_PIN01 & (1 << 4));		// Button 1
+	p1->button2 = !(DB15_PIN01 & (1 << 5));		// Button 2
+
 	p1->button3 = !(DB15_PIN01 & (1 << 6));		// Button 3
 	p1->button4 = !(DB15_PIN01 & (1 << 7));		// Button 4
 	p1->start = !(DB15_PIN02 & (1 << 0));		// Start
