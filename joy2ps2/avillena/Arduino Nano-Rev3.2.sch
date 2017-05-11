@@ -1439,7 +1439,7 @@ chip</description>
 <part name="BTN-8" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-PAD" device="" value="DOWN"/>
 <part name="BTN-4" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-PAD" device="" value="LEFT"/>
 <part name="BTN-5" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-PAD" device="" value="RIGHT"/>
-<part name="BTN-DEL" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-BUTTON" device="" value="SLECT"/>
+<part name="BTN-DEL" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-BUTTON" device="" value="SELECT"/>
 <part name="BTN-ENTER" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-BUTTON" device="" value="START"/>
 <part name="BTN-6" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-BUTTON" device="" value="A"/>
 <part name="BTN-9" library=",giltesa" deviceset="BUTTON-CONDUCTIVE-BUTTON" device="" value="B"/>
@@ -1459,20 +1459,20 @@ chip</description>
 <text x="12.7" y="226.06" size="3.81" layer="94" ratio="10">http://creativecommons.org/license/by-sa/3.0/</text>
 <text x="12.7" y="264.16" size="6.35" layer="91">Based on design by Gravitech (gravitec.us)</text>
 <text x="327.66" y="27.94" size="3.81" layer="94" ratio="10">Author: E.Vita</text>
-<text x="106.68" y="12.7" size="1.778" layer="91">A3 -&gt; PS/2 data
-A4 -&gt; UP
+<text x="106.68" y="12.7" size="1.778" layer="91">A4 -&gt; UP
 D2 -&gt; LEFT
 A5 -&gt; DOWN
 D3 -&gt; RIGHT
 D9 -&gt; SELECT
 D8 -&gt; START</text>
-<text x="137.16" y="12.7" size="1.778" layer="91">A2 -&gt; PS/2 clk
-D4 -&gt; BUTTON1
+<text x="137.16" y="12.7" size="1.778" layer="91">D4 -&gt; BUTTON1
 D5 -&gt; BUTTON2
 D6 -&gt; BUTTON3
 D7 -&gt; BUTTON4
 D10 -&gt; BUTTON5
 D11/MOSI -&gt; BUTTON6</text>
+<text x="27.94" y="17.78" size="1.778" layer="91">A3 -&gt; PS/2 data
+A2 -&gt; PS/2 clk</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
