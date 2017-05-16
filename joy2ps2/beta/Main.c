@@ -225,7 +225,7 @@ int main()
 			//if ((p1prev.up & !p1.up) && millis() - milisecs > 100)
 			if (p1prev.up & !p1.up)
 			{
-				menuoption = menuoption < 10 ? menuoption + 1 : 0;
+				menuoption += (int)(menuoption < 10);
 				combioption = -1;
 				resetoption = -1;
 				escape = 0;
@@ -237,7 +237,7 @@ int main()
 			// Down -> add resetoption counter
 			if (p1prev.down & !p1.down)
 			{
-				resetoption = resetoption < 4 ? resetoption + 1 : 0;
+				resetoption += (int)(resetoption < 4);
 				combioption = -1;
 				menuoption = -1;
 				escape = 0;
@@ -246,7 +246,7 @@ int main()
 			// Right -> add combioption counter
 			if (p1prev.right & !p1.right)
 			{
-				combioption = combioption < 2 ? combioption + 1 : 0;
+				combioption += (int)(combioption < 2);
 				menuoption = -1;
 				resetoption = -1;
 				escape = 0;
