@@ -1,6 +1,6 @@
 Para utilizar un gamepad de tipo Neogeo Oldstyle desde el conector correspondiente, hay que programar el fichero joy2ps2_db15.hex. En este caso, no se debe utilizar el segundo conector db9 porque los pines son compartidos, pero sí se podría utilizar el primer db9 en lugar del db15.
 
-Para utilizar los dos db9 (y no el db15), hay que programar el fichero joy2ps2.hex.
+Para utilizar los dos db9 (y no el db15), hay que programar el fichero joy2ps2_db9.hex.
 
 Los conectores db9 admiten por ahora los siguientes gamepads:
 
@@ -16,7 +16,7 @@ Desde el primer gamepad se puede controlar el ZXUno, así como todo tipo de men�
 En cualquier momento podremos pasar a un estado especial, al que llamaremos SHIFT. Para acceder a este estado, se puede hacer de cualquiera de las siguientes formas:
 
 1. Pulsando Start + Boton 1
-2. Pulsado Start + Select. En mandos NES clonicos, no funciona bien pulsando al reves, hasta que averigue el motivo. Pero en mandos NeoGeo o Megadrive con boton de Mode (Select), se puede pulsar tambien Select priemro y luego Start
+2. Pulsado Select + Start.
 3. Pulsando y soltando la tecla Keymapper. De momento, solo tiene función de SHIFT en esta version beta. Proximamente se podrá acceder a distintos mapas de teclado.
 
 
