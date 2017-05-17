@@ -13,7 +13,6 @@
 #include "PS2Keyboard.h"
 #include "report.h"
 #include "direct.h"
-//#include "millis.h"
 
 const unsigned char MenuOptions[] = { KEY_R, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 };
 
@@ -148,11 +147,10 @@ int main()
 	PORTC |= (1 << 1);					// Select Player 2 high
 	// Loop
 
-	//millis_init();
-	//milisecs = millis();
-
 	while (1) {		
 		
+		_delay_ms(10); // Para evitar efecto rebote en la lectura de pulsaciones de los gamepads
+
 		FreeKBBuffer();
 		p1prev.up = p1.up; p2prev.up = p2.up;
 		p1prev.down = p1.down; p2prev.down = p2.down;
@@ -170,18 +168,21 @@ int main()
 		
 		if (CheckDB15())
 		{
-			// Player 1	
+			// Player 1
+			ReadDB9P1(&p1);
 			ReadDB15(&p1);
 		}
-		else			
+		else
 		{
 			// Player 1
 			ReadDB9P1(&p1);
-			CheckP1SelectStartNesClon();
 			// Player 2
 			ReadDB9P2(&p2);
+
 			CheckP2SelectStartNesClon();
-		}	
+		}
+
+		CheckP1SelectStartNesClon();
 		
 		if 
 		(
@@ -222,14 +223,12 @@ int main()
 		{
 
 			// Up -> add menuoption counter
-			//if ((p1prev.up & !p1.up) && millis() - milisecs > 100)
 			if (p1prev.up & !p1.up)
 			{
 				menuoption += (int)(menuoption < 10);
 				combioption = -1;
 				resetoption = -1;
 				escape = 0;
-				//milisecs = millis();
 				
 			}
 
