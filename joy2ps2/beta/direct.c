@@ -54,10 +54,10 @@ void ReadDB9P1(report_t *p1)
 			_delay_us(14);
 			PORTC &= ~(1 << 0);						// select low
 
-			// Delay needed for settling joystick down
-			_delay_us(2000);
-
 		}
+
+		// Delay needed for settling joystick down
+		_delay_us(2000);
 
 	}
 	else
@@ -117,11 +117,11 @@ void ReadDB9P2(report_t *p2)
 			PORTC |= (1 << 1);						// select P2 high
 			_delay_us(14);
 			PORTC &= ~(1 << 1);						// select P2 low
-
-			// Delay needed for settling joystick down
-			_delay_us(2000);
-
+			
 		}
+
+		// Delay needed for settling joystick down
+		_delay_us(2000);
 
 	}
 	else
@@ -138,21 +138,13 @@ void ReadDB9P2(report_t *p2)
 /* --- NeoGeo controller ------------------------------------------------------------------- */
 
 void ReadDB15(report_t *p1) // Solo en modo 1 jugador, ya que el jugador 2 comparte distintos eventos con el db9p2
-{		
-	p1->keymapper = !(DB15_PIN02 & (1 << 4));  // Keymapper
-
-	p1->up = CHECKUP;							// Up
-	p1->down = CHECKDOWN;						// Down
-	p1->left = !(DB15_PIN01 & (1 << 2));		// Left	
-	p1->right = !(DB15_PIN01 & (1 << 3));		// Right
-	p1->button1 = !(DB15_PIN01 & (1 << 4));		// Button 1
-	p1->button2 = !(DB15_PIN01 & (1 << 5));		// Button 2
-
-	p1->button3 = !(DB15_PIN01 & (1 << 6));		// Button 3
-	p1->button4 = !(DB15_PIN01 & (1 << 7));		// Button 4
-	p1->start = !(DB15_PIN02 & (1 << 0));		// Start
-	p1->select = !(DB15_PIN02 & (1 << 1));		// Select	
-	p1->button5 = !(DB15_PIN02 & (1 << 2));		// Button 5
-	p1->button6 = !(DB15_PIN02 & (1 << 3));		// Button 6
+{	
+	p1->button3 = p1->button3 || (!(DB15_PIN01 & (1 << 6)));		// Button 3
+	p1->button4 = p1->button4 || (!(DB15_PIN01 & (1 << 7)));		// Button 4
+	p1->start = p1->start || (!(DB15_PIN02 & (1 << 0)));		// Start
+	p1->select = p1->select || (!(DB15_PIN02 & (1 << 1)));		// Select	
+	p1->button5 = p1->button5 || (!(DB15_PIN02 & (1 << 2)));		// Button 5
+	p1->button6 = p1->button6 || (!(DB15_PIN02 & (1 << 3)));		// Button 6
+	
 
 }
