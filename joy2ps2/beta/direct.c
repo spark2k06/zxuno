@@ -139,10 +139,11 @@ void ReadDB9P2(report_t *p2)
 
 void ReadDB15(report_t *p1) // Solo en modo 1 jugador, ya que el jugador 2 comparte distintos eventos con el db9p2
 {	
+	
 	p1->button3 = p1->button3 || (!(DB15_PIN01 & (1 << 6)));		// Button 3
 	p1->button4 = p1->button4 || (!(DB15_PIN01 & (1 << 7)));		// Button 4
-	p1->start = p1->start || (!(DB15_PIN02 & (1 << 0)));		// Start
-	p1->select = p1->select || (!(DB15_PIN02 & (1 << 1)));		// Select	
+	p1->start = p1->start || (!(DB15_PIN02 & (1 << 0)));			// Start
+	p1->select = p1->select || (!(DB15_PIN02 & (1 << 1)));			// Select	
 	p1->button5 = p1->button5 || (!(DB15_PIN02 & (1 << 2)));		// Button 5
 	p1->button6 = p1->button6 || (!(DB15_PIN02 & (1 << 3)));		// Button 6
 	

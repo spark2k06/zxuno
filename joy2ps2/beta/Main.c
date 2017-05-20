@@ -120,7 +120,7 @@ int main()
 
 	Cursors(); // Direcciones del joystick como cursores y ENTER por defecto en el inicio
 	
-	/*	
+	/*
 	_delay_ms(500);
 	PressKey(KEY_F2, 200);
 	PressKey(KEY_DOWN, 200);
@@ -150,18 +150,18 @@ int main()
 	while (1) {		
 		
 		FreeKBBuffer();
-		p1prev.up = p1.up; p2prev.up = p2.up; p1.up = 0; p2.up = 0;
-		p1prev.down = p1.down; p2prev.down = p2.down; p1.down = 0; p2.down = 0;
-		p1prev.left = p1.left; p2prev.left = p2.left; p1.left = 0; p2.left = 0;
-		p1prev.right = p1.right; p2prev.right = p2.right; p1.right = 0; p2.right = 0;
-		p1prev.select = p1.select; p2prev.select = p2.select; p1.select = 0; p2.select = 0;
-		p1prev.start = p1.start; p2prev.start = p2.start; p1.start = 0; p2.start = 0;
-		p1prev.button1 = p1.button1; p2prev.button1 = p2.button1; p1.button1 = 0; p2.button1 = 0;
-		p1prev.button2 = p1.button2; p2prev.button2 = p2.button2; p1.button2 = 0; p2.button2 = 0;
-		p1prev.button3 = p1.button3; p2prev.button3 = p2.button3; p1.button3 = 0; p2.button3 = 0;
-		p1prev.button4 = p1.button4; p2prev.button4 = p2.button4; p1.button4 = 0; p2.button4 = 0;
-		p1prev.button5 = p1.button5; p2prev.button5 = p2.button5; p1.button5 = 0; p2.button5 = 0;
-		p1prev.button6 = p1.button6; p2prev.button6 = p2.button6; p1.button6 = 0; p2.button6 = 0;
+		p1prev.up = p1.up; p2prev.up = p2.up;
+		p1prev.down = p1.down; p2prev.down = p2.down;
+		p1prev.left = p1.left; p2prev.left = p2.left;
+		p1prev.right = p1.right; p2prev.right = p2.right;
+		p1prev.select = p1.select; p2prev.select = p2.select; p1.select = 0;
+		p1prev.start = p1.start; p2prev.start = p2.start; p1.start = 0;
+		p1prev.button1 = p1.button1; p2prev.button1 = p2.button1;
+		p1prev.button2 = p1.button2; p2prev.button2 = p2.button2;
+		p1prev.button3 = p1.button3; p2prev.button3 = p2.button3; p1.button3 = 0;
+		p1prev.button4 = p1.button4; p2prev.button4 = p2.button4; p1.button4 = 0;
+		p1prev.button5 = p1.button5; p2prev.button5 = p2.button5; p1.button5 = 0;
+		p1prev.button6 = p1.button6; p2prev.button6 = p2.button6; p1.button6 = 0;
 		p1prev.keymapper = p1.keymapper;
 
 		_delay_ms(10); // Para evitar efecto rebote en la lectura de pulsaciones de los gamepads
@@ -174,6 +174,7 @@ int main()
 		}
 		else
 		{
+			
 			// Player 1
 			ReadDB9P1(&p1);
 			// Player 2
@@ -197,15 +198,28 @@ int main()
 		
 			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
 			{				
+				
+				p1.button3 = 0; p1.button4 = 0; p1.button5 = 0; p1.button6 = 0; p1.select = 0; p1.start = 0;
+				_delay_ms(10); // Para evitar efecto rebote en la lectura de pulsaciones de los gamepads
+
 				if (CheckDB15())
 				{
+					// Player 1
+					ReadDB9P1(&p1);
 					ReadDB15(&p1);
 				}
 				else
 				{
+
+					// Player 1
 					ReadDB9P1(&p1);
-					CheckP1SelectStartNesClon();
+					// Player 2
+					ReadDB9P2(&p2);
+
+					CheckP2SelectStartNesClon();
 				}
+
+				CheckP1SelectStartNesClon();
 				continue;
 			}
 
@@ -267,7 +281,7 @@ int main()
 				p1prev.button1 = 0;
 
 				// ChangeKeys
-				if (menuoption == -1 && resetoption == -1 && combioption == -1)
+				if (menuoption == -1 && resetoption == -1 && combioption == -1 && escape == 0)
 				{
 					ChangeKeys();
 				}
