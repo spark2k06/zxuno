@@ -6,11 +6,11 @@
 
 const unsigned charinimap[] = {
 
-	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '6', 'b'
+	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '8', 'b'
 
 };
 
-const unsigned char db15 = 0;
+const unsigned char db15 = 1;
 
 const unsigned char Map0[] = { // Mapa 0 -> Por defecto al iniciar
 	KEY_Q,       	//DB15 00  UP		DB9_1 00  UP

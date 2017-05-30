@@ -1,6 +1,6 @@
 Para utilizar un gamepad de tipo Neogeo Oldstyle desde el conector correspondiente, hay que programar el fichero joy2ps2_db15.hex. En este caso, no se debe utilizar el segundo conector db9 porque los pines son compartidos, pero sí se podría utilizar el primer db9 en lugar del db15.
 
-Para utilizar los dos db9 (y no el db15), hay que programar el fichero joy2ps2.hex.
+Para utilizar los dos db9 (y no el db15), hay que programar el fichero joy2ps2_db9.hex.
 
 Los conectores db9 admiten por ahora los siguientes gamepads:
 
@@ -16,7 +16,7 @@ Desde el primer gamepad se puede controlar el ZXUno, así como todo tipo de men�
 En cualquier momento podremos pasar a un estado especial, al que llamaremos SHIFT. Para acceder a este estado, se puede hacer de cualquiera de las siguientes formas:
 
 1. Pulsando Start + Boton 1
-2. Pulsado Start + Select. En mandos NES clonicos, no funciona bien pulsando al reves, hasta que averigue el motivo. Pero en mandos NeoGeo o Megadrive con boton de Mode (Select), se puede pulsar tambien Select priemro y luego Start
+2. Pulsado Select + Start.
 3. Pulsando y soltando la tecla Keymapper. De momento, solo tiene función de SHIFT en esta version beta. Proximamente se podrá acceder a distintos mapas de teclado.
 
 
@@ -31,19 +31,30 @@ Sólo boton 1: Cambio de cursores a OPQA y viceversa en el joystick 1 (el princi
 3 veces abajo y luego boton 1: MasterReset y entrada a ROMs (Se cambia automaticamente a cursores)
 4 veces abajo y luego boton 1: MasterReset y entrada a cores (Se cambia automaticamente a cursores)
 5 veces abajo y luego boton 1: MasterReset y entrada a BIOS (Se cambia automaticamente a cursores)
-6 veces... vuelve al principio.
+6 veces y siguientes... se mantiene en la opcion de las 5 veces.
 
 1 vez arriba y luego boton 1: tecla 'R'
 2 veces arriba y luego boton 1: tecla '0'
-... asi sucesivamente hasta tecla '9', luego vuelve al principio
+... asi sucesivamente hasta tecla '9', donde se mantiene.
 
 1 vez derecha y luego boton 1: NMI
 2 veces derecha y luego boton 1: teclas 'LOAD ""' (modo 128k)
-3 veces derecha y luego boton 1: teclas 'K ""' (load modo 48k)
-4 veces... vuelve al principio
+3 veces derecha y luego boton 1: teclas 'J ""' (load modo 48k)
+4 veces y siguientes... se mantiene en la opcion de las 3 veces.
 
-1 vez iquierda: Escape (necesario si se usa joystick de un solo boton, junto como el boton de keymapper a modo de shift)
+1 vez izquierda y luego boton 1: Modo teclado completo (ver abajo)
+2 vez izquierda y luego boton 1: Escape (necesario si se usa joystick de un solo boton, junto como el boton de keymapper a modo de shift)
+3 veces y siguientes... se mantiene en la opcion 2.
 
+Modo teclado completo:
+
+arriba: cambio de tecla hacia adelante e impresion en pantalla.
+abajo: cambio de tecla hacia atras e impresion en pantalla.
+izquierda: borrar tecla.
+derecha: aceptar tecla o espacio.
+boton 1: cambio de tecla a correspodiente con tecla derecha del shift (para imprimir mayusculas o caracteres especiales)
+
+Para salir: Entrar al modo SHIFT y elegir otra opción, o salir de SHIFT volviendo a pulsar la combinación de éste.
 
 
 
