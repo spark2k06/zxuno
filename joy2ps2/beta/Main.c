@@ -15,11 +15,15 @@
 #include "direct.h"
 
 const unsigned char MenuOptions[] = { KEY_R, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 };
+const unsigned char Keys[] = { KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L,
+                               KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X,
+                               KEY_Y, KEY_Z, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0 };
 
 static	report_t		p1, p1prev;
 static	report_t		p2, p2prev;
 static  uchar			p1selectnesclon, p1startnesclon;
 static  uchar			p2selectnesclon, p2startnesclon;
+static  int				keystrokes_supr;
 //millis_t				milisecs;
 
 void CheckP1SelectStartNesClon()
@@ -100,12 +104,30 @@ void CheckP2SelectStartNesClon()
 	}
 }
 
+void keystroke_press(unsigned char key)
+{
+	if (!keystrokes_supr)
+	{
+		PressKey(key, 0);
+		keystrokes_supr = 1;
+	}
+	else
+	{
+		PressKey(KEY_DELETE, 0);
+		PressKey(key, 0);	
+	}
+
+}
 
 int main()
 {	
 	uchar shiftmode = 0;
-	int menuoption = -1, resetoption = -1, combioption = -1;
+	int menuoption = -1, resetoption = -1, combioption = -1, extraoptions = -1;
 	int escape = 0;
+	int keystrokes_idx = 35;
+	int rshift = 0;
+	keystrokes_supr = 0;
+	
 	// Setup		
 	CPU_PRESCALE(0);
 	ps2Init();
@@ -194,7 +216,11 @@ int main()
 					
 		{			
 			
-			shiftmode = !shiftmode;				
+			shiftmode = !shiftmode;	
+			if (!shiftmode)
+			{
+				p1prev.select = 0; p1prev.start = 0; p1prev.button1 = 0;
+			}
 		
 			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
 			{				
@@ -223,11 +249,18 @@ int main()
 				continue;
 			}
 
+			if (combioption == 3) // Fin de modo KEYSTROKE
+			{
+				shiftmode = 0;
+				keystrokes_idx = 35;
+				Cursors(); // Para facilitar el acceso al boton de Intro
+			}
+
 			// Reset counters
 			menuoption = -1;
 			resetoption = -1;
 			combioption = -1;
-			escape = 0;
+			extraoptions = -1;
 	
 			_delay_ms(200);
 
@@ -242,7 +275,7 @@ int main()
 				menuoption += (int)(menuoption < 10);
 				combioption = -1;
 				resetoption = -1;
-				escape = 0;
+				extraoptions = -1;
 				
 			}
 
@@ -253,7 +286,7 @@ int main()
 				resetoption += (int)(resetoption < 4);
 				combioption = -1;
 				menuoption = -1;
-				escape = 0;
+				extraoptions = -1;
 			}
 			
 			// Right -> add combioption counter
@@ -262,13 +295,13 @@ int main()
 				combioption += (int)(combioption < 2);
 				menuoption = -1;
 				resetoption = -1;
-				escape = 0;
+				extraoptions = -1;
 			}
 
 			// Left -> Escape for one button joysticks
 			if (p1prev.left & !p1.left)
 			{
-				escape = 1;
+				extraoptions += (int)(combioption < 7);
 				menuoption = -1;
 				resetoption = -1;
 				combioption = -1;
@@ -281,12 +314,12 @@ int main()
 				p1prev.button1 = 0;
 
 				// ChangeKeys
-				if (menuoption == -1 && resetoption == -1 && combioption == -1 && escape == 0)
+				if (menuoption == -1 && resetoption == -1 && combioption == -1 && extraoptions == -1)
 				{
 					ChangeKeys();
 				}
 
-				// Right counts -> Combination options: NMI, LOAD128, LOAD48
+				// Right counts -> Combination options: NMI, LOAD128, LOAD48, KEYSTROKES
 				if (combioption >= 0)
 				{
 					if (combioption == 0)
@@ -338,32 +371,136 @@ int main()
 					continue;
 				}
 				// Right counts -> Combination options: NMI, LOAD128, LOAD48
-				if (escape)
+
+				if (extraoptions >= 0)
 				{
-					PressKey(KEY_ESCAPE, 0);
-					continue;
+					if (extraoptions == 0) // -> extraoptions == 0 sera KEYSTROKES en modo noshift (!shiftmode)
+					{
+						keystrokes_supr = 0;
+					}
+					if (extraoptions == 1)
+					{
+						PressKey(KEY_ESCAPE, 0);						
+					}
+					if (extraoptions == 2) // Extend
+					{
+						PressKey(KEY_TAB, 0);
+					}
+					if (extraoptions == 3) // Caps (LCTRL)
+					{
+						PressKey(KEY_LCTRL, 0);
+					}
+					if (extraoptions == 4) // Symbol (RCTRL)
+					{
+						PressKeyWithE0(KEY_LCTRL, 0); 
+					}
+					if (extraoptions == 5) // Graph (RALT)
+					{
+						PressKeyWithE0(KEY_LALT, 0);
+					}
+					if (extraoptions == 6) // TrueVid (F3)
+					{
+						PressKey(KEY_F3, 0);
+					}
+					if (extraoptions == 7) // InvVid (F4)
+					{
+						PressKey(KEY_F4, 0);
+					}
+
 				}
 
 			}
 
+
+
 		}				
 		else
 		{
+			
+			if (extraoptions == 0) // modo KEYSTROKES
+			{
+				
+				if (p1prev.button1 & !p1.button1 && keystrokes_supr) // Button 1 -> Hará de KEY_RSHIFT para acceder a mayusculas y a caractéres especiales.									
+				{			
+					rshift = !rshift;
+					PressKey(KEY_DELETE, 0);					
+					if (rshift)
+					{
+						sendCodeMR(KEY_RSHIFT, 0, 0);
+						PressKey(Keys[keystrokes_idx], 0);
+						sendCodeMR(KEY_RSHIFT, 1, 0);
+					}
+					else
+					{
+						PressKey(Keys[keystrokes_idx], 0);
+					}
+					FreeKBBuffer();
+				}
+				
+				if (p1.up && !p1.button1)
+				{					
+					keystrokes_idx = keystrokes_idx < 35 ? keystrokes_idx + 1 : 0;
+					keystroke_press(Keys[keystrokes_idx]);
+					rshift = 0;
+					FreeKBBuffer();
 
-			if (p1.up != p1prev.up) sendCodeMR(KeyMap[0], !p1.up, 0);
-			if (p1.down != p1prev.down) sendCodeMR(KeyMap[1], !p1.down, 0);
-			if (p1.left != p1prev.left) sendCodeMR(KeyMap[2], !p1.left, 0);
-			if (p1.right != p1prev.right) sendCodeMR(KeyMap[3], !p1.right, 0);
+				}
+				if (p1.down && !p1.button1)
+				{
+					keystrokes_idx = keystrokes_idx > 0 ? keystrokes_idx - 1 : 35;
+					keystroke_press(Keys[keystrokes_idx]);
+					rshift = 0;
+					FreeKBBuffer();
+				}
+				if (p1.right && !p1prev.right)
+				{
+					if (p1.button1)
+					{
+						sendCodeMR(KEY_RSHIFT, 1, 0); // Liberamos SHIFT
+					}
+					if (keystrokes_supr)
+					{						
+						keystrokes_supr = 0;
+					}
+					else
+					{
+						PressKey(KEY_SPACE, 0);
+					}
+					rshift = 0;
+					FreeKBBuffer();
+				}
 
-			if (p1prev.select & !p1.select) PressKey(KeyMap[4], 200);
-			if (p1prev.start & !p1.start) PressKey(KeyMap[5], 200);
+				if (p1.left && !p1prev.left && !p1.button1)
+				{
+					if (p1.button1)
+					{
+						sendCodeMR(KEY_RSHIFT, 1, 0);
+					}
+					keystrokes_supr = 0;
+					PressKey(KEY_DELETE, 0);
+					rshift = 0;
+					FreeKBBuffer();
+				}
+								
 
-			if (p1.button1 != p1prev.button1) sendCodeMR(KeyMap[6], !p1.button1, 0);
-			if (p1.button2 != p1prev.button2) sendCodeMR(KeyMap[7], !p1.button2, 0);
-			if (p1.button3 != p1prev.button3) sendCodeMR(KeyMap[8], !p1.button3, 0);
-			if (p1.button4 != p1prev.button4) sendCodeMR(KeyMap[9], !p1.button4, 0);
-			if (p1.button5 != p1prev.button5) sendCodeMR(KeyMap[10], !p1.button5, 0);
-			if (p1.button6 != p1prev.button6) sendCodeMR(KeyMap[11], !p1.button6, 0);
+			}
+			else
+			{
+				if (p1.up != p1prev.up) sendCodeMR(KeyMap[0], !p1.up, 0);
+				if (p1.down != p1prev.down) sendCodeMR(KeyMap[1], !p1.down, 0);
+				if (p1.left != p1prev.left) sendCodeMR(KeyMap[2], !p1.left, 0);
+				if (p1.right != p1prev.right) sendCodeMR(KeyMap[3], !p1.right, 0);
+
+				if (p1prev.select & !p1.select) PressKey(KeyMap[4], 200);
+				if (p1prev.start & !p1.start) PressKey(KeyMap[5], 200);
+
+				if (p1.button1 != p1prev.button1) sendCodeMR(KeyMap[6], !p1.button1, 0);
+				if (p1.button2 != p1prev.button2) sendCodeMR(KeyMap[7], !p1.button2, 0);
+				if (p1.button3 != p1prev.button3) sendCodeMR(KeyMap[8], !p1.button3, 0);
+				if (p1.button4 != p1prev.button4) sendCodeMR(KeyMap[9], !p1.button4, 0);
+				if (p1.button5 != p1prev.button5) sendCodeMR(KeyMap[10], !p1.button5, 0);
+				if (p1.button6 != p1prev.button6) sendCodeMR(KeyMap[11], !p1.button6, 0);
+			}
 		}
 
 		if (p2.up != p2prev.up) sendCodeMR(KEY_I, !p2.up, 0);

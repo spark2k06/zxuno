@@ -283,10 +283,31 @@ void sendCodeMR(unsigned char key, uint16_t release, double ms)
 
 }
 
+void sendCodeMRE0(unsigned char key, uint16_t release, double ms)
+{
+	//secuencia  
+
+	sendPS2(0xE0, 0);
+
+	if (key && release)
+		sendPS2(0xF0, 0);
+
+	if (key)
+		sendPS2(key, ms);
+
+
+}
+
 void PressKey(unsigned char key, double ms)
 {
 	sendCodeMR(key, 0, 100); //Make	
 	sendCodeMR(key, 1, ms); //Release
+}
+
+void PressKeyWithE0(unsigned char key, double ms)
+{
+	sendCodeMRE0(key, 0, 100); //Make	
+	sendCodeMRE0(key, 1, ms); //Release
 }
 
 void Cursors()
