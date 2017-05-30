@@ -39,11 +39,22 @@ Sólo boton 1: Cambio de cursores a OPQA y viceversa en el joystick 1 (el princi
 
 1 vez derecha y luego boton 1: NMI
 2 veces derecha y luego boton 1: teclas 'LOAD ""' (modo 128k)
-3 veces derecha y luego boton 1: teclas 'K ""' (load modo 48k)
+3 veces derecha y luego boton 1: teclas 'J ""' (load modo 48k)
 4 veces y siguientes... se mantiene en la opcion de las 3 veces.
 
-1 vez izquierda: Escape (necesario si se usa joystick de un solo boton, junto como el boton de keymapper a modo de shift)
-2 veces y siguientes... se mantiene en la opcion 1.
+1 vez izquierda y luego boton 1: Modo teclado completo (ver abajo)
+2 vez izquierda y luego boton 1: Escape (necesario si se usa joystick de un solo boton, junto como el boton de keymapper a modo de shift)
+3 veces y siguientes... se mantiene en la opcion 2.
+
+Modo teclado completo:
+
+arriba: cambio de tecla hacia adelante e impresion en pantalla.
+abajo: cambio de tecla hacia atras e impresion en pantalla.
+izquierda: borrar tecla.
+derecha: aceptar tecla o espacio.
+boton 1: cambio de tecla a correspodiente con tecla derecha del shift (para imprimir mayusculas o caracteres especiales)
+
+Para salir: Entrar al modo SHIFT y elegir otra opción, o salir de SHIFT volviendo a pulsar la combinación de éste.
 
 
 
