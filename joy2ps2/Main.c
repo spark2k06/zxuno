@@ -7,378 +7,517 @@
 *
 */
 
-
 #include <stdio.h>
 #include <avr/io.h>
-#include <inttypes.h>
 #include <util/delay.h>
-#include "keymaps.h"
+#include "PS2Keyboard.h"
+#include "report.h"
+#include "direct.h"
 
-#define DB15_PIN01   PIND
-#define DB15_PIN02   PINB
-#define DB15_PORT01   DDRD
-#define DB15_PORT02   DDRB
-#define PS2_PORT  PORTC
-#define PS2_DDR   DDRC
-#define PS2_PIN   PINC
+const unsigned char MenuOptions[] = { KEY_R, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 };
+const unsigned char Keys[] = { KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L,
+                               KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X,
+                               KEY_Y, KEY_Z, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0 };
 
-#define PS2_DAT   PC3
-#define PS2_CLK   PC2
+static	report_t		p1, p1prev;
+static	report_t		p2, p2prev;
+static  uchar			p1selectnesclon, p1startnesclon;
+static  uchar			p2selectnesclon, p2startnesclon;
+static  int				keystrokes_supr;
+//millis_t				milisecs;
 
-#define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
-
-#define HI 1
-#define LO 0
-#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
-
-uint16_t DB15_PIN, DB15_PINAux;
-uint16_t DB15_PINChanges, DB15PINPrev;
-
-uint8_t keyup, keydown, keyleft, keyright;
-uint8_t mapper;
-
-void ps2Mode(uint8_t pin, uint8_t mode)
+void CheckP1SelectStartNesClon()
 {
-	if (mode) { //high
-		PS2_DDR &= ~_BV(pin); //input (Truco DDR. Como input sin estado, se pone en modo Hi-Z)
-	}
-	else { //low
-		PS2_DDR |= _BV(pin); //output (Truco DDR. Como output, se pone a 0v)
-	}
-}
-
-//En us, reloj y semireloj, para los flancos
-//zxuno v2 test15: CK1 = 240, CK2 = 480. Uso normal: CK1 = 20, CK2 = 40 microsegundos
-//(revertir a normal cuando el core ps/2 del ZX-UNO se mejore)
-#define CK1 15 
-#define CK2 30
-
-void ps2Init()
-{
-	//ponemos en alto ambas señales
-	PS2_PORT &= ~_BV(PS2_DAT); //A 0
-	PS2_PORT &= ~_BV(PS2_CLK); //A 0
-	ps2Mode(PS2_DAT, HI);
-	ps2Mode(PS2_CLK, HI);
-}
-
-uint8_t ps2Stat()
-{
-	if (!(PS2_PIN & (1 << PS2_CLK)))
-		return 1;
-	if (!(PS2_PIN & (1 << PS2_DAT)))
-		return 1;
-
-	return 0;
-}
-
-//envio de datos ps/2 simulando reloj con delays.
-void sendPS2(unsigned char code)
-{
-
-	//Para continuar las líneas deben estar en alto
-	if (ps2Stat())
-		return;
-	// CLK debe encontrarse en alto durante al menos 50us
-	_delay_us(50);
-	if (!(PS2_PIN & (1 << PS2_CLK)))
-		return;
-
-	unsigned char parity = 1;
-	unsigned char i = 0;
-
-	//iniciamos transmisión
-	ps2Mode(PS2_DAT, LO);
-	_delay_us(CK1);
-
-	ps2Mode(PS2_CLK, LO); //bit de comienzo
-	_delay_us(CK2);
-	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
-	//enviamos datos
-	for (i = 0; i < 8; ++i)
+	if (p1.up & p1.down)
 	{
-		if ((0b00000001 & code))
-			ps2Mode(PS2_DAT, HI);
-		else
-			ps2Mode(PS2_DAT, LO);
-
-		_delay_us(CK1);
-		ps2Mode(PS2_CLK, LO);
-		_delay_us(CK2);
-		ps2Mode(PS2_CLK, HI);
-		_delay_us(CK1);
-
-		//paridad
-		if ((0b00000001 & code) == 0b00000001)
-		{
-			if (!parity)
-				parity = 1;
-			else
-				parity = 0;
-		}
-		code = code >> 1;
+		p1.select = 1;
+		p1selectnesclon = 1;
+		p1.up = 0;
+		p1.down = 0;
 	}
-
-	// Enviamos bit de paridad
-	if (parity)
-		ps2Mode(PS2_DAT, HI);
 	else
-		ps2Mode(PS2_DAT, LO);
-
-	_delay_us(CK1);
-	ps2Mode(PS2_CLK, LO);
-	_delay_us(CK2);
-	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
-
-	//Bit de parada
-	ps2Mode(PS2_DAT, HI);
-	_delay_us(CK1);
-	ps2Mode(PS2_CLK, LO);
-	_delay_us(CK2);
-	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
-
-	_delay_us(50); //fin  
-
-}
-
-//codifica envio de caracteres ps/2 
-void sendCodeMR(unsigned char key, uint16_t release)
-{
-	uint8_t extn = 0;
-
-	//checkeamos si es una tecla con scancode extendido (E0)
-	switch (key) {
-	case KEY_LEFT:
-	case KEY_DOWN:
-	case KEY_RIGHT:
-	case KEY_UP:
-	case KEY_HOME:
-	case KEY_END:
-	case KEY_PDN:
-	case KEY_PUP:
-		extn = 1;
-		break;
-	default:
-		extn = 0;
-		break;
+	{
+		if (p1selectnesclon)
+		{
+			p1.select = 0;
+			p1selectnesclon = 0;
+		}
+		p1.up = p1.up & !p1prev.select;
+		p1.down = p1.down & !p1prev.select;
 	}
-	//secuencia  
 
-	if (extn)
-		sendPS2(0xE0);
-
-	if (key && release)
-		sendPS2(0xF0);
-
-	if (key)
-		sendPS2(key);
-
-	//fin secuencia
+	if (p1.left & p1.right)
+	{
+		p1.start = 1;
+		p1startnesclon = 1;
+		p1.left = 0;
+		p1.right = 0;
+	}
+	else
+	{
+		if (p1startnesclon)
+		{
+			p1.start = 0;
+			p1startnesclon = 0;
+		}
+		p1.left = p1.left & !p1prev.start;
+		p1.right = p1.right & !p1prev.start;
+	}
 }
 
-void PressKey(unsigned char key)
+void CheckP2SelectStartNesClon()
 {
-	sendCodeMR(keymapVB[key], 0); //Make
-	_delay_ms(100);
-	sendCodeMR(keymapVB[key], 1); //Release
+	if (p2.up & p2.down)
+	{
+		p2.select = 1;
+		p2selectnesclon = 1;
+		p2.up = 0;
+		p2.down = 0;
+	}
+	else
+	{
+		if (p2selectnesclon)
+		{
+			p2.select = 0;
+			p2selectnesclon = 0;
+		}
+		p2.up = p2.up & !p2prev.select;
+		p2.down = p2.down & !p2prev.select;
+	}
+
+	if (p2.left & p2.right)
+	{
+		p2.start = 1;
+		p2startnesclon = 1;
+		p2.left = 0;
+		p2.right = 0;
+	}
+	else
+	{
+		if (p2startnesclon)
+		{
+			p2.start = 0;
+			p2startnesclon = 0;
+		}
+		p2.left = p2.left & !p2prev.start;
+		p2.right = p2.right & !p2prev.start;
+	}
 }
 
-
-void LOAD128() // LOAD "" en BASIC 128
+void keystroke_press(unsigned char key)
 {
+	if (!keystrokes_supr)
+	{
+		PressKey(key, 0);
+		keystrokes_supr = 1;
+	}
+	else
+	{
+		PressKey(KEY_DELETE, 0);
+		PressKey(key, 0);	
+	}
 
-	PressKey('L');
-	PressKey('O');
-	PressKey('A');
-	PressKey('D');
-	sendPS2(KEY_RSHIFT); // Mantenemos pulsado SHIFT
-	PressKey('2');
-	_delay_ms(100);
-	PressKey('2');
-	sendPS2(0xF0); // Liberamos SHIFT
-	sendPS2(KEY_RSHIFT);
-	PressKey(0x0D); // ENTER (13)
-
-}
-
-void LOAD48() // LOAD "" en BASIC 48
-{
-
-	PressKey('J');
-	sendPS2(KEY_RSHIFT); // Mantenemos pulsado SHIFT
-	PressKey('2');
-	_delay_ms(100);
-	PressKey('2');
-	sendPS2(0xF0); // Liberamos SHIFT
-	sendPS2(KEY_RSHIFT);
-	PressKey(0x0D); // ENTER (13)
-
-}
-
-void NMI() // CTRL + ALT + F5 (NMI)
-{
-
-	sendPS2(KEY_LCTRL); // Mantenemos pulsado LCTRL
-	sendPS2(KEY_LALT); // Mantenemos pulsado LALT
-	PressKey(0x74); // F5 (116)
-
-	sendPS2(0xF0); // Liberamos LALT
-	sendPS2(KEY_LALT);
-	sendPS2(0xF0); // Liberamos LCTRL
-	sendPS2(KEY_LCTRL);
-	Cursors();
-	_delay_ms(200); // Retardo para evitar pulsacion INTRO por equivocacion
-
-}
-
-void Reset() // CTRL + ALT + Supr (Reset)
-{
-
-	sendPS2(KEY_LCTRL); // Mantenemos pulsado LCTRL
-	sendPS2(KEY_LALT); // Mantenemos pulsado LALT
-	PressKey(46); // Supr
-
-	sendPS2(0xF0); // Liberamos LALT
-	sendPS2(KEY_LALT);
-	sendPS2(0xF0); // Liberamos LCTRL
-	sendPS2(KEY_LCTRL);
-	Cursors();
-
-}
-
-void MasterReset() // CTRL + ALT + BackSpace (MasterReset)
-{
-
-	sendPS2(KEY_LCTRL); // Mantenemos pulsado LCTRL
-	sendPS2(KEY_LALT); // Mantenemos pulsado LALT
-	PressKey(8); // BackSpace
-
-	sendPS2(0xF0); // Liberamos LALT
-	sendPS2(KEY_LALT);
-	sendPS2(0xF0); // Liberamos LCTRL
-	sendPS2(KEY_LCTRL);
-	Cursors();
-	_delay_ms(200); // Retardo para evitar pulsacion ESC por equivocacion
-
-}
-
-void ChangeKeys()
-{
-	keyup = keyup == KEY_UP ? KEY_Q : KEY_UP;
-	keydown = keydown == KEY_DOWN ? KEY_A : KEY_DOWN;
-	keyleft = keyleft == KEY_LEFT ? KEY_O : KEY_LEFT;
-	keyright = keyright == KEY_RIGHT ? KEY_P : KEY_RIGHT;
-}
-
-void Cursors()
-{
-	keyup = KEY_UP;
-	keydown = KEY_DOWN;
-	keyleft = KEY_LEFT;
-	keyright = KEY_RIGHT;
 }
 
 int main()
-{
-
+{	
+	uchar shiftmode = 0;
+	int menuoption = -1, resetoption = -1, combioption = -1, extraoptions = -1;
+	int escape = 0;
+	int keystrokes_idx = 35;
+	int rshift = 0;
+	keystrokes_supr = 0;
+	
 	// Setup		
 	CPU_PRESCALE(0);
 	ps2Init();
+	QueuePS2Init();
 	mapper = 0; // Mapa por defecto al inicio
-	Cursors(); // Direcciones del joystick como cursores por defecto al inicio
+	SetMap(0);
 
-			   // Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
-	DB15_PIN01 = 0xFF; // Ponemos en alto pines 0 - 7
+	p1selectnesclon = 0;
+	p1startnesclon = 0;
+	p2selectnesclon = 0;
+	p2startnesclon = 0;
+
+	Cursors(); // Direcciones del joystick como cursores y ENTER por defecto en el inicio
+	
+	/*
+	_delay_ms(500);
+	PressKey(KEY_F2, 200);
+	PressKey(KEY_DOWN, 200);
+	PressKey(KEY_DOWN, 200);
+	PressKey(KEY_DOWN, 200);
+	PressKey(KEY_ENTER, 0);	
+	*/
+	
+	// Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
+	DDRC &= ~(1 << 4);	//set UP_BUTTON		as input -> Analogic Pin 4 <-> Digital 0
+	DDRC &= ~(1 << 5);	//set DOWN_BUTTON	as input -> Analogic Pin 5 <-> Digital 1
+	PORTC |= (1 << 4);	//set UP_BUTTON 	pull up on -> Analogic Pin 4 <-> Digital 0
+	PORTC |= (1 << 5);	//set DOWN_BUTTON 	pull up on -> Analogic Pin 5 <-> Digital 1
+	
+	DB15_PIN01 = 0b11111111; // Ponemos en alto pines 0 - 7
 	DB15_PIN02 = DB15_PIN02 | 0b00011111; // Ponemos en alto los pines 8 - 12, respetamos el contenido del resto ya que nos los utilzaremos
-	DB15_PORT01 = 0; // Input pullup 0 - 7 
+	DB15_PORT01 = 0; // Input pullup 2 - 7 
 	DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
 
-	DB15_PINAux = 0xFFFF; // Estado inicial del joystick
-
+	DDRC |= (1 << 0);		// Select as output (Pin A0 -> Player 1)
+	DDRC |= (1 << 1);		// Select as output (Pin A1 -> Player 2)
+	
+	PORTC |= (1 << 0);					// Select Player 1 high
+	PORTC |= (1 << 1);					// Select Player 2 high
 	// Loop
-	while (1) {
 
-		DB15_PIN = (((uint16_t)DB15_PIN02 << 8) + DB15_PIN01) | 0b1110000000000000; // Organizamos los botones en 16 bits (pines digitales 0 a 12, ignorando el resto)
+	while (1) {		
+		
+		FreeKBBuffer();
+		p1prev.up = p1.up; p2prev.up = p2.up;
+		p1prev.down = p1.down; p2prev.down = p2.down;
+		p1prev.left = p1.left; p2prev.left = p2.left;
+		p1prev.right = p1.right; p2prev.right = p2.right;
+		p1prev.select = p1.select; p2prev.select = p2.select; p1.select = 0;
+		p1prev.start = p1.start; p2prev.start = p2.start; p1.start = 0;
+		p1prev.button1 = p1.button1; p2prev.button1 = p2.button1;
+		p1prev.button2 = p1.button2; p2prev.button2 = p2.button2;
+		p1prev.button3 = p1.button3; p2prev.button3 = p2.button3; p1.button3 = 0;
+		p1prev.button4 = p1.button4; p2prev.button4 = p2.button4; p1.button4 = 0;
+		p1prev.button5 = p1.button5; p2prev.button5 = p2.button5; p1.button5 = 0;
+		p1prev.button6 = p1.button6; p2prev.button6 = p2.button6; p1.button6 = 0;
+		p1prev.keymapper = p1.keymapper;
 
-		if ((DB15_PINChanges = DB15_PIN ^ DB15_PINAux) != 0) // Esperamos a un cambio de estado del joystick
+		_delay_ms(10); // Para evitar efecto rebote en la lectura de pulsaciones de los gamepads
+		
+		if (CheckDB15())
 		{
+			// Player 1
+			ReadDB9P1(&p1);
+			ReadDB15(&p1);
+		}
+		else
+		{
+			
+			// Player 1
+			ReadDB9P1(&p1);
+			// Player 2
+			ReadDB9P2(&p2);
 
-			DB15PINPrev = DB15_PINAux; // Almacenamos estado anterior del joystick
-			DB15_PINAux = DB15_PIN; // Almacenamos en auxiliar el estado actual para esperar despues un cambio del estado del joystick
+			CheckP2SelectStartNesClon();
+		}
 
-									// Cambio de mapeo en bucle
-			if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1110111111111111) // Se ha pulsado y soltado KeyMapper
+		CheckP1SelectStartNesClon();
+		
+		if 
+		(
+			(p1.start & p1.button1) ||				// Start + Button 1 (SHIFT MODE)
+			(p1.select & p1.start)	||				// Select + Start (SHIFT MODE)
+			(p1prev.keymapper & !p1.keymapper)      // Keymapper (SHIFT MODE)
+		)
+					
+		{			
+			
+			shiftmode = !shiftmode;	
+			if (!shiftmode)
 			{
-				if (mapper > 2) // Disponemos de cuatro mapeos
+				p1prev.select = 0; p1prev.start = 0; p1prev.button1 = 0;
+			}
+		
+			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
+			{				
+				
+				p1.button3 = 0; p1.button4 = 0; p1.button5 = 0; p1.button6 = 0; p1.select = 0; p1.start = 0;
+				_delay_ms(10); // Para evitar efecto rebote en la lectura de pulsaciones de los gamepads
+
+				if (CheckDB15())
 				{
-					mapper = 0;
+					// Player 1
+					ReadDB9P1(&p1);
+					ReadDB15(&p1);
 				}
 				else
 				{
-					mapper = mapper + 1;
-				}
-				return;
-			}
 
-			// Combinaciones para todos los mapeos
-			if (DB15_PIN == 0b1110111111101111 && DB15PINPrev == 0b1110111111111111) { mapper = 0; _delay_ms(200); return; } // Mapper 0 (KeyMapper + Boton 1) -> Inicial
-			if (DB15_PIN == 0b1110111111011111 && DB15PINPrev == 0b1110111111111111) { mapper = 1; _delay_ms(200); return; } // Mapper 1 (KeyMapper + Boton 2)
-			if (DB15_PIN == 0b1110111110111111 && DB15PINPrev == 0b1110111111111111) { mapper = 2; _delay_ms(200); return; } // Mapper 2 (KeyMapper + Boton 3)
-			if (DB15_PIN == 0b1110111101111111 && DB15PINPrev == 0b1110111111111111) { mapper = 3; _delay_ms(200); return; } // Mapper 3 (KeyMapper + Boton 4)
+					// Player 1
+					ReadDB9P1(&p1);
+					// Player 2
+					ReadDB9P2(&p2);
 
-			if (DB15_PIN == 0b1111110111101111 && DB15PINPrev == 0b1111110111111111) { PressKey('1'); _delay_ms(200); return; } // 1 (Select + Boton 1)
-			if (DB15_PIN == 0b1111110111011111 && DB15PINPrev == 0b1111110111111111) { PressKey('2'); _delay_ms(200); return; } // 2 (Select + Boton 2)
-			if (DB15_PIN == 0b1111110110111111 && DB15PINPrev == 0b1111110111111111) { PressKey('3'); _delay_ms(200); return; } // 3 (Select + Boton 3)
-			if (DB15_PIN == 0b1111110101111111 && DB15PINPrev == 0b1111110111111111) { PressKey('4'); _delay_ms(200); return; } // 4 (Select + Boton 4)
-			if (DB15_PIN == 0b1111110011111111 && DB15PINPrev == 0b1111110111111111) { ChangeKeys(); _delay_ms(200); return; } // (Select + Start) Cursor <-> OQPA desde keyup, keydown, keyleft y keyright en los mapeos que lo utilicen
-
-			if (DB15_PIN == 0b1111110111110111 && DB15PINPrev == 0b1111110111111111) { PressKey(113); _delay_ms(200); return; } // F2 (Select + Derecha)
-			if (DB15_PIN == 0b1111110111111011 && DB15PINPrev == 0b1111110111111111) { PressKey(20); _delay_ms(200); return; } // BloqMayus (Select + Izquierda)
-			if (DB15_PIN == 0b1111110111111110 && DB15PINPrev == 0b1111110111111111) { Reset(); _delay_ms(200);; return; } // Reset (Select + Arriba)
-			if (DB15_PIN == 0b1111110111111101 && DB15PINPrev == 0b1111110111111111) { MasterReset(); _delay_ms(200); return; } // MasterReset (Select + Abajo)
-
-			if (DB15_PIN == 0b1111111011111011 && DB15PINPrev == 0b1111111011111111) { LOAD128(); _delay_ms(200); return; } // Load 128K (Start + Izquierda)
-			if (DB15_PIN == 0b1111111011110111 && DB15PINPrev == 0b1111111011111111) { LOAD48(); _delay_ms(200); return; } // Load 48K (Start + Derecha)
-			if (DB15_PIN == 0b1111111011101111 && DB15PINPrev == 0b1111111011111111) { NMI(); _delay_ms(200); return; } // NMI (Start + Boton 1)              
-
-			if (mapper == 0) // Mapa 0 (inicial) -> Cursores/OPQA y botones Espacio, V, B, N, G, H. Select -> ESC, Start -> Intro
-			{
-				// Select y Start son especiales para una mejor integracion con las combinaciones, actuan al ser pulsados y despues soltados.
-				if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111111011111111) { PressKey(13); return; } // Intro (Start)
-				if (DB15_PIN == 0b1111111111111111 && DB15PINPrev == 0b1111110111111111) { PressKey(27); return; } // ESC (Select)
-
-				if (CHECK_BIT(DB15_PIN, 8) && CHECK_BIT(DB15_PIN, 9) &&
-					CHECK_BIT(DB15PINPrev, 8) && CHECK_BIT(DB15PINPrev, 9)) // Ignoramos si son pulsados o recien soltados los botones Select o Start
-				{
-					// Para el resto, se envia pulsacion o liberacion de tecla segun el estado de los mismos.
-					if (CHECK_BIT(DB15_PINChanges, 0)) sendCodeMR(keyup, CHECK_BIT(DB15_PIN, 0));
-					if (CHECK_BIT(DB15_PINChanges, 1)) sendCodeMR(keydown, CHECK_BIT(DB15_PIN, 1));
-					if (CHECK_BIT(DB15_PINChanges, 2)) sendCodeMR(keyleft, CHECK_BIT(DB15_PIN, 2));
-					if (CHECK_BIT(DB15_PINChanges, 3)) sendCodeMR(keyright, CHECK_BIT(DB15_PIN, 3));
-					if (CHECK_BIT(DB15_PINChanges, 4)) sendCodeMR(KEY_SPACE, CHECK_BIT(DB15_PIN, 4));
-					if (CHECK_BIT(DB15_PINChanges, 5)) sendCodeMR(KEY_V, CHECK_BIT(DB15_PIN, 5));
-					if (CHECK_BIT(DB15_PINChanges, 6)) sendCodeMR(KEY_B, CHECK_BIT(DB15_PIN, 6));
-					if (CHECK_BIT(DB15_PINChanges, 7)) sendCodeMR(KEY_N, CHECK_BIT(DB15_PIN, 7));
-					if (CHECK_BIT(DB15_PINChanges, 10)) sendCodeMR(KEY_G, CHECK_BIT(DB15_PIN, 10));
-					if (CHECK_BIT(DB15_PINChanges, 11)) sendCodeMR(KEY_H, CHECK_BIT(DB15_PIN, 11));
+					CheckP2SelectStartNesClon();
 				}
 
+				CheckP1SelectStartNesClon();
+				continue;
 			}
 
-			/*
-			if (mapper == 1) // Mapa 1 ->
+			if (combioption == 3) // Fin de modo KEYSTROKE
 			{
+				shiftmode = 0;
+				keystrokes_idx = 35;
+				Cursors(); // Para facilitar el acceso al boton de Intro
 			}
-			if (mapper == 2) // Mapa 2 ->
-			{
-			}
-			if (mapper == 3) // Mapa 3 ->
-			{
-			}
-			*/
+
+			// Reset counters
+			menuoption = -1;
+			resetoption = -1;
+			combioption = -1;
+			extraoptions = -1;
+	
+			_delay_ms(200);
+
 		}
+		
+		if (shiftmode)
+		{
+
+			// Up -> add menuoption counter
+			if (p1prev.up & !p1.up)
+			{
+				menuoption += (int)(menuoption < 10);
+				combioption = -1;
+				resetoption = -1;
+				extraoptions = -1;
+				
+			}
+
+			
+			// Down -> add resetoption counter
+			if (p1prev.down & !p1.down)
+			{
+				resetoption += (int)(resetoption < 4);
+				combioption = -1;
+				menuoption = -1;
+				extraoptions = -1;
+			}
+			
+			// Right -> add combioption counter
+			if (p1prev.right & !p1.right)
+			{
+				combioption += (int)(combioption < 2);
+				menuoption = -1;
+				resetoption = -1;
+				extraoptions = -1;
+			}
+
+			// Left -> Escape for one button joysticks
+			if (p1prev.left & !p1.left)
+			{
+				extraoptions += (int)(combioption < 7);
+				menuoption = -1;
+				resetoption = -1;
+				combioption = -1;
+			}
+			
+			if (p1prev.button1 & !p1.button1) // Final combo
+			{				
+				shiftmode = 0;	
+				p1.button1 = 0;
+				p1prev.button1 = 0;
+
+				// ChangeKeys
+				if (menuoption == -1 && resetoption == -1 && combioption == -1 && extraoptions == -1)
+				{
+					ChangeKeys();
+				}
+
+				// Right counts -> Combination options: NMI, LOAD128, LOAD48, KEYSTROKES
+				if (combioption >= 0)
+				{
+					if (combioption == 0)
+					{
+						NMI();
+					}
+					if (combioption == 1)
+					{
+						LOAD128();
+					}
+					if (combioption == 2)
+					{
+						LOAD48();
+					}
+					continue;
+				}
+
+				
+				// Up counts -> Menu options: R, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+				if (menuoption >= 0)
+				{
+					PressKey(MenuOptions[(int)menuoption], 200);
+					continue;
+				}
+
+				// Down counts -> Reset options: Reset, MasterReset, ROMs, cores, BIOS
+				if (resetoption >= 0)
+				{
+					if (resetoption == 0)
+					{
+						Reset();
+					}
+					if (resetoption == 1)
+					{
+						MasterReset(0);
+					}
+					if (resetoption == 2)
+					{
+						MasterReset(1);
+					}
+					if (resetoption == 3)
+					{
+						MasterReset(2);
+					}
+					if (resetoption == 4)
+					{
+						MasterReset(3);
+					}
+					continue;
+				}
+				// Right counts -> Combination options: NMI, LOAD128, LOAD48
+
+				if (extraoptions >= 0)
+				{
+					if (extraoptions == 0) // -> extraoptions == 0 sera KEYSTROKES en modo noshift (!shiftmode)
+					{
+						keystrokes_supr = 0;
+					}
+					if (extraoptions == 1)
+					{
+						PressKey(KEY_ESCAPE, 0);						
+					}
+					if (extraoptions == 2) // Extend
+					{
+						PressKey(KEY_TAB, 0);
+					}
+					if (extraoptions == 3) // Caps (LCTRL)
+					{
+						PressKey(KEY_LCTRL, 0);
+					}
+					if (extraoptions == 4) // Symbol (RCTRL)
+					{
+						PressKeyWithE0(KEY_LCTRL, 0); 
+					}
+					if (extraoptions == 5) // Graph (RALT)
+					{
+						PressKeyWithE0(KEY_LALT, 0);
+					}
+					if (extraoptions == 6) // TrueVid (F3)
+					{
+						PressKey(KEY_F3, 0);
+					}
+					if (extraoptions == 7) // InvVid (F4)
+					{
+						PressKey(KEY_F4, 0);
+					}
+
+				}
+
+			}
+
+
+
+		}				
+		else
+		{
+			
+			if (extraoptions == 0) // modo KEYSTROKES
+			{
+				
+				if (p1prev.button1 & !p1.button1 && keystrokes_supr) // Button 1 -> Hará de KEY_RSHIFT para acceder a mayusculas y a caractéres especiales.									
+				{			
+					rshift = !rshift;
+					PressKey(KEY_DELETE, 0);					
+					if (rshift)
+					{
+						sendCodeMR(KEY_RSHIFT, 0, 0);
+						PressKey(Keys[keystrokes_idx], 0);
+						sendCodeMR(KEY_RSHIFT, 1, 0);
+					}
+					else
+					{
+						PressKey(Keys[keystrokes_idx], 0);
+					}
+					FreeKBBuffer();
+				}
+				
+				if (p1.up && !p1.button1)
+				{					
+					keystrokes_idx = keystrokes_idx < 35 ? keystrokes_idx + 1 : 0;
+					keystroke_press(Keys[keystrokes_idx]);
+					rshift = 0;
+					FreeKBBuffer();
+
+				}
+				if (p1.down && !p1.button1)
+				{
+					keystrokes_idx = keystrokes_idx > 0 ? keystrokes_idx - 1 : 35;
+					keystroke_press(Keys[keystrokes_idx]);
+					rshift = 0;
+					FreeKBBuffer();
+				}
+				if (p1.right && !p1prev.right)
+				{
+					if (p1.button1)
+					{
+						sendCodeMR(KEY_RSHIFT, 1, 0); // Liberamos SHIFT
+					}
+					if (keystrokes_supr)
+					{						
+						keystrokes_supr = 0;
+					}
+					else
+					{
+						PressKey(KEY_SPACE, 0);
+					}
+					rshift = 0;
+					FreeKBBuffer();
+				}
+
+				if (p1.left && !p1prev.left && !p1.button1)
+				{
+					if (p1.button1)
+					{
+						sendCodeMR(KEY_RSHIFT, 1, 0);
+					}
+					keystrokes_supr = 0;
+					PressKey(KEY_DELETE, 0);
+					rshift = 0;
+					FreeKBBuffer();
+				}
+								
+
+			}
+			else
+			{
+				if (p1.up != p1prev.up) sendCodeMR(KeyMap[0], !p1.up, 0);
+				if (p1.down != p1prev.down) sendCodeMR(KeyMap[1], !p1.down, 0);
+				if (p1.left != p1prev.left) sendCodeMR(KeyMap[2], !p1.left, 0);
+				if (p1.right != p1prev.right) sendCodeMR(KeyMap[3], !p1.right, 0);
+
+				if (p1prev.select & !p1.select) PressKey(KeyMap[4], 200);
+				if (p1prev.start & !p1.start) PressKey(KeyMap[5], 200);
+
+				if (p1.button1 != p1prev.button1) sendCodeMR(KeyMap[6], !p1.button1, 0);
+				if (p1.button2 != p1prev.button2) sendCodeMR(KeyMap[7], !p1.button2, 0);
+				if (p1.button3 != p1prev.button3) sendCodeMR(KeyMap[8], !p1.button3, 0);
+				if (p1.button4 != p1prev.button4) sendCodeMR(KeyMap[9], !p1.button4, 0);
+				if (p1.button5 != p1prev.button5) sendCodeMR(KeyMap[10], !p1.button5, 0);
+				if (p1.button6 != p1prev.button6) sendCodeMR(KeyMap[11], !p1.button6, 0);
+			}
+		}
+
+		if (p2.up != p2prev.up) sendCodeMR(KEY_I, !p2.up, 0);
+		if (p2.down != p2prev.down) sendCodeMR(KEY_K, !p2.down, 0);
+		if (p2.left != p2prev.left) sendCodeMR(KEY_J, !p2.left, 0);
+		if (p2.right != p2prev.right) sendCodeMR(KEY_L, !p2.right, 0);
+
+		if ((p2.select != p2prev.select) & !p2.select) PressKey(KEY_6, 200);
+		if ((p2.start != p2prev.start) & !p2.start) PressKey(KEY_2, 200);
+
+		if (p2.button1 != p2prev.button1) sendCodeMR(KEY_A, !p2.button1, 0);
+		if (p2.button2 != p2prev.button2) sendCodeMR(KEY_S, !p2.button2, 0);
+		if (p2.button3 != p2prev.button3) sendCodeMR(KEY_D, !p2.button3, 0);
+		if (p2.button4 != p2prev.button4) sendCodeMR(KEY_F, !p2.button4, 0);
+		if (p2.button5 != p2prev.button5) sendCodeMR(KEY_G, !p2.button5, 0);
+		if (p2.button6 != p2prev.button6) sendCodeMR(KEY_H, !p2.button6, 0);
+						
 	}
 }
+
