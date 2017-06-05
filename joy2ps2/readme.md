@@ -91,7 +91,7 @@ Mapa 0
 
 (Por defecto al iniciar y resetear)
 
-* Jugador 1
+*Jugador 1
 
 	KEY_Q,       	// UP
 	KEY_A,       	// DOWN
@@ -106,7 +106,7 @@ Mapa 0
 	KEY_F,       	// BUTTON 5
 	KEY_C        	// BUTTON 6
 
-* Jugador 2
+*Jugador 2
 
 	KEY_I,       	// UP
 	KEY_K,       	// DOWN
