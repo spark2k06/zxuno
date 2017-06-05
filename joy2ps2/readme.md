@@ -86,12 +86,14 @@ MODO TECLADO (KEYSTROKES)
 MAPAS DE TECLADO
 ----------------
 
+El cambio de mapa es cíclico, después del último mapa vuelve el mapa 0.
+
 Mapa 0 
 ------
 
-(Por defecto al iniciar y resetear)
+(Por defecto al iniciar y resetear el ZXUno)
 
-*Jugador 1
+Jugador 1
 
 	KEY_Q,       	// UP
 	KEY_A,       	// DOWN
@@ -106,7 +108,7 @@ Mapa 0
 	KEY_F,       	// BUTTON 5
 	KEY_C        	// BUTTON 6
 
-*Jugador 2
+Jugador 2
 
 	KEY_I,       	// UP
 	KEY_K,       	// DOWN
@@ -120,3 +122,71 @@ Mapa 0
 	KEY_B,       	// BUTTON 4
 	KEY_Y,       	// BUTTON 5
 	KEY_T        	// BUTTON 6
+
+Mapa 1
+------
+
+Jugador 1
+
+	KEY_W,       	// UP
+	KEY_S,       	// DOWN
+	KEY_A,       	// LEFT
+	KEY_D,       	// RIGHT
+	KEY_5,	        // SELECT
+	KEY_1,		// START
+	KEY_F,		// BUTTON 1
+	KEY_E,       	// BUTTON 2
+	KEY_R,       	// BUTTON 3
+	KEY_D,       	// BUTTON 4
+	KEY_F,       	// BUTTON 5
+	KEY_C        	// BUTTON 6
+
+Jugador 2
+
+	KEY_I,       	// UP
+	KEY_K,       	// DOWN
+	KEY_J,       	// LEFT
+	KEY_L,       	// RIGHT
+	KEY_6,	        // SELECT
+	KEY_2,		// START
+	KEY_H,		// BUTTON 1
+	KEY_G,       	// BUTTON 2
+	KEY_N,       	// BUTTON 3
+	KEY_B,       	// BUTTON 4
+	KEY_Y,       	// BUTTON 5
+	KEY_T        	// BUTTON 6
+
+Mapa 2
+------
+
+(Teclas por defecto de M.A.M.E)
+
+Jugador 1
+
+	KEY_UP,       	// UP
+	KEY_DOWN,      	// DOWN
+	KEY_LEFT,      	// LEFT
+	KEY_RIGHT,     	// RIGHT
+	KEY_5,		// SELECT
+	KEY_1,		// START
+	KEY_LCTRL,	// BUTTON 1
+	KEY_LALT,       // BUTTON 2
+	KEY_SPACE,      // BUTTON 3
+	KEY_LSHIFT,     // BUTTON 4
+	KEY_Z,       	// BUTTON 5
+	KEY_X        	// BUTTON 6
+
+Jugador 2
+
+	KEY_R,       	// UP
+	KEY_F,       	// DOWN
+	KEY_D,       	// LEFT
+	KEY_G,       	// RIGHT
+	KEY_6,	        // SELECT
+	KEY_2,		// START
+	KEY_A,		// BUTTON 1
+	KEY_S,       	// BUTTON 2
+	KEY_Q,       	// BUTTON 3
+	KEY_W,       	// BUTTON 4
+	KEY_E,       	// BUTTON 5 // Not set by default on MAME
+	KEY_T        	// BUTTON 6 // Not set by default on MAME
