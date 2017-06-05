@@ -1,0 +1,69 @@
+PRG            = joy2ps2
+OBJ            = main.o PS2Keyboard.o direct.o
+PROGRAMMER     = blaster
+PORT           = /dev/parport0
+MCU_TARGET     = atmega168
+AVRDUDE_TARGET = atmega168
+OPTIMIZE       = -Os
+DEFS           =
+LIBS           =
+ 
+HZ = 16000000 
+
+# You should not have to change anything below here.
+ 
+CC             = avr-gcc
+ 
+# Override is only needed by avr-lib build system.
+ 
+override CFLAGS        = -g -DF_CPU=$(HZ) -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS) -std=c99
+override LDFLAGS       = -Wl,-Map,$(PRG).map
+ 
+OBJCOPY        = avr-objcopy
+OBJDUMP        = avr-objdump
+ 
+all: $(PRG).elf lst text
+ 
+$(PRG).elf: $(OBJ)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+ 
+clean:
+	rm -rf *.o $(PRG).elf *.hex *.bin
+	rm -rf *.lst *.map $(EXTRA_CLEAN_FILES)
+ 
+lst:  $(PRG).lst
+ 
+%.lst: %.elf
+	$(OBJDUMP) -h -S $< > $@
+ 
+# Rules for building the .text rom images
+ 
+text: hex bin
+ 
+hex:  $(PRG).hex
+bin:  $(PRG).bin
+ 
+%.hex: %.elf
+	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+ 
+%.bin: %.elf
+	$(OBJCOPY) -j .text -j .data -O binary $< $@
+ 
+# Rules for building the .eeprom rom images
+ 
+eeprom: ehex ebin esrec
+ 
+ehex:  $(PRG)_eeprom.hex
+ 
+%_eeprom.hex: %.elf
+	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@
+ 
+%_eeprom.bin: %.elf
+	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O binary $< $@
+ 
+ 
+# command to program chip (invoked by running "make install")
+install:  $(PRG).hex
+	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -P $(PORT) -v  \
+         -U flash:w:$(PRG).hex 
+ 
