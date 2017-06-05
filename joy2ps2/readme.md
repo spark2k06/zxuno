@@ -1,8 +1,8 @@
-# joy2ps2
+# JOY2PS2
 
-Código C para microcontroladores Atmega168/328 que permite mapear a scancodes de teclado PS/2 varios tipos de joysticks.
+Código C para microcontroladores Atmega168/328 que permite mapear a scancodes de teclado PS/2 desde varios tipos de joysticks.
 
-Por defecto, se encuentra configurado para poder utilizar el conector DB15, o bien el conector principal DB9. Esta configuración se puede cambiar en caliente mediante una combinación especial, de manera que se habilitaría el conector auxiliar DB9 y deshabilitaria el conector DB15. Esto es útil cuando se necesita jugar a dos jugadores con un mismo addon.
+Por defecto, se encuentra configurado para poder utilizar el conector DB15, o bien el conector principal DB9. Esta configuración se puede cambiar en caliente mediante una combinación especial, de manera que se habilitaría el conector auxiliar DB9 y deshabilitaria el conector DB15. Esto es útil cuando se necesita jugar a dos jugadores con el mismo addon.
 
 El conector DB15 admite por ahora los siguientes gamepads:
 
@@ -17,7 +17,7 @@ Los conectores db9 admiten por ahora los siguientes gamepads:
 CONTROLES
 ---------
 
-Desde el primer gamepad se puede controlar el ZXUno, así como todo tipo de menús. Al comienzo, éste siempre se encuentra mapeados en modo cursores, primer boton Enter y segundo Escape (modo menú tradicional).
+Desde el gamepad principal se puede controlar el ZXUno, así como todo tipo de menús. Al comienzo, éste siempre se encuentra mapeados en modo cursores, primer boton Enter y segundo Escape (modo menú tradicional).
 
 En cualquier momento podremos pasar a un estado especial, al que llamaremos SHIFT. Para acceder a este estado, se puede hacer de cualquiera de las siguientes formas:
 
@@ -85,3 +85,38 @@ MODO TECLADO (KEYSTROKES)
 
 MAPAS DE TECLADO
 ----------------
+
+Mapa 0 
+------
+
+(Por defecto al iniciar y resetear)
+
+Jugador 1
+
+	KEY_Q,       	// UP
+	KEY_A,       	// DOWN
+	KEY_O,       	// LEFT
+	KEY_P,       	// RIGHT
+	KEY_5,	      // SELECT
+	KEY_1,		    // START
+	KEY_SPACE,    // BUTTON 1
+	KEY_E,       	// BUTTON 2
+	KEY_R,       	// BUTTON 3
+	KEY_D,       	// BUTTON 4
+	KEY_F,       	// BUTTON 5
+	KEY_C        	// BUTTON 6
+
+Jugador 2
+
+	KEY_I,       	// UP
+	KEY_K,       	// DOWN
+	KEY_J,       	// LEFT
+	KEY_L,       	// RIGHT
+	KEY_6,	        // SELECT
+	KEY_2,		    // START
+	KEY_H,		    // BUTTON 1
+	KEY_G,       	// BUTTON 2
+	KEY_N,       	// BUTTON 3
+	KEY_B,       	// BUTTON 4
+	KEY_Y,       	// BUTTON 5
+	KEY_T        	// BUTTON 6
