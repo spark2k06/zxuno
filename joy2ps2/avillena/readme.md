@@ -50,7 +50,10 @@ Opciones ARRIBA
 
 * 1 vez arriba y luego boton 1: tecla '1'
 * 2 veces arriba y luego boton 1: tecla '2'
-* ... asi sucesivamente hasta tecla '9', donde se mantiene.
+* ...
+* 9 veces arriba y luego boton 1: tecla '9'
+* 10 veces arriba y luego boton 1: tecla '0'
+* ... siguientes, se mantiene en la última opción '0'
 
 Opciones DERECHA
 ----------------
