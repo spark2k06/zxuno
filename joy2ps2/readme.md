@@ -97,9 +97,9 @@ Jugador 1
 	KEY_A,       	// DOWN
 	KEY_O,       	// LEFT
 	KEY_P,       	// RIGHT
-	KEY_5,	      // SELECT
-	KEY_1,		    // START
-	KEY_SPACE,    // BUTTON 1
+	KEY_5,	      	// SELECT
+	KEY_1,		// START
+	KEY_SPACE, 	// BUTTON 1
 	KEY_E,       	// BUTTON 2
 	KEY_R,       	// BUTTON 3
 	KEY_D,       	// BUTTON 4
@@ -113,8 +113,8 @@ Jugador 2
 	KEY_J,       	// LEFT
 	KEY_L,       	// RIGHT
 	KEY_6,	        // SELECT
-	KEY_2,		    // START
-	KEY_H,		    // BUTTON 1
+	KEY_2,		// START
+	KEY_H,		// BUTTON 1
 	KEY_G,       	// BUTTON 2
 	KEY_N,       	// BUTTON 3
 	KEY_B,       	// BUTTON 4
