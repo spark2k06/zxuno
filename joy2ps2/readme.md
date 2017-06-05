@@ -74,14 +74,14 @@ CAMBIO DE DB15/DB9 A DB9x2
 MODO TECLADO (KEYSTROKES)
 -------------------------
 
-arriba: cambio de tecla hacia adelante e impresion en pantalla.
-abajo: cambio de tecla hacia atras e impresion en pantalla.
-izquierda: borrar tecla.
-derecha: aceptar tecla o espacio.
-boton 1: cambio de tecla a correspodiente con tecla derecha del shift (para imprimir mayusculas o caracteres especiales)
-boton 2: Enter
+* arriba: cambio de tecla hacia adelante e impresion en pantalla.
+* abajo: cambio de tecla hacia atras e impresion en pantalla.
+* izquierda: borrar tecla.
+* derecha: aceptar tecla o espacio.
+* boton 1: cambio de tecla a correspodiente con tecla derecha del shift (para imprimir mayusculas o caracteres especiales)
+* boton 2: Enter
 
-Para salir: Entrar al modo SHIFT y elegir otra opción, o salir del modo SHIFT una vez dentro.
+* Para salir: Entrar al modo SHIFT y elegir otra opción, o salir del modo SHIFT una vez dentro.
 
 MAPAS DE TECLADO
 ----------------
