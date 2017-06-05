@@ -2,6 +2,6 @@ http://www.atc.us.es/svn/zxuno/hardware/zxuno_uart2ps2 -> Nuevas funcionalidades
 
 http://denki.world3.net/retro_v2.html -> Compatibilidad de gamepads Megadrive y Famicom extraído de retroadapter.
 
-http://zxuno.com
+http://zxuno.com -> Proyecto principal para el que está destinado este addon, aunque es compatible con otros sistemas basados en teclados PS/2.
 
 License is Creative Commons by SA
