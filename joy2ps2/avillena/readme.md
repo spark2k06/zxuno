@@ -104,9 +104,9 @@ Jugador 1
 	KEY_A,       	// DOWN
 	KEY_O,       	// LEFT
 	KEY_P,       	// RIGHT
-	KEY_5,	      // SELECT
-	KEY_1,		    // START
-	KEY_SPACE, 	  // BUTTON 1
+	KEY_5,	      	// SELECT
+	KEY_1,		// START
+	KEY_SPACE, 	// BUTTON 1
 	KEY_E,       	// BUTTON 2
 	KEY_R,       	// BUTTON 3
 	KEY_D,       	// BUTTON 4
