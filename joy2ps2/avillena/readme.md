@@ -74,8 +74,8 @@ Opciones IZQUIERDA
 * 9 veces izquierda y luego boton 1: Tecla InvVid (F4)
 * 10 veces y siguientes... se mantiene en la opcion 9.
 
-CAMBIO DE DB15/DB9 A DB9x2
---------------------------
+CAMBIO ENTRE DB15/DB9 Y DB9x2
+-----------------------------
 
 * Estando en modo SHIFT pulsar el boton 1, y manteniendolo pulsado, pulsar boton 2.
 
