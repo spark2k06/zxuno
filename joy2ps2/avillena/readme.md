@@ -79,7 +79,7 @@ CAMBIO DE DB15/DB9 A DB9x2
 
 * Estando en modo SHIFT pulsar el boton 1, y manteniendolo pulsado, pulsar boton 2.
 
-(Esta configuración permanece durante reseteos en caliente de ZXUno)
+(La configuración seleccionada permanece durante reseteos en caliente de ZXUno)
 
 MODO TECLADO (KEYSTROKES)
 -------------------------
