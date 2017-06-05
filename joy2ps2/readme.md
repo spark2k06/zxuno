@@ -66,8 +66,8 @@ EXTRA
 * 4 veces izquierda y luego boton 1: Cambio de Video (Scroll / Lock)
 * 5 veces y siguientes... se mantiene en la opcion 4.
 
-CAMBIO DE DB15/DB9 A DB9x2
---------------------------
+CAMBIO ENTRE DB15/DB9 Y DB9x2
+-----------------------------
 
 * Estando en modo SHIFT pulsar el boton 1, y manteniendolo pulsado, pulsar boton 2.
 
