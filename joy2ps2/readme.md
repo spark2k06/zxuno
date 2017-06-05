@@ -190,3 +190,11 @@ Jugador 2
 	KEY_W,       	// BUTTON 4
 	KEY_E,       	// BUTTON 5 // Not set by default on MAME
 	KEY_T        	// BUTTON 6 // Not set by default on MAME
+
+TO DO LIST
+----------
+
+* Soporte de gamepads de tipo Famicom DB9
+* Revisar compatibilidad con ordenadores PC con entrada de teclado PS/2. (Ahora no funciona bien)
+* Posibilidad de inicialización de teclado. (Puede que sea necesario para PCs)
+* Implementación y acceso al set 1 de scancodes. (Necesario para el core de PC/XT del ZXUno)
