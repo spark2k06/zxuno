@@ -14,7 +14,7 @@ Los conectores db9 admiten por ahora los siguientes gamepads:
 -> Megadrive de 3 o 6 botones, con botones Start y Select (Mode)
 -> NES clonico, version de Antonio adaptado a Atari DB9
 
-Controles
+CONTROLES
 ---------
 
 Desde el primer gamepad se puede controlar el ZXUno, así como todo tipo de menús. Al comienzo, éste siempre se encuentra mapeados en modo cursores, primer boton Enter y segundo Escape (modo menú tradicional).
