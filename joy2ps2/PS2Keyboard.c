@@ -152,7 +152,7 @@ void ps2Mode(uint8_t pin, uint8_t mode)
 
 void ps2Init()
 {
-	//ponemos en alto ambas señales
+	//ponemos en alto ambas seÃ±ales
 	PS2_PORT &= ~_BV(PS2_DAT); //A 0
 	PS2_PORT &= ~_BV(PS2_CLK); //A 0
 	ps2Mode(PS2_DAT, HI);
@@ -214,14 +214,14 @@ void sendPS2(unsigned char code, double ms)
 void sendPS2fromqueue(unsigned char code)
 {
 
-	//Para continuar las líneas deben estar en alto  
+	//Para continuar las lÃ­neas deben estar en alto  
 	if (ps2Stat())
 		return;
 
 	unsigned char parity = 1;
-	unsigned char i = 0;
+	int i = 0;
 
-	//iniciamos transmisión
+	//iniciamos transmisiÃ³n
 	ps2Mode(PS2_DAT, LO);
 	_delay_us(CK1);
 
@@ -232,8 +232,11 @@ void sendPS2fromqueue(unsigned char code)
 	//enviamos datos
 	for (i = 0; i < 8; ++i)
 	{
-		if ((0b00000001 & code))
+		if (code & (1 << i))
+		{
 			ps2Mode(PS2_DAT, HI);
+			parity = parity ^ 1;
+		}
 		else
 			ps2Mode(PS2_DAT, LO);
 
@@ -242,16 +245,6 @@ void sendPS2fromqueue(unsigned char code)
 		_delay_us(CK2);
 		ps2Mode(PS2_CLK, HI);
 		_delay_us(CK1);
-
-		//paridad
-		if ((0b00000001 & code) == 0b00000001)
-		{
-			if (!parity)
-				parity = 1;
-			else
-				parity = 0;
-		}
-		code = code >> 1;
 	}
 
 	// Enviamos bit de paridad
@@ -273,9 +266,6 @@ void sendPS2fromqueue(unsigned char code)
 	_delay_us(CK2);
 	ps2Mode(PS2_CLK, HI);
 	_delay_us(CK1);
-
-
-
 }
 
 //codifica envio de caracteres ps/2 
