@@ -35,16 +35,6 @@ void ps2Init()
   ps2Mode(PS2_CLK, HI);
 }
 
-uint8_t ps2Stat()
-{
-  if (!(PS2_PIN & (1 << PS2_CLK)))
-    return 1;
-  if (!(PS2_PIN & (1 << PS2_DAT)))
-    return 1;
-
-  return 0;
-}
-
 int get_code_from_host(unsigned char *ret)
 {
   unsigned char data = 0x00;
