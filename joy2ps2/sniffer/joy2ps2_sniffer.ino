@@ -7,8 +7,6 @@
 #define PS2_CLK   PC2
 #define PS2_PORT  PORTC
 #define PS2_DDR   DDRC
-#define CK1 20
-#define CK2 40
 #define HI 1
 #define LO 0
 #define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
