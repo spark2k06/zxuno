@@ -1,4 +1,4 @@
-# JOY2PS2
+# JOY2PS2 Release 2
 
 Código C para microcontroladores Atmega168/328 que permite mapear a scancodes de teclado PS/2 desde varios tipos de joysticks.
 
@@ -197,6 +197,3 @@ TO DO LIST
 ----------
 
 * Soporte de gamepads de tipo Famicom DB9
-* Revisar compatibilidad con ordenadores PC con entrada de teclado PS/2. (Ahora no funciona bien)
-* Posibilidad de inicialización de teclado. (Puede que sea necesario para PCs)
-* Implementación y acceso al set 1 de scancodes. (Necesario para el core de PC/XT del ZXUno)
