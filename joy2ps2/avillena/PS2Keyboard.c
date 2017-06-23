@@ -6,73 +6,103 @@
 
 const unsigned charinimap[] = {
 
-	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '8', 'b'
+	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '9', 'b'
 
 };
 
-const unsigned char db15 = 1;
-
-const unsigned char Map0[] = { // Mapa 0 -> Por defecto al iniciar
-	KEY_Q,       	//DB15 00  UP		DB9_1 00  UP
-	KEY_A,       	//DB15 01  DOWN		DB9_1 01  DOWN
-	KEY_O,       	//DB15 02  LEFT		DB9_1 02  LEFT
-	KEY_P,       	//DB15 03  RIGHT	DB9_1 03  RIGHT
-	KEY_5,	        //DB15 04  SELECT	DB9_1 04  BUTTON 1
-	KEY_1,		    //DB15 05  START	DB9_1 05  BUTTON 2
-	KEY_SPACE,      //DB15 06  BUTTON 1	DB9_2 06  UP
-	KEY_V,       	//DB15 07  BUTTON 2	DB9_2 07  DOWN
-	KEY_B,       	//DB15 08  BUTTON 3	DB9_2 08  LEFT
-	KEY_N,       	//DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	KEY_G,       	//DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	KEY_H        	//DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
+const unsigned char P1Map0[] = { // Mapa 0 - Player 1 -> Por defecto al iniciar (OPQA)
+	KEY_Q,       	// UP
+	KEY_A,       	// DOWN
+	KEY_O,       	// LEFT
+	KEY_P,       	// RIGHT
+	KEY_5,	        // SELECT
+	KEY_1,		    // START
+	KEY_SPACE,      // BUTTON 1
+	KEY_E,       	// BUTTON 2
+	KEY_R,       	// BUTTON 3
+	KEY_D,       	// BUTTON 4
+	KEY_F,       	// BUTTON 5
+	KEY_C        	// BUTTON 6
 
 };
 
-const unsigned char Map1[] = { // Mapa 1
-	0,       //DB15 00  UP			DB9_1 00  UP
-	0,       //DB15 01  DOWN		DB9_1 01  DOWN
-	0,       //DB15 02  LEFT		DB9_1 02  LEFT
-	0,       //DB15 03  RIGHT		DB9_1 03  RIGHT
-	0,       //DB15 04  SELECT		DB9_1 04  BUTTON 1
-	0,       //DB15 05  START		DB9_1 05  BUTTON 2
-	0,       //DB15 06  BUTTON 1	DB9_2 06  UP
-	0,       //DB15 07  BUTTON 2	DB9_2 07  DOWN
-	0,       //DB15 08  BUTTON 3	DB9_2 08  LEFT
-	0,       //DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	0,       //DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	0        //DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
+const unsigned char P2Map0[] = { // Mapa 0 - Player 2 -> Por defecto al iniciar (IKJL)
+	KEY_I,       	// UP
+	KEY_K,       	// DOWN
+	KEY_J,       	// LEFT
+	KEY_L,       	// RIGHT
+	KEY_6,	        // SELECT
+	KEY_2,		    // START
+	KEY_H,		    // BUTTON 1
+	KEY_G,       	// BUTTON 2
+	KEY_N,       	// BUTTON 3
+	KEY_B,       	// BUTTON 4
+	KEY_Y,       	// BUTTON 5
+	KEY_T        	// BUTTON 6
 
 };
 
-const unsigned char Map2[] = { // Mapa 2
-	0,       //DB15 00  UP			DB9_1 00  UP
-	0,       //DB15 01  DOWN		DB9_1 01  DOWN
-	0,       //DB15 02  LEFT		DB9_1 02  LEFT
-	0,       //DB15 03  RIGHT		DB9_1 03  RIGHT
-	0,       //DB15 04  SELECT		DB9_1 04  BUTTON 1
-	0,       //DB15 05  START		DB9_1 05  BUTTON 2
-	0,       //DB15 06  BUTTON 1	DB9_2 06  UP
-	0,       //DB15 07  BUTTON 2	DB9_2 07  DOWN
-	0,       //DB15 08  BUTTON 3	DB9_2 08  LEFT
-	0,       //DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	0,       //DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	0        //DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
+const unsigned char P1Map1[] = { // Mapa 1 - Player 1 (WSAD)
+	KEY_W,       	// UP
+	KEY_S,       	// DOWN
+	KEY_A,       	// LEFT
+	KEY_D,       	// RIGHT
+	KEY_5,	        // SELECT
+	KEY_1,		    // START
+	KEY_F,		    // BUTTON 1
+	KEY_E,       	// BUTTON 2
+	KEY_R,       	// BUTTON 3
+	KEY_D,       	// BUTTON 4
+	KEY_F,       	// BUTTON 5
+	KEY_C        	// BUTTON 6
 
 };
 
-const unsigned char Map3[] = { // Mapa 3
-	0,       //DB15 00  UP			DB9_1 00  UP
-	0,       //DB15 01  DOWN		DB9_1 01  DOWN
-	0,       //DB15 02  LEFT		DB9_1 02  LEFT
-	0,       //DB15 03  RIGHT		DB9_1 03  RIGHT
-	0,       //DB15 04  SELECT		DB9_1 04  BUTTON 1
-	0,       //DB15 05  START		DB9_1 05  BUTTON 2
-	0,       //DB15 06  BUTTON 1	DB9_2 06  UP
-	0,       //DB15 07  BUTTON 2	DB9_2 07  DOWN
-	0,       //DB15 08  BUTTON 3	DB9_2 08  LEFT
-	0,       //DB15 09  BUTTON 4	DB9_2 09  RIGHT
-	0,       //DB15 10  BUTTON 5	DB9_2 10  BUTTON 1
-	0        //DB15 11  BUTTON 6	DB9_2 11  BUTTON 2
+const unsigned char P2Map1[] = { // Mapa 1 - Player 2 (QAOP)
+	KEY_I,       	// UP
+	KEY_K,       	// DOWN
+	KEY_J,       	// LEFT
+	KEY_L,       	// RIGHT
+	KEY_6,	        // SELECT
+	KEY_2,		    // START
+	KEY_H,		    // BUTTON 1
+	KEY_G,       	// BUTTON 2
+	KEY_N,       	// BUTTON 3
+	KEY_B,       	// BUTTON 4
+	KEY_Y,       	// BUTTON 5
+	KEY_T        	// BUTTON 6
+
+};
+
+const unsigned char P1Map2[] = { // Mapa 2 - Player 1 (Default MAME)
+	KEY_UP,       	// UP
+	KEY_DOWN,      	// DOWN
+	KEY_LEFT,      	// LEFT
+	KEY_RIGHT,     	// RIGHT
+	KEY_5,			// SELECT
+	KEY_1,			// START
+	KEY_LCTRL,		// BUTTON 1
+	KEY_LALT,       // BUTTON 2
+	KEY_SPACE,      // BUTTON 3
+	KEY_LSHIFT,     // BUTTON 4
+	KEY_Z,       	// BUTTON 5
+	KEY_X        	// BUTTON 6
+
+};
+
+const unsigned char P2Map2[] = { // Mapa 2 - Player 2 (Default MAME)
+	KEY_R,       	// UP
+	KEY_F,       	// DOWN
+	KEY_D,       	// LEFT
+	KEY_G,       	// RIGHT
+	KEY_6,	        // SELECT
+	KEY_2,		    // START
+	KEY_A,		    // BUTTON 1
+	KEY_S,       	// BUTTON 2
+	KEY_Q,       	// BUTTON 3
+	KEY_W,       	// BUTTON 4
+	KEY_E,       	// BUTTON 5 // Not set by default on MAME
+	KEY_T        	// BUTTON 6 // Not set by default on MAME
 
 };
 
@@ -283,20 +313,41 @@ void sendCodeMR(unsigned char key, uint16_t release, double ms)
 
 }
 
+void sendCodeMRE0(unsigned char key, uint16_t release, double ms)
+{
+	//secuencia  
+
+	sendPS2(0xE0, 0);
+
+	if (key && release)
+		sendPS2(0xF0, 0);
+
+	if (key)
+		sendPS2(key, ms);
+
+
+}
+
 void PressKey(unsigned char key, double ms)
 {
 	sendCodeMR(key, 0, 100); //Make	
 	sendCodeMR(key, 1, ms); //Release
 }
 
+void PressKeyWithE0(unsigned char key, double ms)
+{
+	sendCodeMRE0(key, 0, 100); //Make	
+	sendCodeMRE0(key, 1, ms); //Release
+}
+
 void Cursors()
 {
-	KeyMap[0] = KEY_UP;
-	KeyMap[1] = KEY_DOWN;
-	KeyMap[2] = KEY_LEFT;
-	KeyMap[3] = KEY_RIGHT;
-	KeyMap[6] = KEY_ENTER;
-	KeyMap[7] = KEY_ESCAPE;
+	P1KeyMap[0] = KEY_UP;
+	P1KeyMap[1] = KEY_DOWN;
+	P1KeyMap[2] = KEY_LEFT;
+	P1KeyMap[3] = KEY_RIGHT;
+	P1KeyMap[6] = KEY_ENTER;
+	P1KeyMap[7] = KEY_ESCAPE;
 }
 
 void LOAD128() // LOAD "" en BASIC 128
@@ -391,43 +442,55 @@ void MasterReset(int extra) // CTRL + ALT + BackSpace (MasterReset)
 
 void ChangeKeys()
 {
-	if (mapper == 0) // El cambio entre cursores y teclas solo disponible para el mapa 0
+	if (p1map == 0) // El cambio entre cursores y teclas solo disponible para el mapa 0
 	{
-		unsigned char KeyMapAux[12];
-		for (imap = 0; imap < 12; imap++) KeyMapAux[imap] = Map0[imap];
+		unsigned char P1KeyMapAux[12];
+		for (imap = 0; imap < 12; imap++) P1KeyMapAux[imap] = P1Map0[imap];
 
-		KeyMap[0] = KeyMap[0] == KEY_UP ? KeyMapAux[0] : KEY_UP;
-		KeyMap[1] = KeyMap[1] == KEY_DOWN ? KeyMapAux[1] : KEY_DOWN;
-		KeyMap[2] = KeyMap[2] == KEY_LEFT ? KeyMapAux[2] : KEY_LEFT;
-		KeyMap[3] = KeyMap[3] == KEY_RIGHT ? KeyMapAux[3] : KEY_RIGHT;
-		KeyMap[6] = KeyMap[6] == KEY_ENTER ? KeyMapAux[6] : KEY_ENTER;
-		KeyMap[7] = KeyMap[7] == KEY_ESCAPE ? KeyMapAux[7] : KEY_ESCAPE;
+		P1KeyMap[0] = P1KeyMap[0] == KEY_UP ? P1KeyMapAux[0] : KEY_UP;
+		P1KeyMap[1] = P1KeyMap[1] == KEY_DOWN ? P1KeyMapAux[1] : KEY_DOWN;
+		P1KeyMap[2] = P1KeyMap[2] == KEY_LEFT ? P1KeyMapAux[2] : KEY_LEFT;
+		P1KeyMap[3] = P1KeyMap[3] == KEY_RIGHT ? P1KeyMapAux[3] : KEY_RIGHT;
+		P1KeyMap[6] = P1KeyMap[6] == KEY_ENTER ? P1KeyMapAux[6] : KEY_ENTER;
+		P1KeyMap[7] = P1KeyMap[7] == KEY_ESCAPE ? P1KeyMapAux[7] : KEY_ESCAPE;
 	}
 }
 
-void SetMap(int map)
+void SetMapP1(int map)
 {		
 	switch (map)
 	{
 	case 0:
-		for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map0[imap];
+		for (imap = 0; imap < 12; imap++) P1KeyMap[imap] = P1Map0[imap];
 		break;
 	case 1:
-		for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map1[imap];
+		for (imap = 0; imap < 12; imap++) P1KeyMap[imap] = P1Map1[imap];
 		break;
 	case 2:
-		for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map2[imap];
+		for (imap = 0; imap < 12; imap++) P1KeyMap[imap] = P1Map2[imap];
 		break;
-	case 3:
-		for (imap = 0; imap < 12; imap++) KeyMap[imap] = Map3[imap];
-		break;
+
 	default:
 		break;
 	}
 	
-
 }
-unsigned char CheckDB15()
+
+void SetMapP2(int map)
 {
-	return db15;
+	switch (map)
+	{
+	case 0:
+		for (imap = 0; imap < 12; imap++) P2KeyMap[imap] = P2Map0[imap];
+		break;
+	case 1:
+		for (imap = 0; imap < 12; imap++) P2KeyMap[imap] = P2Map1[imap];
+		break;		
+		case 2:
+		for (imap = 0; imap < 12; imap++) P2KeyMap[imap] = P2Map2[imap];
+		break;
+	default:
+		break;
+	}
+
 }

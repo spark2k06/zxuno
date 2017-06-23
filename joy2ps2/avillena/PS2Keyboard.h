@@ -12,7 +12,9 @@ void FreeKBBuffer();
 void sendPS2(unsigned char code, double ms);
 void sendPS2fromqueue(unsigned char code);
 void sendCodeMR(unsigned char key, uint16_t release, double ms);
+void sendCodeMRE0(unsigned char key, uint16_t release, double ms);
 void PressKey(unsigned char key, double ms);
+void PressKeyWithE0(unsigned char key, double ms);
 void Cursors();
 void LOAD128();
 void LOAD48();
@@ -20,6 +22,5 @@ void NMI();
 void Reset();
 void MasterReset();
 void ChangeKeys();
-void SetMap();
-unsigned char CheckDB15();
-
+void SetMapP1(int map);
+void SetMapP2(int map);

@@ -126,12 +126,12 @@
 //En us, reloj y semireloj, para los flancos
 //zxuno v2 test15: CK1 = 240, CK2 = 480. Uso normal: CK1 = 20, CK2 = 40 microsegundos
 //(revertir a normal cuando el core ps/2 del ZX-UNO se mejore)
-#define CK1 4
-#define CK2 8
+#define CK1 20
+#define CK2 40
 
 uint16_t DB15_PIN;
 
-uint8_t mapper;
+uint8_t p1map, p2map;
 
 #define QUEUE_ELEMENTS 64
 #define QUEUE_SIZE (QUEUE_ELEMENTS + 2)
@@ -143,5 +143,6 @@ uint8_t QueueIn, QueueOut;
 unsigned char sendcode;
 double wait_ms;
 
-unsigned char KeyMap[12];
+unsigned char P1KeyMap[12];
+unsigned char P2KeyMap[12];
 uint8_t imap;

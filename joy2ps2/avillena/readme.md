@@ -1,4 +1,6 @@
-# JOY2PS2 Release 2
+# JOY2PS2
+
+* Versión alternativa propuesta por Antonio Villena.
 
 Código C para microcontroladores Atmega168/328 que permite mapear a scancodes de teclado PS/2 desde varios tipos de joysticks.
 
@@ -32,39 +34,45 @@ Nota: Las combinaciones abajo expuestas son pulsando y soltando (no mantener bot
 Sólo boton 1: Cambio de cursores a OPQA y viceversa en el joystick 1 (el principal)
 Sólo boton 2: Cancelar modo SHIFT (también se puede cancelar volviendo a pulsar la combinación de SHIFT)
 
-RESETS
-------
+Opciones ABAJO
+--------------
 
-* 1 vez abajo y luego boton 1: Reset (Se cambia automaticamente a cursores)
-* 2 veces abajo y luego boton 1: MasterReset (Se cambia automaticamente a cursores)
-* 3 veces abajo y luego boton 1: MasterReset y entrada a ROMs (Se cambia automaticamente a cursores)
-* 4 veces abajo y luego boton 1: MasterReset y entrada a cores (Se cambia automaticamente a cursores)
-* 5 veces abajo y luego boton 1: MasterReset y entrada a BIOS (Se cambia automaticamente a cursores)
-* 6 veces y siguientes... se mantiene en la opcion de las 5 veces.
+* 1 vez abajo y luego boton 1: NMI
+* 2 veces abajo y luego boton 1: Reset (Se cambia automaticamente a cursores)
+* 3 veces abajo y luego boton 1: MasterReset (Se cambia automaticamente a cursores)
+* 4 veces abajo y luego boton 1: MasterReset y entrada a ROMs (Se cambia automaticamente a cursores)
+* 5 veces abajo y luego boton 1: MasterReset y entrada a cores (Se cambia automaticamente a cursores)
+* 6 veces abajo y luego boton 1: MasterReset y entrada a BIOS (Se cambia automaticamente a cursores)
+* 7 veces y siguientes... se mantiene en la opcion de las 6 veces.
 
-MENUS
------
+Opciones ARRIBA
+---------------
 
-* 1 vez arriba y luego boton 1: tecla 'R'
-* 2 veces arriba y luego boton 1: tecla '0'
-* ... asi sucesivamente hasta tecla '9', donde se mantiene.
+* 1 vez arriba y luego boton 1: tecla '1'
+* 2 veces arriba y luego boton 1: tecla '2'
+* ...
+* 9 veces arriba y luego boton 1: tecla '9'
+* 10 veces arriba y luego boton 1: tecla '0'
+* ... siguientes, se mantiene en la última opción '0'
 
-CARGADOR
---------
+Opciones DERECHA
+----------------
 
-* 1 vez derecha y luego boton 1: NMI
-* 2 veces derecha y luego boton 1: teclas 'LOAD ""' (modo 128k)
-* 3 veces derecha y luego boton 1: teclas 'J ""' (load modo 48k)
-* 4 veces y siguientes... se mantiene en la opcion de las 3 veces.
+* 1 vez y sucesivas: teclas 'J ""' (load modo 48k)
 
-EXTRA
------
+Opciones IZQUIERDA
+------------------
 
 * 1 vez izquierda y luego boton 1: Modo teclado completo (ver abajo)
 * 2 veces izquierda y luego boton 1: Escape (necesario si se usa joystick de un solo boton, junto como el boton de keymapper a modo de shift)
 * 3 veces izquierda y luego boton 1 de jugador 1 o 2: Cambio de mapa del jugador correspondiente. (ver abajo mapas disponibles)
-* 4 veces izquierda y luego boton 1: Cambio de Video (Scroll / Lock)
-* 5 veces y siguientes... se mantiene en la opcion 4.
+* 4 veces izquierda y luego boton 1: Tecla Extend
+* 5 veces izquierda y luego boton 1: Tecla Caps (LCTRL)
+* 6 veces izquierda y luego boton 1: Tecla Symbol (RCTRL)
+* 7 veces izquierda y luego boton 1: Tecla Graph (RALT)
+* 8 veces izquierda y luego boton 1: Tecla TrueVid (F3)
+* 9 veces izquierda y luego boton 1: Tecla InvVid (F4)
+* 10 veces y siguientes... se mantiene en la opcion 9.
 
 CAMBIO ENTRE DB15/DB9 Y DB9x2
 -----------------------------
@@ -116,7 +124,7 @@ Jugador 2
 	KEY_K,       	// DOWN
 	KEY_J,       	// LEFT
 	KEY_L,       	// RIGHT
-	KEY_6,	        // SELECT
+	KEY_6,	    	// SELECT
 	KEY_2,		// START
 	KEY_H,		// BUTTON 1
 	KEY_G,       	// BUTTON 2
@@ -134,7 +142,7 @@ Jugador 1
 	KEY_S,       	// DOWN
 	KEY_A,       	// LEFT
 	KEY_D,       	// RIGHT
-	KEY_5,	        // SELECT
+	KEY_5,	     	// SELECT
 	KEY_1,		// START
 	KEY_F,		// BUTTON 1
 	KEY_E,       	// BUTTON 2
@@ -149,7 +157,7 @@ Jugador 2
 	KEY_K,       	// DOWN
 	KEY_J,       	// LEFT
 	KEY_L,       	// RIGHT
-	KEY_6,	        // SELECT
+	KEY_6,	    	// SELECT
 	KEY_2,		// START
 	KEY_H,		// BUTTON 1
 	KEY_G,       	// BUTTON 2
@@ -169,14 +177,14 @@ Jugador 1
 	KEY_DOWN,      	// DOWN
 	KEY_LEFT,      	// LEFT
 	KEY_RIGHT,     	// RIGHT
-	KEY_5,		// SELECT
+	KEY_5,	      	// SELECT
 	KEY_1,		// START
-	KEY_LCTRL,	// BUTTON 1
+	KEY_LCTRL,    	// BUTTON 1
 	KEY_LALT,       // BUTTON 2
 	KEY_SPACE,      // BUTTON 3
 	KEY_LSHIFT,     // BUTTON 4
-	KEY_Z,       	// BUTTON 5
-	KEY_X        	// BUTTON 6
+	KEY_Z,        	// BUTTON 5
+	KEY_X         	// BUTTON 6
 
 Jugador 2
 
@@ -184,7 +192,7 @@ Jugador 2
 	KEY_F,       	// DOWN
 	KEY_D,       	// LEFT
 	KEY_G,       	// RIGHT
-	KEY_6,	        // SELECT
+	KEY_6,	    	// SELECT
 	KEY_2,		// START
 	KEY_A,		// BUTTON 1
 	KEY_S,       	// BUTTON 2
@@ -197,3 +205,6 @@ TO DO LIST
 ----------
 
 * Soporte de gamepads de tipo Famicom DB9
+* Revisar compatibilidad con ordenadores PC con entrada de teclado PS/2. (Ahora no funciona bien)
+* Posibilidad de inicialización de teclado. (Puede que sea necesario para PCs)
+* Implementación y acceso al set 1 de scancodes. (Necesario para el core de PC/XT del ZXUno)
