@@ -1,14 +1,9 @@
+#include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
 #include "PS2Keyboard.h"
 
 // Mapas del joystick
-
-const unsigned charinimap[] = {
-
-	'[','J', 'O', 'Y', '2', 'P', 'S', '2', ']', '0', '0', '0', '9', 'b'
-
-};
 
 const unsigned char P1Map0[] = { // Mapa 0 - Player 1 -> Por defecto al iniciar (OPQA)
 	KEY_Q,       	// UP
@@ -134,6 +129,15 @@ void my_delay_ms_10ms_steps(int ms)
 	}
 }
 
+void my_delay_us_4us_steps(int us)
+{
+	while (0 < us)
+	{
+		_delay_us(4);
+		us -= 4;
+	}
+}
+
 void QueuePS2Init(void)
 {
 	QueueIn = QueueOut = 0;
@@ -237,17 +241,17 @@ int getPS2(unsigned char *ret)
 {
 	unsigned char data = 0x00;
 	unsigned char p = 0x01;
-
+	
 	// discard the start bit
 	while ((PS2_PIN & (1 << PS2_DAT)));
 	while (!(PS2_PIN & (1 << PS2_CLK)));
 
 	// Bit de comienzo
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 	ps2Mode(PS2_CLK, LO);
-	_delay_us(CK2);
+	my_delay_us_4us_steps(CK2 * ckt);
 	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 
 	// read each data bit
 	for (int i = 0; i<8; i++) {		
@@ -255,41 +259,44 @@ int getPS2(unsigned char *ret)
 			data = data | (1 << i);
 			p = p ^ 1;
 		}
-		_delay_us(CK1);
+		my_delay_us_4us_steps(CK1 * ckt);
 		ps2Mode(PS2_CLK, LO);
-		_delay_us(CK2);
+		my_delay_us_4us_steps(CK2 * ckt);
 		ps2Mode(PS2_CLK, HI);
-		_delay_us(CK1);
+		my_delay_us_4us_steps(CK1 * ckt);
 	}
-
+	
 	// read the parity bit	
+	
 	if (((PS2_PIN & (1 << PS2_DAT)) != 0) != p) {
+				
 		return -1;
 	}
-	_delay_us(CK1);
+	
+	my_delay_us_4us_steps(CK1 * ckt);
 	ps2Mode(PS2_CLK, LO);
-	_delay_us(CK2);
+	my_delay_us_4us_steps(CK2 * ckt);
 	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 
 	// send 'ack' bit
 	ps2Mode(PS2_DAT, LO);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 	ps2Mode(PS2_CLK, LO);
-	_delay_us(CK2);
+	my_delay_us_4us_steps(CK2 * ckt);
 	ps2Mode(PS2_CLK, HI);
 	ps2Mode(PS2_DAT, HI);
 
 	_delay_us(100);
-
 	*ret = data;
+
 	return 0;
 }
 
 //envio de datos ps/2 simulando reloj con delays.
+
 void sendPS2fromqueue(unsigned char code)
 {
-
 	//Para continuar las líneas deben estar en alto  
 	while (ps2Stat());
 
@@ -298,12 +305,12 @@ void sendPS2fromqueue(unsigned char code)
 
 	//iniciamos transmisión
 	ps2Mode(PS2_DAT, LO);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 
 	ps2Mode(PS2_CLK, LO); //bit de comienzo
-	_delay_us(CK2);
+	my_delay_us_4us_steps(CK2 * ckt);
 	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 	//enviamos datos
 	for (i = 0; i < 8; ++i)
 	{
@@ -315,11 +322,11 @@ void sendPS2fromqueue(unsigned char code)
 		else
 			ps2Mode(PS2_DAT, LO);
 
-		_delay_us(CK1);
+		my_delay_us_4us_steps(CK1 * ckt);
 		ps2Mode(PS2_CLK, LO);
-		_delay_us(CK2);
+		my_delay_us_4us_steps(CK2 * ckt);
 		ps2Mode(PS2_CLK, HI);
-		_delay_us(CK1);
+		my_delay_us_4us_steps(CK1 * ckt);
 	}
 
 	// Enviamos bit de paridad
@@ -328,19 +335,19 @@ void sendPS2fromqueue(unsigned char code)
 	else
 		ps2Mode(PS2_DAT, LO);
 
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 	ps2Mode(PS2_CLK, LO);
-	_delay_us(CK2);
+	my_delay_us_4us_steps(CK2 * ckt);
 	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 
 	//Bit de parada
 	ps2Mode(PS2_DAT, HI);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 	ps2Mode(PS2_CLK, LO);
-	_delay_us(CK2);
+	my_delay_us_4us_steps(CK2 * ckt);
 	ps2Mode(PS2_CLK, HI);
-	_delay_us(CK1);
+	my_delay_us_4us_steps(CK1 * ckt);
 
 	_delay_us(50);
 	

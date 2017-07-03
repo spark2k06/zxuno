@@ -124,16 +124,16 @@ void keystroke_press(unsigned char key)
 
 int main()
 {	
-	uchar shiftmode = 0;
-	int menuoption = -1, resetoption = -1, combioption = -1, extraoptions = -1;
+	
+	uchar shiftmode = 0, kbinit = 1;
+	int menuoption = -1, resetoption = -1, combioption = -1, extraoptions = -1;	
 	int keystrokes_idx = 35;
-	int rshift = 0;
+	int rshift = 0;	
 	db15 = 1;
 	p1map = 0, p2map = 0;
-	keystrokes_supr = 0;
-	
-	// Setup		
-	CPU_PRESCALE(0);
+	keystrokes_supr = 0;	
+	ckt = 4; // Por defecto, tiempos de 16/32 us para semireloj y reloj
+		
 	ps2Init();
 	QueuePS2Init();	
 	SetMapP1(p1map);
@@ -168,59 +168,71 @@ int main()
 
 	// Loop
 	while (1) {
-		
-		if (ps2Stat()) // Lineas CLK y/o DATA a 0
+
+		if (kbinit && ps2Stat()) // Lineas CLK y/o DATA a 0
 		{
+				
 			// wait for response
 			while (checkState(1000)) // tramos de 5 us (5000 us)
 			{
+
 				prevhostdata = hostdata;
 				if (getPS2(&hostdata) == 0)
 				{
 
-					sendPS2fromqueue(0xFA); // Ack
+					if (hostdata == 0xEE)
+					{						
+						sendPS2fromqueue(0xEE); // Echo
+					}
+					else
+					{
+						sendPS2fromqueue(0xFA); // Ack
+					}
 					switch (hostdata) {
-					case 0x00: // second bit of 0xED or 0xF3 (or get scancode set)	
+					case 0x00: // second bit of 0xED or 0xF3 (or get scancode set)			
 						if (prevhostdata == 0xF0)
 						{
 							sendPS2fromqueue(scancodeset);
 						}
 						break;
-					case 0x01: // set scancode 1
+					case 0x01: // set scancode 1					
 						if (prevhostdata == 0xF0)
 						{
 							scancodeset = 1;
-						}						
+						}
 						break;
-					case 0x02: // set scancode 2
+					case 0x02: // set scancode 2					
 						if (prevhostdata == 0xF0)
 						{
 							scancodeset = 2;
 						}
 						break;
-					case 0xED: // set/reset LEDs
+					case 0xED: // set/reset LEDs						
 						break;
-					case 0xF2: // ID					
+					case 0xF2: // ID
 						sendPS2fromqueue(0xAB);
 						sendPS2fromqueue(0x83);
 						break;
-					case 0xF0: // get/set scancode set
+					case 0xF0: // get/set scancode set					
 						break;
-					case 0xF3: // set/reset typematic delay
+					case 0xF3: // set/reset typematic delay						
 						break;
 					case 0xF4: // keyboard is enabled, break loop						
 						break;
 					case 0xF5: // keyboard is disabled, break loop						
 						break;
 					case 0xFF:
-						// tell host we are ready to connect						
+						// tell host we are ready to connect
 						sendPS2fromqueue(0xAA);
 						break;
 					default:
 						break;
 					}
+					
 				}
+
 			}
+			
 
 		}
 		else // Lineas CLK/DATA libres, liberamos buffer de eventos.
@@ -277,6 +289,7 @@ int main()
 			if (!shiftmode)
 			{
 				p1prev.select = 0; p1prev.start = 0; p1prev.button1 = 0;
+				kbinit = !kbinit;
 			}
 
 			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
@@ -318,6 +331,28 @@ int main()
 
 		if (shiftmode)
 		{
+			if (p1.start && p1prev.up && !p1.up) // Reducimos CK1 y CK2 hasta 4 / 8 minimo en tramos de 4 / 8
+			{
+				if (ckt > 1)
+				{
+					ckt--;
+				}
+				p1prev.up = 0;
+				_delay_ms(200);
+				continue;
+			}
+
+			if (p1.start && p1prev.down && !p1.down) // Aumentamos CK1 y CK2 hasta 16 / 32 maximo en tramos de 4 / 8
+			{
+
+				if (ckt < 4)
+				{
+					ckt++;
+				}
+				p1prev.down = 0;
+				_delay_ms(200);
+				continue;
+			}
 
 			// Up -> add menuoption counter
 			if (p1prev.up & !p1.up)
@@ -423,7 +458,9 @@ int main()
 				{
 					p1map = 0, p2map = 0;
 					SetMapP1(p1map);
-					SetMapP2(p2map);
+					SetMapP2(p2map);					
+					ckt = 4; // Por defecto, tiempos de 16/32 us para semireloj y reloj
+					kbinit = 1; // Por defecto, inicialización de teclado incluido.
 
 					if (resetoption == 0)
 					{
