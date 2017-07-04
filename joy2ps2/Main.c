@@ -291,7 +291,6 @@ int main()
 			if (!shiftmode)
 			{
 				p1prev.select = 0; p1prev.start = 0; p1prev.button1 = 0;
-				keybinit = !keybinit;
 			}
 
 			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
@@ -366,7 +365,6 @@ int main()
 
 			}
 
-
 			// Down -> add resetoption counter
 			if (p1prev.down & !p1.down)
 			{
@@ -416,6 +414,22 @@ int main()
 				p1.button1 = 0; p1.button2 = 0;
 				p1prev.button1 = 0; p1prev.button2 = 0;
 				db15 = !db15;
+			}
+
+			if (p1.button1 && p1.left) // Desactivacion de escucha del Host
+			{
+				shiftmode = 0;
+				p1.button1 = 0; p1.left = 0;
+				p1prev.button1 = 0; p1prev.left = 0;
+				keybinit = 0;
+			}
+
+			if (p1.button1 && p1.right) // Activacion de escucha del Host
+			{
+				shiftmode = 0;
+				p1.button1 = 0; p1.right = 0;
+				p1prev.button1 = 0; p1prev.right = 0;
+				keybinit = 1;
 			}
 
 			if (p1prev.button1 & !p1.button1) // Final combo
