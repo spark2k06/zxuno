@@ -24,6 +24,7 @@ static	report_t		p2, p2prev;
 static  uchar			p1selectnesclon, p1startnesclon;
 static  uchar			p2selectnesclon, p2startnesclon;
 static  int				keystrokes_supr;
+unsigned char			keybinit;
 unsigned char			db15;
 unsigned char			hostdata;
 unsigned char			prevhostdata;
@@ -125,11 +126,12 @@ void keystroke_press(unsigned char key)
 int main()
 {	
 	
-	uchar shiftmode = 0, kbinit = 1;
+	uchar shiftmode = 0;
 	int menuoption = -1, resetoption = -1, combioption = -1, extraoptions = -1;	
 	int keystrokes_idx = 35;
 	int rshift = 0;	
 	db15 = 1;
+	keybinit = 1;
 	p1map = 0, p2map = 0;
 	keystrokes_supr = 0;	
 	ckt = 4; // Por defecto, tiempos de 16/32 us para semireloj y reloj
@@ -169,7 +171,7 @@ int main()
 	// Loop
 	while (1) {
 
-		if (kbinit && ps2Stat()) // Lineas CLK y/o DATA a 0
+		if (keybinit & ps2Stat()) // Lineas CLK y/o DATA a 0
 		{
 				
 			// wait for response
@@ -289,7 +291,7 @@ int main()
 			if (!shiftmode)
 			{
 				p1prev.select = 0; p1prev.start = 0; p1prev.button1 = 0;
-				kbinit = !kbinit;
+				keybinit = !keybinit;
 			}
 
 			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
@@ -460,7 +462,7 @@ int main()
 					SetMapP1(p1map);
 					SetMapP2(p2map);					
 					ckt = 4; // Por defecto, tiempos de 16/32 us para semireloj y reloj
-					kbinit = 1; // Por defecto, inicialización de teclado incluido.
+					keybinit = 1; // Por defecto, inicialización de teclado incluido.
 
 					if (resetoption == 0)
 					{
