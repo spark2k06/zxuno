@@ -394,6 +394,7 @@ int main()
 
 			if (p2prev.button1 & !p2.button1) // Final combo P2
 			{
+				_delay_ms(200);
 				shiftmode = 0;
 				p2.button1 = 0;
 				p2prev.button1 = 0;
@@ -410,6 +411,7 @@ int main()
 
 			if (p1.button1 && p1.button2) // db15 / db9
 			{
+				_delay_ms(500);
 				shiftmode = 0;
 				p1.button1 = 0; p1.button2 = 0;
 				p1prev.button1 = 0; p1prev.button2 = 0;
@@ -418,6 +420,7 @@ int main()
 
 			if (p1.button1 && p1.left) // Desactivacion de escucha del Host
 			{
+				_delay_ms(500);
 				shiftmode = 0;
 				p1.button1 = 0; p1.left = 0;
 				p1prev.button1 = 0; p1prev.left = 0;
@@ -426,6 +429,7 @@ int main()
 
 			if (p1.button1 && p1.right) // Activacion de escucha del Host
 			{
+				_delay_ms(500);
 				shiftmode = 0;
 				p1.button1 = 0; p1.right = 0;
 				p1prev.button1 = 0; p1prev.right = 0;
@@ -434,6 +438,7 @@ int main()
 
 			if (p1prev.button1 & !p1.button1) // Final combo
 			{
+				_delay_ms(200);
 				shiftmode = 0;
 				p1.button1 = 0;
 				p1prev.button1 = 0;
