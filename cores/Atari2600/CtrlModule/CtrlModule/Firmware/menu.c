@@ -5,7 +5,7 @@
 
 int joykeys;
 int keys_p1[5] = { 0x1d, 0x1b, 0x1c, 0x23, 0x2b}; // WSAD -> F (Default)
-int keys_p2[5] = { 0x43, 0x42, 0x3b, 0x4b, 0x33}; // IKJL -> J (Default)
+int keys_p2[5] = { 0x43, 0x42, 0x3b, 0x4b, 0x33}; // IKJL -> H (Default)
 
 static struct menu_entry *menu;
 static int menu_visible=0;
