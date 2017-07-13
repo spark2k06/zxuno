@@ -13,7 +13,7 @@ const unsigned char P1Map0[] = { // Mapa 0 - Player 1 -> Por defecto al iniciar 
 	KEY_5,	        // SELECT
 	KEY_1,		    // START
 	KEY_SPACE,      // BUTTON 1
-	KEY_E,       	// BUTTON 2
+	KEY_X,       	// BUTTON 2		-> Cambio a 'X' para adaptarnos a cores arcade y Sega Master System
 	KEY_R,       	// BUTTON 3
 	KEY_D,       	// BUTTON 4
 	KEY_F,       	// BUTTON 5
@@ -29,7 +29,7 @@ const unsigned char P2Map0[] = { // Mapa 0 - Player 2 -> Por defecto al iniciar 
 	KEY_6,	        // SELECT
 	KEY_2,		    // START
 	KEY_H,		    // BUTTON 1
-	KEY_G,       	// BUTTON 2
+	KEY_Y,       	// BUTTON 2		-> Cambio a 'Y' para adaptarnos a configuracion por defecto de cores NES y Atari 2600
 	KEY_N,       	// BUTTON 3
 	KEY_B,       	// BUTTON 4
 	KEY_Y,       	// BUTTON 5
@@ -45,8 +45,8 @@ const unsigned char P1Map1[] = { // Mapa 1 - Player 1 (WSAD)
 	KEY_5,	        // SELECT
 	KEY_1,		    // START
 	KEY_F,		    // BUTTON 1
-	KEY_E,       	// BUTTON 2
-	KEY_R,       	// BUTTON 3
+	KEY_R,       	// BUTTON 2		-> Cambio a 'R' para adaptarnos a configuracion por defecto de cores NES y Atari 2600
+	KEY_E,       	// BUTTON 3
 	KEY_D,       	// BUTTON 4
 	KEY_F,       	// BUTTON 5
 	KEY_C        	// BUTTON 6
@@ -61,7 +61,7 @@ const unsigned char P2Map1[] = { // Mapa 1 - Player 2 (QAOP)
 	KEY_6,	        // SELECT
 	KEY_2,		    // START
 	KEY_H,		    // BUTTON 1
-	KEY_G,       	// BUTTON 2
+	KEY_Y,       	// BUTTON 2		-> Cambio a 'Y' para adaptarnos a configuracion por defecto de cores NES y Atari 2600
 	KEY_N,       	// BUTTON 3
 	KEY_B,       	// BUTTON 4
 	KEY_Y,       	// BUTTON 5
