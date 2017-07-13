@@ -1,10 +1,12 @@
 #include "osd.h"
 #include "menu.h"
 #include "keyboard.h"
+#include "host.h"
 
-
-int joya;
-int joyb;
+int joykeys1;
+int joykeys2;
+int keys_p1[8] = { 0x1d, 0x1b, 0x1c, 0x23, 0x2b, 0x2d, 0x2e, 0x16}; // WSAD -> FR (Default) (5,1)
+int keys_p2[8] = { 0x43, 0x42, 0x3b, 0x4b, 0x33, 0x35, 0x36, 0x1e}; // IKJL -> HY (Default) (6,2)
 
 static struct menu_entry *menu;
 static int menu_visible=0;
@@ -26,7 +28,7 @@ void Menu_Show()
 void Menu_Hide()
 {
 	// Wait for key releases before hiding the menu, to avoid stray keyup messages reaching the host core.
-	while(TestKey(KEY_ESC) || TestKey(KEY_ENTER))
+	while(TestKey(KEY_ESC) || TestKey(KEY_ENTER) || TestKey(keys_p1[4]))
 		HandlePS2RawCodes();
 	OSD_Show(menu_visible=0);
 }
@@ -107,51 +109,66 @@ int Menu_Run()
 		OSD_Show(menu_visible^=1);
 	}
 
-	joya=0;
-	joyb=0;
+	joykeys1=0;
+    joykeys2=0;
+	
+	int auxkey;
+	
+	if(TestKey(KEY_F4)&2) // Swapping players keys...
+	{
+		auxkey = keys_p2[0]; keys_p2[0] = keys_p1[0]; keys_p1[0] = auxkey;
+		auxkey = keys_p2[1]; keys_p2[1] = keys_p1[1]; keys_p1[1] = auxkey;
+		auxkey = keys_p2[2]; keys_p2[2] = keys_p1[2]; keys_p1[2] = auxkey;
+		auxkey = keys_p2[3]; keys_p2[3] = keys_p1[3]; keys_p1[3] = auxkey;
+		auxkey = keys_p2[4]; keys_p2[4] = keys_p1[4]; keys_p1[4] = auxkey;
+		auxkey = keys_p2[5]; keys_p2[5] = keys_p1[5]; keys_p1[5] = auxkey;
+        auxkey = keys_p2[6]; keys_p2[6] = keys_p1[6]; keys_p1[6] = auxkey;
+        auxkey = keys_p2[7]; keys_p2[7] = keys_p1[7]; keys_p1[7] = auxkey;
+	}		
 
 	if(!menu_visible)	// Swallow any keystrokes that occur while the OSD is hidden...
 	{
-		if(TestKey(KEY_ENTER))
-			joya|=0x80;
-		if(TestKey(KEY_RSHIFT))
-			joya|=0x40;
-		if(TestKey(KEY_RCTRL))
-			joya|=0x10;
-		if(TestKey(KEY_ALTGR))
-			joya|=0x20;
-		if(TestKey(KEY_UPARROW))
-			joya|=0x01;
-		if(TestKey(KEY_DOWNARROW))
-			joya|=0x02;
-		if(TestKey(KEY_LEFTARROW))
-			joya|=0x04;
-		if(TestKey(KEY_RIGHTARROW))
-			joya|=0x08;
 
-		if(TestKey(KEY_CAPSLOCK))
-			joyb|=0x80;
-		if(TestKey(KEY_LSHIFT))
-			joyb|=0x40;
-		if(TestKey(KEY_LCTRL))
-			joyb|=0x10;
-		if(TestKey(KEY_ALT))
-			joyb|=0x20;
-		if(TestKey(KEY_W))
-			joyb|=0x01;
-		if(TestKey(KEY_S))
-			joyb|=0x02;
-		if(TestKey(KEY_A))
-			joyb|=0x04;
-		if(TestKey(KEY_D))
-			joyb|=0x08;
+		// Player 1
+		if(TestKey(keys_p1[0])) // Up
+			joykeys1|=0x01;
+		if(TestKey(keys_p1[1])) // Down
+			joykeys1|=0x02;
+		if(TestKey(keys_p1[2])) // Left
+			joykeys1|=0x04;
+		if(TestKey(keys_p1[3])) // Right
+			joykeys1|=0x08;
+		if(TestKey(keys_p1[4])) // B1
+			joykeys1|=0x10;
+		if(TestKey(keys_p1[5])) // B2
+			joykeys1|=0x20;
+		if(TestKey(keys_p1[6])) // Select
+			joykeys1|=0x40;
+		if(TestKey(keys_p1[7])) // Start
+			joykeys1|=0x80;
+			
+		// Player 2
+		if(TestKey(keys_p2[0])) // Up
+			joykeys2|=0x01;
+		if(TestKey(keys_p2[1])) // Down
+			joykeys2|=0x02;
+		if(TestKey(keys_p2[2])) // Left
+			joykeys2|=0x04;
+		if(TestKey(keys_p2[3])) // Right
+			joykeys2|=0x08;
+		if(TestKey(keys_p2[4])) // B1
+			joykeys2|=0x10;
+		if(TestKey(keys_p2[5])) // B2
+			joykeys2|=0x20;
+		if(TestKey(keys_p2[6])) // Select
+			joykeys2|=0x40;
+		if(TestKey(keys_p2[7])) // Start
+			joykeys2|=0x80;
+		
+		HW_HOST(REG_HOST_JOYKEY1) = joykeys1;
+        HW_HOST(REG_HOST_JOYKEY2) = joykeys2;
 
-		//q
-		if(TestKey(KEY_1))
-			Start();
-
-		if(TestKey(KEY_2))
-			Select();
+		//q       
 		// master reset
 		if ((TestKey(KEY_LCTRL) || TestKey(KEY_RCTRL)) && (TestKey(KEY_ALT) || TestKey(KEY_ALTGR)) && TestKey(KEY_BACKSP) ) 
 		{
@@ -171,14 +188,14 @@ int Menu_Run()
 		masterReset();
 	}
 
-	if(TestKey(KEY_UPARROW)&2)
+	if((TestKey(KEY_UPARROW)&2) || (TestKey(keys_p1[0])&2))
 	{
 		if(currentrow)
 			--currentrow;
 		else if((m+menurows)->action)
 			MENU_ACTION_CALLBACK((m+menurows)->action)(ROW_LINEUP);
 	}
-	if(TestKey(KEY_DOWNARROW)&2)
+	if((TestKey(KEY_DOWNARROW)&2) || (TestKey(keys_p1[1])&2))
 	{
 		if(currentrow<(menurows-1))
 			++currentrow;
@@ -186,7 +203,7 @@ int Menu_Run()
 			MENU_ACTION_CALLBACK((m+menurows)->action)(ROW_LINEDOWN);
 	}
 
-	if(TestKey(KEY_PAGEUP)&2)
+	if((TestKey(KEY_PAGEUP)&2) || (TestKey(keys_p1[2])&2))
 	{
 		if(currentrow)
 			currentrow=0;
@@ -194,7 +211,7 @@ int Menu_Run()
 			MENU_ACTION_CALLBACK((m+menurows)->action)(ROW_PAGEUP);
 	}
 
-	if(TestKey(KEY_PAGEDOWN)&2)
+	if((TestKey(KEY_PAGEDOWN)&2) || (TestKey(keys_p1[3])&2))
 	{
 		if(currentrow<(menurows-1))
 			currentrow=menurows-1;
@@ -242,7 +259,7 @@ int Menu_Run()
 	}
 
 
-	if(TestKey(KEY_ENTER)&2)
+	if((TestKey(KEY_ENTER)&2) || (TestKey(keys_p1[4])&2))
 	{
 		struct menu_entry *m=menu;
 		i=currentrow;

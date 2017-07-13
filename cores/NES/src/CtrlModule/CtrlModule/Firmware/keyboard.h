@@ -32,6 +32,12 @@
 
 #define KEY_P 0x4d
 #define KEY_T 0x2c
+#define KEY_BACKSP 0x66
+#define KEY_1 0x16
+#define KEY_2 0x1E
+
+#define KEY_5 0x2E
+#define KEY_6 0x36
 
 #define KEY_A 0x1c
 #define KEY_D 0x23
@@ -44,10 +50,23 @@
 #define KEY_ALT	0x11
 #define KEY_ALTGR 0x91
 
-#define KEY_1 0x16
-#define KEY_2 0x1E
+// Player 1
 
-#define KEY_BACKSP 0x66
+#define KEY_A 0x1c
+#define KEY_D 0x23
+#define KEY_W 0x1d
+#define KEY_S 0x1b
+#define KEY_F 0x2b
+#define KEY_R 0x2d
+
+// Player 2
+
+#define KEY_I 0x43
+#define KEY_K 0x42
+#define KEY_J 0x3b
+#define KEY_L 0x4b
+#define KEY_H 0x33
+#define KEY_Y 0x35
 
 
 int HandlePS2RawCodes();

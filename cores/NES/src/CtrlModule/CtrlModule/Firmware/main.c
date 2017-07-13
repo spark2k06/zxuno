@@ -10,6 +10,10 @@
 
 fileTYPE file;
 
+extern int keys_p1[];
+extern int keys_p2[];
+extern int joykeys1;
+
 
 int OSD_Puts(char *str)
 {
@@ -59,18 +63,13 @@ void Reset(int row)
 }
 
 void Select(int row)
-{
-	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_SELECT|HOST_CONTROL_DIVERT_KEYBOARD; // Send select
-	SuperDelay();
-	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_DIVERT_KEYBOARD;
+{    
+	HW_HOST(REG_HOST_JOYKEY1)=joykeys1 | 0x40; // Send select
 }
 
 void Start(int row)
-{
-	
-	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_START|HOST_CONTROL_DIVERT_KEYBOARD; // Send start
-	SuperDelay();
-	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_DIVERT_KEYBOARD;
+{	
+	HW_HOST(REG_HOST_JOYKEY1)=joykeys1 | 0x80; // Send start	
 }
 
 void ResetLoader()
@@ -137,6 +136,40 @@ static struct menu_entry loadfailed[]=
 	{MENU_ENTRY_NULL,0,0}
 };
 
+static int LoadKeys()
+{
+	int opened;
+	
+	HW_HOST(REG_HOST_CONTROL)=HOST_CONTROL_RESET;
+		
+	if((opened=FileOpen(&file,"KEYSP1     \0")))
+	{
+		if(FileRead(&file,sector_buffer))
+		{
+			
+			keys_p1[0] = (int)sector_buffer[0];
+			keys_p1[1] = (int)sector_buffer[1];
+			keys_p1[2] = (int)sector_buffer[2];
+			keys_p1[3] = (int)sector_buffer[3];
+			keys_p1[4] = (int)sector_buffer[4];
+			keys_p1[5] = (int)sector_buffer[5];
+		}		
+	}
+	
+	if((opened=FileOpen(&file,"KEYSP2     \0")))
+	{
+		if(FileRead(&file,sector_buffer))
+		{
+			keys_p2[0] = (int)sector_buffer[0];
+			keys_p2[1] = (int)sector_buffer[1];
+			keys_p2[2] = (int)sector_buffer[2];
+			keys_p2[3] = (int)sector_buffer[3];
+			keys_p2[4] = (int)sector_buffer[4];
+			keys_p2[5] = (int)sector_buffer[5];
+		}		
+	}
+	
+}
 
 static int LoadROM(const char *filename)
 {
@@ -234,6 +267,8 @@ int main(int argc,char **argv)
 //	OSD_Puts("Loading initial ROM...\n");
 
 //	LoadROM("PIC1    RAW");
+
+	LoadKeys();
 
 	FileSelector_SetLoadFunction(LoadROM);
 	
