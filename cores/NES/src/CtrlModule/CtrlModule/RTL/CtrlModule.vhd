@@ -32,6 +32,9 @@ entity CtrlModule is
 		-- DIP switches
 		dipswitches : out std_logic_vector(15 downto 0);
 		size : out std_logic_vector(31 downto 0);
+		-- JOY Keystrokes
+		joykeys1: out std_logic_vector(15 downto 0);
+        joykeys2: out std_logic_vector(15 downto 0);
 		
 		-- RGB scaling
 --		scalered : out unsigned(4 downto 0);
@@ -43,8 +46,6 @@ entity CtrlModule is
 		host_divert_keyboard : out std_logic;
 		host_reset_n : out std_logic;
 		host_reset_loader : out std_logic;
-		host_select : out std_logic;
-		host_start : out std_logic;
 		host_master_reset : out std_logic := '0';
 		
 		-- Boot upload signals
@@ -323,11 +324,9 @@ begin
 							mem_busy<='0';
 							host_reset_n<=not mem_write(0);
 							host_divert_keyboard<=mem_write(1);
-							host_divert_sdcard<=mem_write(2);
-							host_select<=mem_write(3);
-							host_start<=mem_write(4);
-							host_reset_loader <=mem_write(5);
-							host_master_reset <=mem_write(6);
+							host_divert_sdcard<=mem_write(2);							
+							host_reset_loader <=mem_write(3);
+							host_master_reset <=mem_write(4);
 
 --						when X"F0" => -- Scale Red
 --							mem_busy<='0';
@@ -336,6 +335,14 @@ begin
 --						when X"F4" => -- Scale Green
 --							mem_busy<='0';
 --							scalegreen<=unsigned(mem_write(4 downto 0));
+							
+						when X"ED" => -- Joy Keystrokes P1
+							mem_busy<='0';
+							joykeys1<=mem_write(15 downto 0);
+                            
+						when X"EE" => -- Joy Keystrokes P2
+							mem_busy<='0';
+							joykeys2<=mem_write(15 downto 0);
 							
 						when X"F8" => -- ROM Size
 							mem_busy<='0';
