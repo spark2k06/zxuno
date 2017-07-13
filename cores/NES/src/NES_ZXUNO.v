@@ -37,6 +37,8 @@ module NES_ZXUNO(
   wire osd_window;
   wire osd_pixel;
   wire [15:0] dipswitches;
+  wire [15:0] joykeys1;
+  wire [15:0] joykeys2;
   wire scanlines;
   wire hq_enable;
   wire border;
@@ -48,8 +50,6 @@ module NES_ZXUNO(
   wire host_reset_loader;
   wire host_divert_sdcard;
   wire host_divert_keyboard;
-  wire host_select;
-  wire host_start;
   
   wire master_reset;
   
@@ -127,10 +127,8 @@ module NES_ZXUNO(
   wire [15:0] debugdata;
 
   wire [7:0] joystick1, joystick2;
-  wire p_sel = !host_select;
-  wire p_start = !host_start;
-  assign joystick1 = {~P_R, ~P_L, ~P_D, ~P_U, ~p_start, ~p_sel, ~P_tr, ~P_A};
-  
+  assign joystick1 = {~P_R | joykeys1[3], ~P_L | joykeys1[2], ~P_D | joykeys1[1], ~P_U | joykeys1[0], joykeys1[7], joykeys1[6], ~P_tr | joykeys1[4], ~P_A | joykeys1[5]};
+  assign joystick2 = {joykeys2[3], joykeys2[2], joykeys2[1], joykeys2[0], joykeys2[7], joykeys2[6], joykeys2[4], joykeys2[5]};
  
   always @(posedge clk) begin
     if (joypad_strobe) begin
@@ -268,13 +266,13 @@ wire [31:0] rom_size;
 			.spi_mosi(SPI_MOSI), 
 			.spi_clk(SPI_CLK), 
 			.spi_cs(SPI_CS), 
-			.dipswitches(dipswitches), 
+			.dipswitches(dipswitches),
+			.joykeys1(joykeys1),
+            .joykeys2(joykeys2),
 			.size(rom_size), 
 			.host_divert_sdcard(host_divert_sdcard), 
 			.host_divert_keyboard(host_divert_keyboard), 
 			.host_reset_n(host_reset_n), 
-			.host_select(host_select), 
-			.host_start(host_start),
 			.host_reset_loader(host_reset_loader),
 			.host_bootdata(bootdata), 
 			.host_bootdata_req(bootdata_req), 
