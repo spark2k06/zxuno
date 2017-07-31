@@ -6,6 +6,8 @@
 // Mapas del joystick
 
 const unsigned char P1Map0[] = { // Mapa 0 - Player 1 -> Por defecto al iniciar (OPQA)
+
+	// Jugador 1
 	KEY_Q,       	// UP
 	KEY_A,       	// DOWN
 	KEY_O,       	// LEFT
@@ -22,6 +24,8 @@ const unsigned char P1Map0[] = { // Mapa 0 - Player 1 -> Por defecto al iniciar 
 };
 
 const unsigned char P2Map0[] = { // Mapa 0 - Player 2 -> Por defecto al iniciar (IKJL)
+
+	// Jugador 2
 	KEY_I,       	// UP
 	KEY_K,       	// DOWN
 	KEY_J,       	// LEFT
@@ -38,6 +42,8 @@ const unsigned char P2Map0[] = { // Mapa 0 - Player 2 -> Por defecto al iniciar 
 };
 
 const unsigned char P1Map1[] = { // Mapa 1 - Player 1 (WSAD)
+
+	// Jugador 1
 	KEY_W,       	// UP
 	KEY_S,       	// DOWN
 	KEY_A,       	// LEFT
@@ -53,7 +59,9 @@ const unsigned char P1Map1[] = { // Mapa 1 - Player 1 (WSAD)
 
 };
 
-const unsigned char P2Map1[] = { // Mapa 1 - Player 2 (QAOP)
+const unsigned char P2Map1[] = { // Mapa 1 - Player 2 (IKJL)
+
+	// Jugador 2
 	KEY_I,       	// UP
 	KEY_K,       	// DOWN
 	KEY_J,       	// LEFT
@@ -70,6 +78,8 @@ const unsigned char P2Map1[] = { // Mapa 1 - Player 2 (QAOP)
 };
 
 const unsigned char P1Map2[] = { // Mapa 2 - Player 1 (Default MAME)
+
+	// Jugador 1
 	KEY_UP,       	// UP
 	KEY_DOWN,      	// DOWN
 	KEY_LEFT,      	// LEFT
@@ -86,6 +96,8 @@ const unsigned char P1Map2[] = { // Mapa 2 - Player 1 (Default MAME)
 };
 
 const unsigned char P2Map2[] = { // Mapa 2 - Player 2 (Default MAME)
+
+	// Jugador 2
 	KEY_R,       	// UP
 	KEY_F,       	// DOWN
 	KEY_D,       	// LEFT
@@ -385,7 +397,7 @@ void sendCodeMR(unsigned char key, uint16_t release, double ms, unsigned char sc
 		sendPS2(0xE0, 0);
 
 	if (key && release && scancodeset == 1) // Set 1 release
-		sendPS2(ScanCodes1[key] + 0x80, 0);
+		sendPS2(ScanCodes1[key] + 0x80, ms);
 
 	if (key && !release && scancodeset == 1) // Set 1 make
 		sendPS2(ScanCodes1[key], 0);

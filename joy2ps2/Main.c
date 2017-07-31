@@ -131,7 +131,7 @@ int main()
 	int keystrokes_idx = 35;
 	int rshift = 0;	
 	db15 = 1;
-	keybinit = 1;
+	keybinit = 0; // Por defecto, escucha deshabilitada para evitar conflictos con teclados reales
 	p1map = 0, p2map = 0;
 	keystrokes_supr = 0;	
 	ckt = 4; // Por defecto, tiempos de 16/32 us para semireloj y reloj
@@ -156,7 +156,7 @@ int main()
 	
 	DB15_PIN01 = 0b11111111; // Ponemos en alto pines 0 - 7
 	DB15_PIN02 = DB15_PIN02 | 0b00011111; // Ponemos en alto los pines 8 - 12, respetamos el contenido del resto ya que nos los utilzaremos
-	DB15_PORT01 = 0; // Input pullup 2 - 7 
+	DB15_PORT01 = 0; // Input pullup 0 - 7 
 	DB15_PORT02 = DB15_PORT02 & 0b11100000; // Input pullup 8 - 12
 
 	DDRC |= (1 << 0);		// Select as output (Pin A0 -> Player 1)
@@ -171,7 +171,7 @@ int main()
 	// Loop
 	while (1) {
 
-		if (keybinit & ps2Stat()) // Lineas CLK y/o DATA a 0
+		if ((keybinit | shiftmode) & ps2Stat()) // Lineas CLK y/o DATA a 0
 		{
 				
 			// wait for response
@@ -201,12 +201,14 @@ int main()
 						if (prevhostdata == 0xF0)
 						{
 							scancodeset = 1;
+							shiftmode = 0;
 						}
 						break;
 					case 0x02: // set scancode 2					
 						if (prevhostdata == 0xF0)
 						{
 							scancodeset = 2;
+							shiftmode = 0;
 						}
 						break;
 					case 0xED: // set/reset LEDs						
@@ -481,7 +483,7 @@ int main()
 					SetMapP1(p1map);
 					SetMapP2(p2map);					
 					ckt = 4; // Por defecto, tiempos de 16/32 us para semireloj y reloj
-					keybinit = 1; // Por defecto, inicialización de teclado incluido.
+					keybinit = 0; // Por defecto, escucha deshabilitada para evitar conflictos con teclados reales
 
 					if (resetoption == 0)
 					{

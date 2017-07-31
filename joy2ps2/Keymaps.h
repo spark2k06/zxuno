@@ -109,8 +109,8 @@
 #define PS2_CLK   PC2
 
 #define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
-#define CHECKUP (!(PINC & (1 << 4)) | !(DB15_PIN01 & (1 << 0)))
-#define CHECKDOWN (!(PINC & (1 << 5)) | !(DB15_PIN01 & (1 << 1)))
+#define CHECKUP (!(PINC & (1 << 4)))// | !(DB15_PIN01 & (1 << 0)))
+#define CHECKDOWN (!(PINC & (1 << 5)))// | !(DB15_PIN01 & (1 << 1)))
 
 #define HI 1
 #define LO 0
