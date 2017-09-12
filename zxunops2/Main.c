@@ -77,6 +77,8 @@ uint8_t soltarteclas;
 uint8_t shiftmod;
 uint8_t symbolmod;
 
+unsigned char prevshift = 0;
+
 unsigned char	hostdata = 0;
 unsigned char	hostdataAnt;
 unsigned char	codeset = 2;
@@ -495,32 +497,6 @@ void pulsafn(unsigned char row, unsigned char col, unsigned char key, unsigned c
 	fnpulsando = 1;
 }
 
-/*
-void pulsaysueltateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
-{
-unsigned char key=0, shift=0;
-
-if(modokb==cpc) {key=mapCPC[row][col]; shift=modCPC[row][col];}
-if(modokb==msx) {key=mapMSX[row][col]; shift=modMSX[row][col];}
-if(modokb==c64) {key=mapC64[row][col]; shift=modC64[row][col];}
-if(modokb==at8) {key=mapAT8[row][col]; shift=modAT8[row][col];}
-if(modokb==bbc) {key=mapBBC[row][col]; shift=modBBC[row][col];}
-if(modokb==aco) {key=mapACO[row][col]; shift=modACO[row][col];}
-if(modokb==ap2) {key=mapAP2[row][col]; shift=modAP2[row][col];}
-if(modokb==vic) {key=mapVIC[row][col]; shift=modVIC[row][col];}
-if(modokb==ori) {key=mapORI[row][col]; shift=modORI[row][col];}
-if(modokb==sam) {key=mapSAM[row][col]; shift=modSAM[row][col];}
-if(modokb==jup) {key=mapJUP[row][col]; shift=modJUP[row][col];}
-if(modokb==xt1) {key=mapXT1[row][col]; shift=modXT1[row][col];}
-
-if(shift) {if(codeset==2) sendPS2(KEY_RSHIFT); else sendPS2(KS1_RSHIFT); }// _delay_us(5);}
-sendPS2(key); _delay_us(50);
-if(codeset==2) {sendPS2(0xF0);sendPS2(key);} else sendPS2(key+KS1_RELEASE);
-if(shift) {if(codeset==2) {sendPS2(0xF0); sendPS2(KEY_RSHIFT);} else sendPS2(KS1_RSHIFT+KS1_RELEASE); }// _delay_us(5);}
-_delay_ms(KBp); //Pequeña pausa para evitar la "super-repeticion-atodapastilla"
-matriz[row][col]=0;
-}
-*/
 void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
 {
 	unsigned char key = 0, shift = 0;
@@ -537,7 +513,7 @@ void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modok
 	if (modokb == sam) { key = mapSAM[row][col]; shift = modSAM[row][col]; }
 	if (modokb == jup) { key = mapJUP[row][col]; shift = modJUP[row][col]; }
 	if (modokb == xt1) { key = mapXT1[row][col]; shift = modXT1[row][col]; }
-
+			
 	if (shift) { if (codeset == 2) sendPS2(KEY_RSHIFT); else sendPS2(KS1_RSHIFT); }
 	sendPS2(key);
 	matriz[row][col] = 3;
@@ -563,30 +539,6 @@ if(codeset==2) {sendPS2(0xF0);sendPS2(key);} else sendPS2(key+KS1_RELEASE);
 if(shift) {if(codeset==2) {sendPS2(0xF0); sendPS2(KEY_RSHIFT);} else sendPS2(KS1_RSHIFT+KS1_RELEASE); }
 matriz[row][col]=0;
 }
-/*
-void pulsaysueltateclaconshift(unsigned char row, unsigned char col, unsigned char key)
-{
-unsigned char cursores=0;
-if(!key) //si no esta mapeada saca la mayuscula
-{
-if(codeset==2) sendPS2(KEY_RSHIFT); else sendPS2(KS1_RSHIFT);//_delay_us(5);
-if(codeset==2) sendPS2(mapZX[row][col]); else sendPS2(mapSET1[row][col]);
-_delay_us(5);
-if(codeset==2) {sendPS2(0xF0); sendPS2(mapZX[row][col]); sendPS2(0xF0); sendPS2(KEY_RSHIFT); } //_delay_us(5);
-else           {sendPS2(mapSET1[row][col]+KS1_RELEASE); sendPS2(KS1_RSHIFT+KS1_RELEASE);}
-}else
-{
-if(codeset==2 && (key==KEY_LEFT || key==KEY_RIGHT || key==KEY_UP || key==KEY_DOWN)) {sendPS2(0xE0); cursores=1;} //Es una tecla del codeset2 que necesita E0
-if(codeset==1 && (key==KS1_LEFT || key==KS1_RIGHT || key==KS1_UP || key==KS1_DOWN)) {sendPS2(0xE0); cursores=1;}//Es una tecla del codeset1 que necesita E0
-sendPS2(key); _delay_us(5);
-if(codeset==2 && (key==KEY_LEFT || key==KEY_RIGHT || key==KEY_UP || key==KEY_DOWN)) sendPS2(0xE0); //Es una tecla del codeset2 que necesita E0
-if(codeset==1 && (key==KS1_LEFT || key==KS1_RIGHT || key==KS1_UP || key==KS1_DOWN)) sendPS2(0xE0); //Es una tecla del codeset1 que necesita E0
-if(codeset==2) {sendPS2(0xF0); sendPS2(key);} else sendPS2(key+KS1_RELEASE); //_delay_us(5);
-}
-if(!cursores) _delay_ms(KBp); else if(KBc) _delay_ms(KBc);  //Pequeña pausa para evitar la "super-repeticion-atodapastilla"
-matriz[row][col]=0;
-}
-*/
 void pulsateclaconshift(unsigned char row, unsigned char col, unsigned char key)
 {
 	unsigned char cursores = 0;
@@ -625,7 +577,7 @@ void sueltateclaconshift(unsigned char row, unsigned char col, unsigned char key
 void matrixScan()
 {
 	uint8_t r, c, b;
-
+	
 	fnpulsada = 0; //Se pone a 0 la pulsacion de una tecla de funcion
 
 				   //Controla los Botones Externos del Arduino
@@ -812,27 +764,31 @@ void matrixScan()
 			if (symbolmod == 3)
 			{
 				for (r = 0; r<ROWS; r++) for (c = 0; c<COLS; c++)
-				{
-					//if(matriz[r][c]>1 && matriz[r][c]<4) pulsaysueltateclaconsymbol(r,c,modo);
+				{					
 					if (matriz[r][c] == 2) pulsateclaconsymbol(r, c, modo);
-					if (matriz[r][c] == 1) sueltateclaconsymbol(r, c, modo);
-
-					//if(matriz[r][c]==1) matriz[r][c]=0; //Si esta marcada para soltar se pone a 0
+					if (matriz[r][c] == 1) sueltateclaconsymbol(r, c, modo);										
 				}
 			}
 			//Si esta pulsada la tecla shift se pulsa y suelta esa tecla
 			if (shiftmod == 3)
 			{
 				for (r = 0; r<ROWS; r++) for (c = 0; c<COLS; c++)
-				{
-					//if(matriz[r][c]>1 && matriz[r][c]<4) { if(codeset==2) pulsaysueltateclaconshift(r,c,mapEXT[r][c]); else pulsaysueltateclaconshift(r,c,mapEXT1[r][c]); }
+				{					
 					if (matriz[r][c] == 2) { if (codeset == 2) pulsateclaconshift(r, c, mapEXT[r][c]); else pulsateclaconshift(r, c, mapEXT1[r][c]); }
 					if (matriz[r][c] == 1) { if (codeset == 2) sueltateclaconshift(r, c, mapEXT[r][c]); else sueltateclaconshift(r, c, mapEXT1[r][c]); }
 				}
 			}
 			//Si se suelta symbol se pone a cero sin mas (No se mantiene ninguna tecla pulsada de symbol que requiera mandar la marca de soltar)
-			if (symbolmod == 1) symbolmod = 0;
+			if (symbolmod == 1)
+			{
+				for (r = 0; r<ROWS; r++) for (c = 0; c<COLS; c++) // Hacemos un repaso por si queda alguna tecla pulsada o por liberar no detectada con symbolmod = 3
+				{
+					if (matriz[r][c] > 0) { sueltateclaconsymbol(r, c, modo); matriz[r][c] = 3; } // La liberamos y la marcamos como pulsada para que no se active en el siguiente ciclo
+				}
+				symbolmod = 0;
+			}
 			if (shiftmod == 1)  shiftmod = 0;
+			
 
 		}//Fin del If/else manejo de modo ZX u otros Keymaps
 	}//Fin del If del control del teclado.

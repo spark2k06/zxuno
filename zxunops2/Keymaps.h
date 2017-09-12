@@ -10,7 +10,7 @@
 //KEY_H: (flecha) KEY_J: -        KEY_K: +        KEY_L: =        KEY_ENTER: NADA
 //KEY_B: *        KEY_N: ,        KEY_M: .        NADA            KEY_SPACE: NADA
 
-const uint8_t version[8] = { 0,5,0,9,2,0,1,7 }; //DDMMAAAA
+const uint8_t version[8] = { 1,2,0,9,2,0,1,7 }; //DDMMAAAA
 
 #define KEY_ESCAPE 0x76
 #define KEY_DELETE 0x71
