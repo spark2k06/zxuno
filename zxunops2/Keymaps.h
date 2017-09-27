@@ -10,7 +10,7 @@
 //KEY_H: (flecha) KEY_J: -        KEY_K: +        KEY_L: =        KEY_ENTER: NADA
 //KEY_B: *        KEY_N: ,        KEY_M: .        NADA            KEY_SPACE: NADA
 
-const uint8_t version[8] = { 1,2,0,9,2,0,1,7 }; //DDMMAAAA
+const uint8_t version[8] = { 2,6,0,9,2,0,1,7 }; //DDMMAAAA
 
 #define KEY_ESCAPE 0x76
 #define KEY_DELETE 0x71
@@ -214,33 +214,33 @@ const uint8_t version[8] = { 1,2,0,9,2,0,1,7 }; //DDMMAAAA
 #define MODO_A       ori
 #define MODO_B       sam
 #define MODO_C       jup
-#define MODO_D       0
-#define MODO_E       0
-#define MODO_F       0
-#define MODO_G       0
-#define MODO_H       0
-#define MODO_I       0
-#define MODO_J       0
-#define MODO_K       0
-#define MODO_L       0
-#define MODO_M       0
-#define MODO_N       0
-#define MODO_O       0
-#define MODO_P       0
-#define MODO_Q       0
-#define MODO_R       0
-#define MODO_S       0
-#define MODO_T       0
-#define MODO_U       0
-#define MODO_V       0
-#define MODO_W       0
-#define MODO_X       0
-#define MODO_Y       0
-#define MODO_Z       0
-#define MODO_SS      0
-#define MODO_CS      0
-#define MODO_ENTER   0
-#define MODO_SPACE   0
+#define MODO_D       -1
+#define MODO_E       -1
+#define MODO_F       -1
+#define MODO_G       -1
+#define MODO_H       -1
+#define MODO_I       -1
+#define MODO_J       -1
+#define MODO_K       -1
+#define MODO_L       -1
+#define MODO_M       -1
+#define MODO_N       -1
+#define MODO_O       -1
+#define MODO_P       -1
+#define MODO_Q       -1
+#define MODO_R       -1
+#define MODO_S       -1
+#define MODO_T       -1
+#define MODO_U       -1
+#define MODO_V       -1
+#define MODO_W       -1
+#define MODO_X       -1
+#define MODO_Y       -1
+#define MODO_Z       -1
+#define MODO_SS      -1
+#define MODO_CS      -1
+#define MODO_ENTER   -1
+#define MODO_SPACE   -1
 #define MODO_1       cpc
 #define MODO_2       msx
 #define MODO_3       c64
@@ -249,24 +249,22 @@ const uint8_t version[8] = { 1,2,0,9,2,0,1,7 }; //DDMMAAAA
 #define MODO_6       aco
 #define MODO_7       ap2
 #define MODO_8       vic
-#define MODO_9       xt1
+#define MODO_9       pc
 #define MODO_0       zx
 
 
 #define ROWS 8  //Numero de Filas de teclado en Arduino
 #define COLS 5  //Numero de Columnas de teclado en Arduino
 #define NUMSW 2 //Numero de botones externos en Arduino
-#define MAXKB xt1 //Numero de mapas de teclado maximo (sin contar el de ZX) el xt1 siempre sera el ultimo.
+#define MAXKB pc //Numero de mapas de teclado maximo (sin contar el de ZX) el pc siempre sera el ultimo.
 
 const uint8_t versionKeyCodes[10] = { KEY_0,KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9 };
+const uint8_t eepromsavename[14] = { KEY_C,KEY_F,KEY_G,KEY_F,KEY_L,KEY_A,KEY_S,KEY_H,KEY_E,KEY_D };
 
-enum KBMODE { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, xt1 };
+enum KBMODE { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, pc };
 // mapa ZX Spectrum
 // CKm=Multiplicador de CK1 y CK2
-// KBp=Pausa en ms entre teclas cuando se pulsan con shift o symbol en modo > 0
-// KBc=Pausa en ms entre el uso de los cursores
-// KBn=Pausa en ms entre las teclas normales
-const uint8_t nomZX[] = { 2,KEY_Z,KEY_X,1,0,0,0 }; //Numero de Letras,(letras[n],,),CKm,KBp,KBc,KBn)
+const uint8_t nomZX[] = { 2,KEY_Z,KEY_X,1}; //Numero de Letras,(letras[n],,),CKm)
 const uint8_t mapZX[ROWS][COLS] = {
 	{ KEY_5,          KEY_4,          KEY_3,          KEY_2,          KEY_1 },
 	{ KEY_T,          KEY_R,          KEY_E,          KEY_W,          KEY_Q },
@@ -311,249 +309,19 @@ const uint8_t mapEXT1[ROWS][COLS] = { //Mapa especial con caps shift para Codese
 	{ 0,          0,          0,          0, KS1_ESCAPE }
 };
 
-const uint8_t nomCPC[] = { 3,KEY_C,KEY_P,KEY_C,4,25,0,0 };
-const uint8_t mapCPC[ROWS][COLS] = { //Mapa de CPC pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,    KEY_ACORCHE,          KEY_1 },
-	{ KEY_PUNTO,       KEY_COMA,              0,              0,              0 },
-	{ KEY_BKSLASH,    KEY_CCORCHE,       KEY_LESS,    KEY_ACORCHE,       KEY_LESS },
-	{ KEY_6,          KEY_7,          KEY_8,          KEY_9,          KEY_0 },
-	{ KEY_CCORCHE,    KEY_BKSLASH,              0,    KEY_COMILLA,          KEY_2 },
-	{ KEY_SLASH,      KEY_SLASH,      KEY_IGUAL,    KEY_PTOCOMA,              0 },
-	{ KEY_IGUAL,      KEY_MENOS,    KEY_COMILLA,      KEY_MENOS,              0 },
-	{ KEY_PTOCOMA,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modCPC[ROWS][COLS] = { //Mod de CPC 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              0,              1 },
-	{ 1,              1,              0,              0,              0 },
-	{ 1,              1,              0,              1,              1 },
-	{ 1,              1,              1,              1,              1 },
-	{ 0,              0,              0,              0,              1 },
-	{ 0,              1,              1,              0,              0 },
-	{ 0,              0,              1,              1,              0 },
-	{ 1,              0,              0,              0,              0 }
-};
+const uint8_t nomCPC[] = { 3,KEY_C,KEY_P,KEY_C,4};
+const uint8_t nomMSX[] = { 3,KEY_M,KEY_S,KEY_X,4};
+const uint8_t nomC64[] = { 3,KEY_C,KEY_6,KEY_4,4};
+const uint8_t nomAT8[] = { 5,KEY_A,KEY_T,KEY_A,KEY_R,KEY_I,4};
+const uint8_t nomBBC[] = { 3,KEY_B,KEY_B,KEY_C,4};
+const uint8_t nomACO[] = { 5,KEY_A,KEY_C,KEY_O,KEY_R,KEY_N,4};
+const uint8_t nomVIC[] = { 3,KEY_V,KEY_I,KEY_C,4};
+const uint8_t nomORI[] = { 4,KEY_O,KEY_R,KEY_I,KEY_C,4};
+const uint8_t nomSAM[] = { 3,KEY_S,KEY_A,KEY_M,4};
+const uint8_t nomJUP[] = { 7,KEY_J,KEY_U,KEY_P,KEY_I,KEY_T,KEY_E,KEY_R,4};
+const uint8_t nomAP2[] = { 5,KEY_A,KEY_P,KEY_P,KEY_L,KEY_E,4};
 
-const uint8_t nomMSX[] = { 3,KEY_M,KEY_S,KEY_X,4,10,0,0 };
-const uint8_t mapMSX[ROWS][COLS] = { //Mapa de MSX(EN) pulsando Control (symbol shift)
-	{ KEY_5,        KEY_4,         KEY_3,    KEY_COMILLA,          KEY_1 },
-	{ KEY_PUNTO,     KEY_COMA,             0,              0,              0 },
-	{ KEY_ACORCHE,      KEY_TLD,   KEY_BKSLASH,    KEY_BKSLASH,    KEY_CCORCHE },
-	{ KEY_COMILLA,  KEY_PTOCOMA,         KEY_0,              0,      KEY_IGUAL },
-	{ KEY_2,  KEY_ACORCHE,             0,    KEY_PTOCOMA,          KEY_8 },
-	{ KEY_SLASH,    KEY_SLASH,             0,      KEY_IGUAL,              0 },
-	{ KEY_7,    KEY_MENOS,       KEY_TLD,          KEY_6,              0 },
-	{ KEY_9,     KEY_COMA,     KEY_PUNTO,              0,              0 }
-};
-const uint8_t modMSX[ROWS][COLS] = { //Mod de MSX(EN) 1 hay q usar Shift, 0 no hay que usar
-	{ 1,             1,             1,             1,             1 },
-	{ 1,             1,             0,             0,             0 },
-	{ 1,             0,             0,             1,             1 },
-	{ 0,             1,             1,             0,             0 },
-	{ 1,             0,             0,             0,             1 },
-	{ 0,             1,             0,             1,             0 },
-	{ 1,             0,             1,             1,             0 },
-	{ 1,             0,             0,             0,             0 }
-};
-
-const uint8_t nomC64[] = { 3,KEY_C,KEY_6,KEY_4,4,25,0,0 };
-const uint8_t mapC64[ROWS][COLS] = { //Mapa de C64 pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,    KEY_ACORCHE,          KEY_1 },
-	{ KEY_COMA,       KEY_LESS,              0,              0,              0 },
-	{ 0,              0,              0,      KEY_MENOS,              0 },
-	{ KEY_6,          KEY_7,          KEY_8,          KEY_9,          KEY_0 },
-	{ KEY_PTOCOMA,    KEY_COMILLA,              0,    KEY_COMILLA,          KEY_2 },
-	{ KEY_SLASH,      KEY_SLASH,              0,    KEY_PTOCOMA,              0 },
-	{ KEY_BKSLASH,      KEY_MENOS,        KEY_F10,      KEY_IGUAL,              0 },
-	{ KEY_CCORCHE,       KEY_LESS,       KEY_COMA,              0,              0 }
-};
-const uint8_t modC64[ROWS][COLS] = { //Mod de C64 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              0,              1 },
-	{ 1,              1,              0,              0,              0 },
-	{ 0,              0,              0,              1,              0 },
-	{ 1,              1,              1,              1,              1 },
-	{ 1,              1,              0,              0,              1 },
-	{ 0,              1,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 }
-};
-
-const uint8_t nomAT8[] = { 5,KEY_A,KEY_T,KEY_A,KEY_R,KEY_I,4,25,0,0 };
-const uint8_t mapAT8[ROWS][COLS] = { //Mapa de Atari800 pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,          KEY_8,          KEY_1 },
-	{ KEY_IGUAL,      KEY_MENOS,              0,        KEY_F12,        KEY_F11 },
-	{ 0,              0,    KEY_COMILLA,    KEY_CCORCHE,              0 },
-	{ KEY_6,          KEY_7,          KEY_9,          KEY_0,    KEY_ACORCHE },
-	{ KEY_COMA,      KEY_PUNTO,              0,    KEY_PTOCOMA,          KEY_2 },
-	{ KEY_SLASH,      KEY_SLASH,              0,    KEY_PTOCOMA,              0 },
-	{ KEY_BKSLASH,    KEY_ACORCHE,    KEY_COMILLA,    KEY_CCORCHE,              0 },
-	{ KEY_BKSLASH,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modAT8[ROWS][COLS] = { //Mod de Atari800 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              1,              1 },
-	{ 0,              0,              0,              0,              0 },
-	{ 0,              0,              1,              1,              0 },
-	{ 1,              1,              1,              1,              1 },
-	{ 1,              1,              0,              0,              1 },
-	{ 0,              1,              0,              1,              0 },
-	{ 1,              0,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 }
-};
-
-const uint8_t nomBBC[] = { 3,KEY_B,KEY_B,KEY_C,4,25,0,0 };
-const uint8_t mapBBC[ROWS][COLS] = { //Mapa de BBC pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,        KEY_TLD,          KEY_1 },
-	{ KEY_PUNTO,       KEY_COMA,              0,        KEY_F12,        KEY_F12 },
-	{ 0,              0,              0,       KEY_LESS,      KEY_MENOS },
-	{ KEY_6,          KEY_7,          KEY_8,          KEY_9,          KEY_0 },
-	{ 0,              0,              0,    KEY_PTOCOMA,          KEY_2 },
-	{ KEY_SLASH,      KEY_SLASH,    KEY_BKSLASH,    KEY_COMILLA,              0 },
-	{ KEY_IGUAL,    KEY_BKSLASH,    KEY_PTOCOMA,      KEY_MENOS,              0 },
-	{ KEY_COMILLA,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modBBC[ROWS][COLS] = { //Mod de BBC 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              0,              1 },
-	{ 1,              1,              0,              0,              1 },
-	{ 0,              0,              0,              1,              0 },
-	{ 1,              1,              1,              1,              1 },
-	{ 0,              0,              0,              0,              1 },
-	{ 0,              1,              1,              0,              0 },
-	{ 0,              0,              1,              1,              0 },
-	{ 1,              0,              0,              0,              0 }
-};
-
-const uint8_t nomACO[] = { 5,KEY_A,KEY_C,KEY_O,KEY_R,KEY_N,4,25,0,0 };
-const uint8_t mapACO[ROWS][COLS] = { //Mapa de Acorn pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,          KEY_0,          KEY_1 },
-	{ KEY_PUNTO,       KEY_COMA,              0,              0,              0 },
-	{ 0,              0,    KEY_BKSLASH,              0,              0 },
-	{ KEY_6,          KEY_7,          KEY_8,          KEY_9,    KEY_CCORCHE },
-	{ KEY_ACORCHE,    KEY_CCORCHE,              0,    KEY_PTOCOMA,          KEY_2 },
-	{ KEY_SLASH,      KEY_SLASH,    KEY_ACORCHE,    KEY_COMILLA,              0 },
-	{ 0,      KEY_MENOS,    KEY_PTOCOMA,      KEY_MENOS,              0 },
-	{ KEY_COMILLA,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modACO[ROWS][COLS] = { //Mod de XXX 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              1,              1 },
-	{ 1,              1,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 },
-	{ 1,              1,              1,              1,              1 },
-	{ 0,              0,              0,              0,              1 },
-	{ 0,              1,              1,              0,              0 },
-	{ 0,              0,              1,              1,              0 },
-	{ 1,              0,              0,              0,              0 }
-};
-
-const uint8_t nomVIC[] = { 3,KEY_V,KEY_I,KEY_C,4,25,0,0 };
-const uint8_t mapVIC[ROWS][COLS] = { //Mapa de VIC20 pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,    KEY_ACORCHE,          KEY_1 },
-	{ KEY_COMA,       KEY_LESS,              0,              0,              0 },
-	{ 0,              0,              0,      KEY_IGUAL,              0 },
-	{ KEY_6,          KEY_7,          KEY_8,          KEY_9,          KEY_0 },
-	{ KEY_PTOCOMA,    KEY_COMILLA,              0,    KEY_COMILLA,          KEY_2 },
-	{ KEY_SLASH,      KEY_SLASH,              0,    KEY_PTOCOMA,              0 },
-	{ 0,      KEY_IGUAL,      KEY_MENOS,    KEY_BKSLASH,              0 },
-	{ KEY_CCORCHE,       KEY_LESS,       KEY_COMA,              0,              0 }
-};
-const uint8_t modVIC[ROWS][COLS] = { //Mod de VIC20 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              0,              1 },
-	{ 1,              1,              0,              0,              0 },
-	{ 0,              0,              0,              1,              0 },
-	{ 1,              1,              1,              1,              1 },
-	{ 1,              1,              0,              0,              1 },
-	{ 0,              1,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 }
-};
-
-const uint8_t nomORI[] = { 4,KEY_O,KEY_R,KEY_I,KEY_C,4,25,0,0 };
-const uint8_t mapORI[ROWS][COLS] = { //Mapa de Oric pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,          KEY_2,          KEY_1 },
-	{ KEY_PUNTO,       KEY_COMA,              0,              0,              0 },
-	{ KEY_CCORCHE,    KEY_ACORCHE,    KEY_BKSLASH,    KEY_BKSLASH,              0 },
-	{ KEY_7,    KEY_COMILLA,          KEY_9,          KEY_0,              0 },
-	{ KEY_ACORCHE,    KEY_CCORCHE,              0,    KEY_PTOCOMA,    KEY_COMILLA },
-	{ KEY_SLASH,      KEY_SLASH,      KEY_MENOS,    KEY_PTOCOMA,              0 },
-	{ KEY_6,      KEY_MENOS,      KEY_IGUAL,      KEY_IGUAL,              0 },
-	{ KEY_8,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modORI[ROWS][COLS] = { //Mod de Oric 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              1,              1 },
-	{ 1,              1,              0,              0,              0 },
-	{ 1,              1,              0,              1,              0 },
-	{ 1,              0,              1,              1,              0 },
-	{ 0,              0,              0,              0,              1 },
-	{ 0,              1,              1,              1,              0 },
-	{ 1,              0,              1,              0,              0 },
-	{ 1,              0,              0,              0,              0 }
-};
-
-const uint8_t nomSAM[] = { 3,KEY_S,KEY_A,KEY_M,4,25,0,0 };
-const uint8_t mapSAM[ROWS][COLS] = { //Mapa de Sam Coupe pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,    KEY_BKSLASH,          KEY_1 },
-	{ KEY_LESS,       KEY_LESS,              0,              0,              0 },
-	{ KEY_BKSLASH,    KEY_COMILLA,              0,              0,    KEY_PTOCOMA },
-	{ KEY_6,      KEY_MENOS,          KEY_8,          KEY_9,      KEY_SLASH },
-	{ 0,              0,              0,       KEY_COMA,          KEY_2 },
-	{ KEY_7,      KEY_MENOS,    KEY_ACORCHE,      KEY_PUNTO,              0 },
-	{ KEY_ACORCHE,      KEY_SLASH,    KEY_CCORCHE,          KEY_0,              0 },
-	{ KEY_CCORCHE,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modSAM[ROWS][COLS] = { //Mod de Sam Coupe 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              1,              1 },
-	{ 1,              0,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 },
-	{ 1,              0,              1,              1,              1 },
-	{ 0,              0,              0,              1,              1 },
-	{ 1,              1,              0,              1,              0 },
-	{ 1,              0,              0,              1,              0 },
-	{ 1,              0,              0,              0,              0 }
-};
-
-const uint8_t nomJUP[] = { 7,KEY_J,KEY_U,KEY_P,KEY_I,KEY_T,KEY_E,KEY_R,4,25,0,0 };
-const uint8_t mapJUP[ROWS][COLS] = { //Mapa de Jupiter Ace pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,    KEY_BKSLASH,          KEY_1 },
-	{ KEY_LESS,       KEY_LESS,              0,              0,              0 },
-	{ 0,    KEY_COMILLA,        KEY_TLD,              0,              0 },
-	{ KEY_6,      KEY_MENOS,          KEY_8,          KEY_9,      KEY_SLASH },
-	{ KEY_ACORCHE,              0,              0,       KEY_COMA,          KEY_2 },
-	{ KEY_7,      KEY_MENOS,    KEY_COMILLA,      KEY_PUNTO,              0 },
-	{ KEY_ACORCHE,      KEY_SLASH,    KEY_CCORCHE,          KEY_0,              0 },
-	{ KEY_CCORCHE,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modJUP[ROWS][COLS] = { //Mod de Jupiter Ace 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              0,              1 },
-	{ 1,              0,              0,              0,              0 },
-	{ 0,              1,              0,              0,              0 },
-	{ 1,              0,              1,              1,              1 },
-	{ 1,              0,              0,              1,              1 },
-	{ 1,              1,              0,              1,              0 },
-	{ 0,              0,              0,              1,              0 },
-	{ 1,              0,              0,              0,              0 }
-};
-
-const uint8_t nomAP2[] = { 5,KEY_A,KEY_P,KEY_P,KEY_L,KEY_E,4,25,0,0 };
-const uint8_t mapAP2[ROWS][COLS] = { //Mapa de Apple2 pulsando Control (symbol shift)
-	{ KEY_5,          KEY_4,          KEY_3,          KEY_2,          KEY_1 },
-	{ KEY_PUNTO,       KEY_COMA,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 },
-	{ KEY_7,    KEY_COMILLA,          KEY_9,          KEY_0,      KEY_MENOS },
-	{ KEY_ACORCHE,    KEY_CCORCHE,              0,    KEY_PTOCOMA,    KEY_COMILLA },
-	{ KEY_SLASH,      KEY_SLASH,              0,    KEY_PTOCOMA,              0 },
-	{ KEY_6,      KEY_MENOS,      KEY_IGUAL,      KEY_IGUAL,              0 },
-	{ KEY_8,       KEY_COMA,      KEY_PUNTO,              0,              0 }
-};
-const uint8_t modAP2[ROWS][COLS] = { //Mod de Apple2 1 hay q usar Shift, 0 no hay que usar
-	{ 1,              1,              1,              1,              1 },
-	{ 1,              1,              0,              0,              0 },
-	{ 0,              0,              0,              0,              0 },
-	{ 1,              0,              1,              1,              1 },
-	{ 0,              0,              0,              0,              1 },
-	{ 0,              1,              0,              1,              0 },
-	{ 1,              0,              1,              0,              0 },
-	{ 1,              0,              0,              0,              0 }
-};
-
-const uint8_t nomXT1[] = { 4,KEY_P,KEY_C,KEY_X,KEY_T,4,100,50,20 };
+const uint8_t nompc[] = { 4,KEY_P,KEY_C,KEY_X,KEY_T,4};
 const uint8_t mapXT1[ROWS][COLS] = { //Mapa de PC-XT CodeSet1 pulsando Control (symbol shift)
 	{ KS1_5,          KS1_4,          KS1_3,          KS1_2,          KS1_1 },
 	{ KS1_PUNTO,       KS1_COMA,              0,              0,              0 },
@@ -597,8 +365,8 @@ KEY_H: (flecha) KEY_J: -        KEY_K: +        KEY_L: =        KEY_ENTER: NADA
 KEY_B: *        KEY_N: ,        KEY_M: .        NADA            KEY_SPACE: NADA
 */
 
-/* Mapa en blanco para rellenar //Numero de Letras,(letras),KBp,KBc,KBn) p=pausa con shift o symbol / c=pausa cursores / n=pausa teclas normales
-const uint8_t nomXXX[] = {3,KEY_X,KEY_X,KEY_X,0,0,0};
+/* Mapa en blanco para rellenar //Numero de Letras,(letras)
+const uint8_t nomXXX[] = {3,KEY_X,KEY_X,KEY_X,0};
 const uint8_t mapXXX[ROWS][COLS] = { //Mapa de XXX pulsando Control (symbol shift)
 {      KEY_5,          KEY_4,          KEY_3,          KEY_2,          KEY_1},
 {      KEY_T,          KEY_R,              0,              0,              0},
