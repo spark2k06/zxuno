@@ -5,7 +5,7 @@ Conversor teclado ZX-spectrum 8x5 -> PS/2 de Neuro (Codigo original de Quest) (C
 
 -> Optimizacion de codigo. Ahora entra en un atmega 168 al liberar memoria dinamica ocupada por los diferentes mapas.
 
--> Mejora del proceso de interceptación de teclas pulsadas y soltadas por la matriz de teclado, incluyendo la combinacion de CAPS y SYMBOL por cada tecla para facilitar su gestion en modos distintos al de ZXSpectrum. Esta mejora ha permitido eliminar la anterior gestion y simplificarla, evitando asi pausas entre teclas cuando se usan junto con CAPS o SYMBOL.
+-> Mejora del proceso de interceptaciÃ³n de teclas pulsadas y soltadas por la matriz de teclado, incluyendo la combinacion de CAPS y SYMBOL por cada tecla para facilitar su gestion en modos distintos al de ZXSpectrum. Esta mejora ha permitido eliminar la anterior gestion y simplificarla, evitando asi pausas entre teclas cuando se usan junto con CAPS o SYMBOL.
 
 -> Antighosting de CAPS y SYMBOL en cores distintos al de ZXSpectrum.
 
@@ -19,7 +19,7 @@ Conversor teclado ZX-spectrum 8x5 -> PS/2 de Neuro (Codigo original de Quest) (C
     
     -> Deshabilitacion de escucha de comandos una vez inicializado el teclado. Aunque la escucha permanece activa si se estan recibiendo comandos echos (algunos conversores comerciales de PS/2 a USB lo requieren para su correcto funcionamiento). La escucha activa de comandos es especialmente problematica con el uso simultaneo de otro teclado.
     
-    -> Si se va a usar como teclado externo, es importante haber guardado previamente en la EEPROM el modo de teclado PCXT, ya que sólo este modo dispone de escucha activa temporal hasta la inicializacion del mismo.
+    -> Si se va a usar como teclado externo, es importante haber guardado previamente en la EEPROM el modo de teclado PCXT, ya que sÃ³lo este modo dispone de escucha activa temporal hasta la inicializacion del mismo.
     
     -> Si se va a utilizar un conversor comercial de PS/2 a USB, es importante que sea de tipo activo, ya que los pasivos solo funcionaran con teclados duales (estos en su firmware son capaces de identificar y controlar tanto PS/2 como USB).
 
@@ -270,7 +270,7 @@ uint8_t CKm = 1;  //Multiplicador de CK1 y CK2
 //envio de datos ps/2 simulando reloj con delays.
 void sendPS2(unsigned char code)
 {
-	//Para continuar las líneas deben estar en alto
+	//Para continuar las lÃ­neas deben estar en alto
 	//if (ps2Stat())
 	//	return;   
 	while (ps2Stat());
@@ -278,7 +278,7 @@ void sendPS2(unsigned char code)
 	unsigned char parity = 1;
 	uint8_t i = 0;
 
-	//iniciamos transmisión
+	//iniciamos transmisiÃ³n
 	ps2Mode(PS2_DAT, LO);
 	_delay_us_4usteps(CK1*CKm);
 
@@ -491,7 +491,7 @@ enum KBMODE cambiarmodo2(enum KBMODE modokb)
 	if (modokb == ori) CKm = nomORI[nomORI[0] + 1];
 	if (modokb == sam) CKm = nomSAM[nomSAM[0] + 1];
 	if (modokb == jup) CKm = nomJUP[nomJUP[0] + 1];
-  if (modokb == pc) { CKm = nompc[nompc[0] + 1]; kbescucha = 1; timeout_escucha = 0; codeset = 2; } // Iniciamos la escucha para que se pueda cambiar al core de PC/XT.
+	if (modokb == pc) { CKm = nompc[nompc[0] + 1]; kbescucha = 1; timeout_escucha = 0; codeset = 2; } // Iniciamos la escucha para que se pueda cambiar al core de PC/XT.
 	
 	return modokb;
 }
@@ -511,7 +511,7 @@ enum KBMODE cambiarmodo(enum KBMODE modokb)
 	if (modokb == ori) imprimecore(nomORI);
 	if (modokb == sam) imprimecore(nomSAM);
 	if (modokb == jup) imprimecore(nomJUP);
-  if (modokb == pc) { kbescucha = 1; timeout_escucha = 0; codeset = 2; imprimecore(nompc); } // Iniciamos la escucha para que se pueda cambiar al core de PC/XT.
+	if (modokb == pc) { kbescucha = 1; timeout_escucha = 0; codeset = 2; imprimecore(nompc); } // Iniciamos la escucha para que se pueda cambiar al core de PC/XT.
 
 	//Uso normal: CK1 = 20, CK2 = 40 // Para codigo sin optimizar (x12) CK1 = 240, CK2 = 480.  //JOyPs2 CK1=15 CK2=30 //Mio CK1=4 CK2=8
 	//if(modokb>0) CKm=4; else CKm=1; //Se coge del Nombrecore[]
@@ -709,18 +709,18 @@ unsigned char traducekey(unsigned char key, enum KBMODE modokb) // con esta func
 void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
 {
 	unsigned char key = 0, shift = 0;
-  typematicfirst = 0;
-  typematic_codeaux = 0;
+	typematicfirst = 0;
+	typematic_codeaux = 0;
 	key = traducekey(mapZX[row][col], modokb);
 	if (key != 0)
 	{
 		if (modokb == pc && codeset == 1) { key = mapXT1[row][col]; shift = modXT1[row][col]; }
 		else { shift = !(key & 0x80); if (!shift) key ^= 0x80; }
 
-	    if (shift) { if (codeset == 2) { sendPS2(KEY_RSHIFT); typematic_codeaux = KEY_RSHIFT; } else { sendPS2(KS1_RSHIFT); typematic_codeaux = KS1_RSHIFT; } }   
-	    sendPS2(key);
-	    typematic_code = key;
-  } 
+		if (shift) { if (codeset == 2) { sendPS2(KEY_RSHIFT); typematic_codeaux = KEY_RSHIFT; } else { sendPS2(KS1_RSHIFT); typematic_codeaux = KS1_RSHIFT; } }   
+		sendPS2(key);
+		typematic_code = key;
+	} 
 }
 void sueltateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
 {
@@ -745,15 +745,15 @@ void pulsateclaconshift(unsigned char row, unsigned char col, unsigned char key)
   	typematic_codeaux = 0;
 	if (!key) //si no esta mapeada saca la mayuscula
 	{
-    	if (codeset == 2) { sendPS2(KEY_RSHIFT); typematic_codeaux = KEY_RSHIFT; } else { sendPS2(KS1_RSHIFT); typematic_codeaux = KS1_RSHIFT; }
-    	if (codeset == 2) { sendPS2(mapZX[row][col]); typematic_code = mapZX[row][col]; } else { sendPS2(mapSET1[row][col]); typematic_code = mapSET1[row][col]; }
+    		if (codeset == 2) { sendPS2(KEY_RSHIFT); typematic_codeaux = KEY_RSHIFT; } else { sendPS2(KS1_RSHIFT); typematic_codeaux = KS1_RSHIFT; }
+    		if (codeset == 2) { sendPS2(mapZX[row][col]); typematic_code = mapZX[row][col]; } else { sendPS2(mapSET1[row][col]); typematic_code = mapSET1[row][col]; }
 	}
 	else
 	{
-	    if (codeset == 2 && (key == KEY_LEFT || key == KEY_RIGHT || key == KEY_UP || key == KEY_DOWN)) { sendPS2(0xE0); typematic_codeaux = 0xE0; } //Es una tecla del codeset2 que necesita E0
-	    if (codeset == 1 && (key == KS1_LEFT || key == KS1_RIGHT || key == KS1_UP || key == KS1_DOWN)) { sendPS2(0xE0); typematic_codeaux = 0xE0; }//Es una tecla del codeset1 que necesita E0
-	    sendPS2(key);
-	    typematic_code = key;
+		if (codeset == 2 && (key == KEY_LEFT || key == KEY_RIGHT || key == KEY_UP || key == KEY_DOWN)) { sendPS2(0xE0); typematic_codeaux = 0xE0; } //Es una tecla del codeset2 que necesita E0
+		if (codeset == 1 && (key == KS1_LEFT || key == KS1_RIGHT || key == KS1_UP || key == KS1_DOWN)) { sendPS2(0xE0); typematic_codeaux = 0xE0; }//Es una tecla del codeset1 que necesita E0
+		sendPS2(key);
+		typematic_code = key;
 	}	
 }
 
@@ -888,7 +888,7 @@ void matrixScan()
 				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && modo) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, 0, 50); //F11  
 				if ((matriz[Q_T_ROW][W_COL] & 0x01) && modo) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12  
 
-				if (matriz[A_G_ROW][A_COL] & 0x01) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (¿Mejor cambiar a otra?)
+				if (matriz[A_G_ROW][A_COL] & 0x01) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (Â¿Mejor cambiar a otra?)
 
 				if (matriz[Y_P_ROW][Y_COL] & 0x01) pulsafn(Y_P_ROW, Y_COL, KEY_F5, 0, 0, 1, 1, 5);        //ZXUNO NMI (Control+Alt+F5)
 				if (matriz[B_M_ROW][B_COL] & 0x01) pulsafn(B_M_ROW, B_COL, KEY_BACKSP, 0, 0, 1, 1, 5);    //ZXUNO Hard Reset (Control+Alt+Backsp)
@@ -924,7 +924,7 @@ void matrixScan()
 	}
 	else fnpulsando = 0; //Fin de escaneo de combos
 
-						 //Control de teclado
+	//Control de teclado
 	if (!fnpulsada) //Si no se ha pulsado ningun tecla de funcion y el modo es 0 (ZX-Spectrum)
 	{		
 		if (!modo)
@@ -943,9 +943,7 @@ void matrixScan()
 			}
 		}
 		else // Manejo de los otros modos de Keymap
-		{
-
-			
+		{			
 			if (!antighosting)
 			{
 				if (((matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x01) && !(matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x02)) ||
@@ -985,12 +983,12 @@ void matrixScan()
 					if ((matriz[r][c] & 0x10) && !(matriz[r][c] & 0x08)) pulsateclaconsymbol(r, c, modo); // Pulsar con symbolshift
 					if (!(matriz[r][c] & 0x08) && !(matriz[r][c] & 0x10))
 					{
-			            if (codeset == 2) typematic_code = mapZX[r][c]; 
-			            else typematic_code = mapSET1[r][c]; // Pulsar sin modificadores
+			            		if (codeset == 2) typematic_code = mapZX[r][c]; 
+			            		else typematic_code = mapSET1[r][c]; // Pulsar sin modificadores
 
-			            typematicfirst = 0;
-			            typematic_codeaux = 0;
-			            sendPS2(typematic_code);
+			            		typematicfirst = 0;
+			            		typematic_codeaux = 0;
+			            		sendPS2(typematic_code);
 					}
 					// Si estan pulsados capsshift y symbolshift, no hacemos nada
 
@@ -1003,8 +1001,8 @@ void matrixScan()
 					if ((matriz[r][c] & 0x10) && !(matriz[r][c] & 0x08)) sueltateclaconsymbol(r, c, modo); // Liberar con symbolshift					
 					if (!(matriz[r][c] & 0x08) && !(matriz[r][c] & 0x10))
 					{
-			            if (codeset == 2) { sendPS2(0xF0); sendPS2(mapZX[r][c]); typematic_code = typematic_code == mapZX[r][c] ? 0 : typematic_code; }
-			            else { sendPS2(mapSET1[r][c] + KS1_RELEASE); typematic_code = typematic_code == mapSET1[r][c] ? 0 : typematic_code; } // Liberar sin modificadores
+			            		if (codeset == 2) { sendPS2(0xF0); sendPS2(mapZX[r][c]); typematic_code = typematic_code == mapZX[r][c] ? 0 : typematic_code; }
+			            		else { sendPS2(mapSET1[r][c] + KS1_RELEASE); typematic_code = typematic_code == mapSET1[r][c] ? 0 : typematic_code; } // Liberar sin modificadores
 					}
 					matriz[r][c] = 0; // Fin de gestion de la tecla
 
@@ -1038,19 +1036,18 @@ int main()
 		eeprom_write_byte((uint8_t*)5, (uint8_t)0); // y modo ZX por defecto
 	}
 		
-	while (1) {
-				
+	while (1) 
+	{				
   		if (ps2Stat() && modo == MAXKB && (kbescucha || timeout_escucha > 0)) // Lineas CLK y/o DATA a 0 y escucha activa
-	    {                      // Solo hay escucha activa en modo PC, hasta su inicializacion.
-	                             // Una vez completada la inicializacion de teclado, no es necesario mantener activa la escucha de comandos excepto si se hace eco
-											   
+	    	{                    // Solo hay escucha activa en modo PC, hasta su inicializacion.
+	                             // Una vez completada la inicializacion de teclado, no es necesario mantener activa la escucha de comandos excepto si se hace eco							   
 		
 			while (checkState(1000)) // tramos de 5 us (5000 us)
 			{
 				hostdataAnt = hostdata;
 				if (getPS2(&hostdata) == 0)
 				{
-  			        timeout_escucha = 100000;   // Dejamos tiempo para que se complete la inicializacion
+  			        	timeout_escucha = 100000;   // Dejamos tiempo para que se complete la inicializacion
 					if (hostdata == 0xEE)
 					{
 						sendPS2(0xEE); // Echo
@@ -1105,7 +1102,7 @@ int main()
 				} //Fin del IF de si detecta dato			
 			} //Fin del while que chequea el estado
 
-	    }
+	    	}
 		else
 		{
 			if (timeout_escucha > 0) timeout_escucha--;
