@@ -1,7 +1,7 @@
-zxunops2-DDMMAAAA-XXX-01 -> Mismo pineado que el ZXGo+
+zxunops2-DDMMAAAA-go: Configuración de pines del ZXGo+, así como sus botones físicos adicionales de NMI y VGA-SWITCH.
 
-zxunops2-DDMMAAAA-XXX-02 -> Faja de 8 pines en orden inverso al del ZXGo+
+zxunops2-DDMMAAAA-328: Igual que zxunops2-DDMMAAAA-go pero sin gestión de su botones físicos adicionales.
 
-zxunops2-DDMMAAAA-XXX-03 -> Faja de 5 pines en orden inverso al del ZXGo+
+zxunops2-DDMMAAAA-168: Igual que zxunops2-DDMMAAAA-328 pero compilado para la versión 168 de atmega.
 
-zxunops2-DDMMAAAA-XXX-04 -> Fajas de 5 y 8 pines en orden inverso a las del ZXGo+
+zxunops2-DDMMAAAA-644: Configuración de pines del addon de adaptador de fajas 11/13 para +2A/+3 de Antonio basado en atmega 644, y sin gestión de botones físicos del ZXGo+.
