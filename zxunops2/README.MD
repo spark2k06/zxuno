@@ -1,3 +1,5 @@
+![alt text](zxunops2.png "Combos")
+
 Modificacion a partir del código de Neuro (enlace indicado en el archivo de licencia).
 
 Entre otros cambios, este fork sale de la línea de envío de scancodes especiales de forma reiterada, mediante pulsacion de shift o symbol. 
@@ -9,3 +11,5 @@ Release 2
 -> Compatibilidad con teclados +2A/+3. (Atmega 644)
 
 -> OPQA mapeado en cursores para el modo PC.
+
+
