@@ -1,6 +1,6 @@
 ![alt text](zxunops2.png "Combos")
 
-
+http://www.zxuno.com/forum/viewtopic.php?f=63&t=1680
 
 Modificacion a partir del código de Neuro (enlace indicado en el archivo de licencia).
 
