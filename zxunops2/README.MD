@@ -12,10 +12,8 @@ Release 2
 
 -> Compatibilidad con teclados +2A/+3. (Atmega 644)
 
--> OPQA mapeado en cursores para el modo PC.
-
-Demos:
-
 [![Alt text](https://img.youtube.com/vi/WUbUbnqNGHQ/0.jpg)](https://www.youtube.com/watch?v=WUbUbnqNGHQ)
+
+-> OPQA mapeado en cursores para el modo PC.
 
 [![Alt text](https://img.youtube.com/vi/GBOXth72a-g/0.jpg)](https://www.youtube.com/watch?v=GBOXth72a-g)
