@@ -11,6 +11,7 @@
 #define ROWS8 8		//Numero de Filas de teclado 8x5
 #define COLS5 5		//Numero de Columnas de teclado 8x5
 
+//#define xchg_del_break
 // Mapa de la matriz
 // 1x1 = '1', 1x2 = '2'
 // 2x1 = 'Q', 2x2 = 'W'

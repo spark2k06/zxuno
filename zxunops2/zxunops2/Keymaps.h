@@ -10,9 +10,7 @@
 //KEY_ENTER: NADA KEY_L: =        KEY_K: +        KEY_J: -        KEY_H: (flecha)
 //KEY_SPACE: NADA NADA            KEY_M: .        KEY_N: ,        KEY_B: *
 
-const uint8_t version[8] = { 1,6,1,0,2,0,1,7 }; //DDMMAAAA
-
-#define KEY_ESCAPE 0x76
+const uint8_t version[8] = { 2,2,1,0,2,0,1,7 }; //DDMMAAAA
 
 #define KEY_ESCAPE 0x76
 #define KEY_DELETE 0x71
@@ -258,7 +256,11 @@ const uint8_t version[8] = { 1,6,1,0,2,0,1,7 }; //DDMMAAAA
 #define MAXKB pc //Numero de mapas de teclado maximo (sin contar el de ZX) el pc siempre sera el ultimo.
 
 const uint8_t versionKeyCodes[10] = { KEY_0,KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9 };
-const uint8_t eepromsavename[14] = { KEY_C,KEY_F,KEY_G,KEY_F,KEY_L,KEY_A,KEY_S,KEY_H,KEY_E,KEY_D };
+const uint8_t eepromsavename[10] = { KEY_C,KEY_F,KEY_G,KEY_F,KEY_L,KEY_A,KEY_S,KEY_H,KEY_E,KEY_D };
+
+const uint8_t fkbmode0[7] = { KEY_D,KEY_E,KEY_F,KEY_A,KEY_U,KEY_L,KEY_T };
+const uint8_t fkbmode1[4] = { KEY_F,KEY_U,KEY_L,KEY_L };
+const uint8_t fkbmode2[4] = { KEY_P,KEY_U,KEY_R,KEY_E };
 
 enum KBMODE { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, pc };
 
