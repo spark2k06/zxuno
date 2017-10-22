@@ -8,6 +8,14 @@ Entre otros cambios, este fork sale de la línea de envío de scancodes especial
 
 En su lugar se envían los scancodes una sola vez y se vuelven a enviar la liberación de los mismos una vez soltada la tecla.
 
+Release 3
+
+-> Distintos tipos de teclado para el modo ZX propuesto por Uto (miembro de la comunidad de ZXUno): .DEFAULT, .FULL, .PURE
+
+-> Cambio de combo de guardado de modo de teclado de CS+SS+Z a CS+SS+X.
+
+-> Actualizacion de la tabla de combos.
+
 Release 2
 
 -> Compatibilidad con teclados +2A/+3. (Atmega 644)
