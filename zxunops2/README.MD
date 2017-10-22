@@ -1,4 +1,4 @@
-![alt text](zxunops2_v2.png "Combos")
+![alt text](zxunops2_v3.png "Combos")
 
 http://www.zxuno.com/forum/viewtopic.php?f=63&t=1680
 
