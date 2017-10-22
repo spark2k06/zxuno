@@ -1,3 +1,5 @@
+Release 3.
+
 zxunops2-DDMMAAAA-go: Configuración de pines del ZXGo+, así como sus botones físicos adicionales de NMI y VGA-SWITCH.
 
 zxunops2-DDMMAAAA-328: Igual que zxunops2-DDMMAAAA-go pero sin gestión de su botones físicos adicionales.
