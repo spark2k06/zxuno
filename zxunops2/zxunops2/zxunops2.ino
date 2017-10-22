@@ -5,7 +5,7 @@ Conversor teclado ZX-spectrum 8x5 -> PS/2 de Neuro (Codigo original de Quest) (C
 
 -> Optimizacion de codigo. Ahora entra en un atmega 168 al liberar memoria dinamica ocupada por los diferentes mapas.
 
--> Mejora del proceso de interceptación de teclas pulsadas y soltadas por la matriz de teclado, incluyendo la combinacion de CAPS y SYMBOL por cada tecla para facilitar su gestion en modos distintos al de ZXSpectrum. Esta mejora ha permitido eliminar la anterior gestion y simplificarla, evitando asi pausas entre teclas cuando se usan junto con CAPS o SYMBOL.
+-> Mejora del proceso de interceptaciï¿½n de teclas pulsadas y soltadas por la matriz de teclado, incluyendo la combinacion de CAPS y SYMBOL por cada tecla para facilitar su gestion en modos distintos al de ZXSpectrum. Esta mejora ha permitido eliminar la anterior gestion y simplificarla, evitando asi pausas entre teclas cuando se usan junto con CAPS o SYMBOL.
 
 -> Antighosting de CAPS y SYMBOL en cores distintos al de ZXSpectrum.
 
@@ -19,7 +19,7 @@ Conversor teclado ZX-spectrum 8x5 -> PS/2 de Neuro (Codigo original de Quest) (C
     
     -> Deshabilitacion de escucha de comandos una vez inicializado el teclado. Aunque la escucha permanece activa si se estan recibiendo comandos echos (algunos conversores comerciales de PS/2 a USB lo requieren para su correcto funcionamiento). La escucha activa de comandos es especialmente problematica con el uso simultaneo de otro teclado.
     
-    -> Si se va a usar como teclado externo, es importante haber guardado previamente en la EEPROM el modo de teclado PCXT, ya que sólo este modo dispone de escucha activa temporal hasta la inicializacion del mismo.
+    -> Si se va a usar como teclado externo, es importante haber guardado previamente en la EEPROM el modo de teclado PCXT, ya que sï¿½lo este modo dispone de escucha activa temporal hasta la inicializacion del mismo.
     
     -> Si se va a utilizar un conversor comercial de PS/2 a USB, es importante que sea de tipo activo, ya que los pasivos solo funcionaran con teclados duales (estos en su firmware son capaces de identificar y controlar tanto PS/2 como USB).
 
@@ -281,7 +281,7 @@ uint8_t CKm = 1;  //Multiplicador de CK1 y CK2
 //envio de datos ps/2 simulando reloj con delays.
 void sendPS2(unsigned char code)
 {
-	//Para continuar las líneas deben estar en alto
+	//Para continuar las lï¿½neas deben estar en alto
 	//if (ps2Stat())
 	//	return;   
 	while (ps2Stat());
@@ -289,7 +289,7 @@ void sendPS2(unsigned char code)
 	unsigned char parity = 1;
 	uint8_t i = 0;
 
-	//iniciamos transmisión
+	//iniciamos transmisiï¿½n
 	ps2Mode(PS2_DAT, LO);
 	_delay_us_4usteps(CK1*CKm);
 
@@ -1170,7 +1170,7 @@ void matrixScan()
 				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && modo) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, 0, 50); //F11  
 				if ((matriz[Q_T_ROW][W_COL] & 0x01) && modo) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12  
 
-				if ((matriz[A_G_ROW][A_COL] & 0x01) && (fkbmode == 1 || modo)) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (¿Mejor cambiar a otra?)
+				if ((matriz[A_G_ROW][A_COL] & 0x01) && (fkbmode == 1 || modo)) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (ï¿½Mejor cambiar a otra?)
 
 				if ((matriz[Y_P_ROW][Y_COL] & 0x01) && (fkbmode != 2 || modo)) pulsafn(Y_P_ROW, Y_COL, KEY_F5, 0, 0, 1, 1, 5);        //ZXUNO NMI (Control+Alt+F5)
 				if ((matriz[B_M_ROW][B_COL] & 0x01) && (fkbmode != 2 || modo)) pulsafn(B_M_ROW, B_COL, KEY_BACKSP, 0, 0, 1, 1, 5);    //ZXUNO Hard Reset (Control+Alt+Backsp)
@@ -1359,106 +1359,106 @@ void matrixScan()
 	}//Fin del If del control del teclado.
 }//FIN de Matrixscan
 
-
-int main()
+void setup()
 {
-
-	CPU_PRESCALE(CPU_16MHz);
-	ps2Init();
-	matrixInit();
-	const uint8_t ZXUNO_SIGNATURE[] = { 'Z','X','U','N','O' };
-	uint8_t checksignature[5];
-	uint8_t issigned = 1;
-	eeprom_read_block((void*)&checksignature, (const void*)0, 5);
-		
-	for (int n = 0; n < 5; n++)	if (checksignature[n] != ZXUNO_SIGNATURE[n]) issigned = 0;
-	if (issigned)
-	{
-		modo = cambiarmodo2(eeprom_read_byte((uint8_t*)5));		
-	}
-	else
-	{
-		eeprom_write_block((void*)&ZXUNO_SIGNATURE, (const void*)0, 5); // Guardamos la firma
-		eeprom_write_byte((uint8_t*)5, (uint8_t)0); // y modo ZX por defecto
-	}
-		
-	while (1) {
-				
-  		if (ps2Stat() && modo == MAXKB && (kbescucha || timeout_escucha > 0)) // Lineas CLK y/o DATA a 0 y escucha activa
-	    {                      // Solo hay escucha activa en modo PC, hasta su inicializacion.
-	                             // Una vez completada la inicializacion de teclado, no es necesario mantener activa la escucha de comandos excepto si se hace eco
-											   
-		
-			while (checkState(1000)) // tramos de 5 us (5000 us)
-			{
-				hostdataAnt = hostdata;
-				if (getPS2(&hostdata) == 0)
-				{
-  			        timeout_escucha = 100000;   // Dejamos tiempo para que se complete la inicializacion
-					if (hostdata == 0xEE)
-					{
-						sendPS2(0xEE); // Echo
-						kbescucha = 1; // Si se hace eco, mantenemos la escucha de comandos (necesario en determinados adaptadores PS/2 -> USB)
-					}
-					else
-					{
-						sendPS2(0xFA); // Ack
-					}
-					switch (hostdata)
-					{
-					case 0x00: // second bit of 0xED or 0xF3 (or get scancode set)	
-						if (hostdataAnt == 0xF0)
-						{
-							sendPS2(codeset);
-						}
-						break;
-					case 0x01: // set scancode 1
-						if (hostdataAnt == 0xF0)
-						{
-							codeset = 1;
-						}
-						break;
-					case 0x02: // set scancode 2
-						if (hostdataAnt == 0xF0)
-						{
-							codeset = 2;
-						}
-						break;
-					case 0xED: // set/reset LEDs
-						break;
-					case 0xF2: // ID					
-						sendPS2(0xAB);
-						sendPS2(0x83);
-						break;
-					case 0xF0: // get/set scancode set
-						break;
-					case 0xF3: // set/reset typematic delay
-						break;
-					case 0xF4: // keyboard is enabled, break loop
-						break;
-					case 0xF5: // keyboard is disabled, break loop						
-						break;
-					case 0xFF:
-						// tell host we are ready to connect
-						sendPS2(0xAA); 
-          				kbescucha = 0; // En el inicio iniciamos la cuenta atras de timeout
-						break;
-					default:
-						break;
-					} //Fin del Swich
-				} //Fin del IF de si detecta dato			
-			} //Fin del while que chequea el estado
-
-	    }
-		else
-		{
-			if (timeout_escucha > 0) timeout_escucha--;
-			if (modo == MAXKB && typematic_code != 0 && (typematicfirst++ > 1000 || codeset == 2) && typematic++ > 150) // Funcion tipematica simulada para PC
-			{
-				if (typematic_codeaux != 0) sendPS2(typematic_codeaux);
-				sendPS2(typematic_code); typematic = 0;
-			}
-			matrixScan(); //No llegan datos del Host, enviamos teclado.
-		}
-	}//Fin del Bucle infinito
+  CPU_PRESCALE(CPU_16MHz);
+  ps2Init();
+  matrixInit();
+  const uint8_t ZXUNO_SIGNATURE[] = { 'Z','X','U','N','O' };
+  uint8_t checksignature[5];
+  uint8_t issigned = 1;
+  eeprom_read_block((void*)&checksignature, (const void*)0, 5);
+    
+  for (int n = 0; n < 5; n++) if (checksignature[n] != ZXUNO_SIGNATURE[n]) issigned = 0;
+  if (issigned)
+  {
+    modo = cambiarmodo2(eeprom_read_byte((uint8_t*)5));   
+  }
+  else
+  {
+    eeprom_write_block((void*)&ZXUNO_SIGNATURE, (const void*)0, 5); // Guardamos la firma
+    eeprom_write_byte((uint8_t*)5, (uint8_t)0); // y modo ZX por defecto
+  }  
 }
+
+void loop()
+{
+        if (ps2Stat() && modo == MAXKB && (kbescucha || timeout_escucha > 0)) // Lineas CLK y/o DATA a 0 y escucha activa
+      {                      // Solo hay escucha activa en modo PC, hasta su inicializacion.
+                               // Una vez completada la inicializacion de teclado, no es necesario mantener activa la escucha de comandos excepto si se hace eco
+                         
+    
+      while (checkState(1000)) // tramos de 5 us (5000 us)
+      {
+        hostdataAnt = hostdata;
+        if (getPS2(&hostdata) == 0)
+        {
+                timeout_escucha = 100000;   // Dejamos tiempo para que se complete la inicializacion
+          if (hostdata == 0xEE)
+          {
+            sendPS2(0xEE); // Echo
+            kbescucha = 1; // Si se hace eco, mantenemos la escucha de comandos (necesario en determinados adaptadores PS/2 -> USB)
+          }
+          else
+          {
+            sendPS2(0xFA); // Ack
+          }
+          switch (hostdata)
+          {
+          case 0x00: // second bit of 0xED or 0xF3 (or get scancode set)  
+            if (hostdataAnt == 0xF0)
+            {
+              sendPS2(codeset);
+            }
+            break;
+          case 0x01: // set scancode 1
+            if (hostdataAnt == 0xF0)
+            {
+              codeset = 1;
+            }
+            break;
+          case 0x02: // set scancode 2
+            if (hostdataAnt == 0xF0)
+            {
+              codeset = 2;
+            }
+            break;
+          case 0xED: // set/reset LEDs
+            break;
+          case 0xF2: // ID          
+            sendPS2(0xAB);
+            sendPS2(0x83);
+            break;
+          case 0xF0: // get/set scancode set
+            break;
+          case 0xF3: // set/reset typematic delay
+            break;
+          case 0xF4: // keyboard is enabled, break loop
+            break;
+          case 0xF5: // keyboard is disabled, break loop            
+            break;
+          case 0xFF:
+            // tell host we are ready to connect
+            sendPS2(0xAA); 
+                  kbescucha = 0; // En el inicio iniciamos la cuenta atras de timeout
+            break;
+          default:
+            break;
+          } //Fin del Swich
+        } //Fin del IF de si detecta dato     
+      } //Fin del while que chequea el estado
+
+      }
+    else
+    {
+      if (timeout_escucha > 0) timeout_escucha--;
+      if (modo == MAXKB && typematic_code != 0 && (typematicfirst++ > 1000 || codeset == 2) && typematic++ > 150) // Funcion tipematica simulada para PC
+      {
+        if (typematic_codeaux != 0) sendPS2(typematic_codeaux);
+        sendPS2(typematic_code); typematic = 0;
+      }
+      matrixScan(); //No llegan datos del Host, enviamos teclado.
+    }
+  
+}
+
