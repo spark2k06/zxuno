@@ -393,7 +393,7 @@ int getPS2(unsigned char *ret) //Lectura de PS2 para acceso bidireccional
 void imprimeversion() //Imprime la fecha de la version
 {
 	int n;
-	char pausa = 25;
+	char pausa = 50; // Subimos el delay de 25 a 50 ms porque el core de Spectrum no procesa correctamente delays tan cortos entre tecla y tecla.
 	if (!modo) 
 	{ 
 		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
