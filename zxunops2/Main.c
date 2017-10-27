@@ -5,7 +5,7 @@ Conversor teclado ZX-spectrum 8x5 -> PS/2 de Neuro (Codigo original de Quest) (C
 
 -> Optimizacion de codigo. Ahora entra en un atmega 168 al liberar memoria dinamica ocupada por los diferentes mapas.
 
--> Mejora del proceso de interceptación de teclas pulsadas y soltadas por la matriz de teclado, incluyendo la combinacion de CAPS y SYMBOL por cada tecla para facilitar su gestion en modos distintos al de ZXSpectrum. Esta mejora ha permitido eliminar la anterior gestion y simplificarla, evitando asi pausas entre teclas cuando se usan junto con CAPS o SYMBOL.
+-> Mejora del proceso de interceptaciÃ³n de teclas pulsadas y soltadas por la matriz de teclado, incluyendo la combinacion de CAPS y SYMBOL por cada tecla para facilitar su gestion en modos distintos al de ZXSpectrum. Esta mejora ha permitido eliminar la anterior gestion y simplificarla, evitando asi pausas entre teclas cuando se usan junto con CAPS o SYMBOL.
 
 -> Antighosting de CAPS y SYMBOL en cores distintos al de ZXSpectrum.
 
@@ -19,7 +19,7 @@ Conversor teclado ZX-spectrum 8x5 -> PS/2 de Neuro (Codigo original de Quest) (C
     
     -> Deshabilitacion de escucha de comandos una vez inicializado el teclado. Aunque la escucha permanece activa si se estan recibiendo comandos echos (algunos conversores comerciales de PS/2 a USB lo requieren para su correcto funcionamiento). La escucha activa de comandos es especialmente problematica con el uso simultaneo de otro teclado.
     
-    -> Si se va a usar como teclado externo, es importante haber guardado previamente en la EEPROM el modo de teclado PCXT, ya que sólo este modo dispone de escucha activa temporal hasta la inicializacion del mismo.
+    -> Si se va a usar como teclado externo, es importante haber guardado previamente en la EEPROM el modo de teclado PCXT, ya que sÃ³lo este modo dispone de escucha activa temporal hasta la inicializacion del mismo.
     
     -> Si se va a utilizar un conversor comercial de PS/2 a USB, es importante que sea de tipo activo, ya que los pasivos solo funcionaran con teclados duales (estos en su firmware son capaces de identificar y controlar tanto PS/2 como USB).
 
@@ -281,7 +281,7 @@ uint8_t CKm = 1;  //Multiplicador de CK1 y CK2
 //envio de datos ps/2 simulando reloj con delays.
 void sendPS2(unsigned char code)
 {
-	//Para continuar las líneas deben estar en alto
+	//Para continuar las lÃ­neas deben estar en alto
 	//if (ps2Stat())
 	//	return;   
 	while (ps2Stat());
@@ -289,7 +289,7 @@ void sendPS2(unsigned char code)
 	unsigned char parity = 1;
 	uint8_t i = 0;
 
-	//iniciamos transmisión
+	//iniciamos transmisiÃ³n
 	ps2Mode(PS2_DAT, LO);
 	_delay_us_4usteps(CK1*CKm);
 
@@ -390,7 +390,7 @@ int getPS2(unsigned char *ret) //Lectura de PS2 para acceso bidireccional
 	return 0;
 }
 
-void imprimeversion() //Imprime la fecha de la version en modos que no sean ZX ni PC
+void imprimeversion() //Imprime la fecha de la version
 {
 	int n;
 	char pausa = 25;
@@ -1170,7 +1170,7 @@ void matrixScan()
 				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && modo) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, 0, 50); //F11  
 				if ((matriz[Q_T_ROW][W_COL] & 0x01) && modo) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12  
 
-				if ((matriz[A_G_ROW][A_COL] & 0x01) && (fkbmode == 1 || modo)) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (¿Mejor cambiar a otra?)
+				if ((matriz[A_G_ROW][A_COL] & 0x01) && (fkbmode == 1 || modo)) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (Â¿Mejor cambiar a otra?)
 
 				if ((matriz[Y_P_ROW][Y_COL] & 0x01) && (fkbmode != 2 || modo)) pulsafn(Y_P_ROW, Y_COL, KEY_F5, 0, 0, 1, 1, 5);        //ZXUNO NMI (Control+Alt+F5)
 				if ((matriz[B_M_ROW][B_COL] & 0x01) && (fkbmode != 2 || modo)) pulsafn(B_M_ROW, B_COL, KEY_BACKSP, 0, 0, 1, 1, 5);    //ZXUNO Hard Reset (Control+Alt+Backsp)
