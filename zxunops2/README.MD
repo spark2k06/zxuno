@@ -7,6 +7,13 @@ Modificacion a partir del código de Neuro (enlace indicado en el archivo de lic
 Entre otros cambios, este fork sale de la línea de envío de scancodes especiales de forma reiterada, mediante pulsacion de shift o symbol. 
 
 En su lugar se envían los scancodes una sola vez y se vuelven a enviar la liberación de los mismos una vez soltada la tecla.
+Release 4
+
+-> textos de modos .DEFAULT, .FULL y .PURE sustituidos por .ZXPARTIALCOMBOS, .ZXFULLCOMBOS y .ZXPURE, y al cambiar de modo se guardan automaticamente en la EEPROM.
+
+-> Nuevo combo CS+SS+S = F8+F10 para Atari o Ctrl+F12 para C64.
+
+-> CS+SS+X sigue guardando en la EEPROM el modo de teclado actual.
 
 Release 3
 
