@@ -399,6 +399,8 @@ void imprimeversion() //Imprime la fecha de la version en modos que no sean ZX n
 		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
 		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
 	}
+    
+    sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
 
 	for (n = 0; n<8; n++)
 	{
