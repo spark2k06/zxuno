@@ -393,7 +393,7 @@ int getPS2(unsigned char *ret) //Lectura de PS2 para acceso bidireccional
 void imprimeversion() //Imprime la fecha de la version en modos que no sean ZX ni PC
 {
 	int n;
-	char pausa = 25;
+	char pausa = 50;
 	if (!modo) 
 	{ 
 		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
@@ -423,7 +423,7 @@ void eepromsave() //Imprime ' .CFGFLASHED' y guarda en la EEPROM el modo actual
 		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
 		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
 	}
-	eeprom_write_byte((uint8_t*)5, (uint8_t)modo);
+	eeprom_write_byte((uint8_t*)5, (uint8_t)modo);	
 	if (codeset == 2)
 	{
 		_delay_ms(pausa); sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
@@ -478,7 +478,7 @@ void cambiafkbmode()
 		switch (fkbmode)
 		{
 		case 0:
-			for (n = 0; n < 7; n++)
+			for (n = 0; n < 15; n++)
 			{
 				_delay_ms(pausa);
 				sendPS2(fkbmode0[n]);
@@ -486,10 +486,11 @@ void cambiafkbmode()
 				sendPS2(0xF0);
 				sendPS2(fkbmode0[n]);
 				_delay_ms(pausa);
+				eeprom_write_byte((uint8_t*)6, (uint8_t)fkbmode);
 			}
 			break;
 		case 1:
-			for (n = 0; n < 4; n++)
+			for (n = 0; n < 12; n++)
 			{
 				_delay_ms(pausa);
 				sendPS2(fkbmode1[n]);
@@ -497,10 +498,11 @@ void cambiafkbmode()
 				sendPS2(0xF0);
 				sendPS2(fkbmode1[n]);
 				_delay_ms(pausa);
+				eeprom_write_byte((uint8_t*)6, (uint8_t)fkbmode);
 			}
 			break;
 		case 2:
-			for (n = 0; n < 4; n++)
+			for (n = 0; n < 6; n++)
 			{
 				_delay_ms(pausa);
 				sendPS2(fkbmode2[n]);
@@ -508,6 +510,7 @@ void cambiafkbmode()
 				sendPS2(0xF0);
 				sendPS2(fkbmode2[n]);
 				_delay_ms(pausa);
+				eeprom_write_byte((uint8_t*)6, (uint8_t)fkbmode);
 			}
 			break;
 		default:
@@ -554,7 +557,6 @@ void matrixInit()
 enum KBMODE cambiarmodo2(enum KBMODE modokb)
 {
 	opqa_cursors = 0;
-	fkbmode = 0;
 	if (modokb == zx)  CKm = nomZX[nomZX[0] + 1];
 	if (modokb == cpc) CKm = nomCPC[nomCPC[0] + 1];
 	if (modokb == msx) CKm = nomMSX[nomMSX[0] + 1];
@@ -575,7 +577,6 @@ enum KBMODE cambiarmodo2(enum KBMODE modokb)
 enum KBMODE cambiarmodo(enum KBMODE modokb)
 {
 	opqa_cursors = 0;
-	fkbmode = 0;
 	if (modokb == zx)  imprimecore(nomZX);
 	if (modokb == cpc) imprimecore(nomCPC);
 	if (modokb == msx) imprimecore(nomMSX);
@@ -1167,10 +1168,36 @@ void matrixScan()
 				if ((matriz[N6_N0_ROW][N8_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N8_COL, KEY_F8, 0, 0, 0, 0, 5);  //F8
 				if ((matriz[N6_N0_ROW][N9_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N9_COL, KEY_F9, 0, 0, 0, 0, 5);  //F9
 				if ((matriz[N6_N0_ROW][N0_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N0_COL, KEY_F10, 0, 0, 0, 0, 5); //F10
+								
+					
 				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && modo) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, 0, 50); //F11  
 				if ((matriz[Q_T_ROW][W_COL] & 0x01) && modo) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12  
+				if ((matriz[A_G_ROW][S_COL] & 0x01) && modo)
+				{
+					if (modo == at8) //F8 + F10 para Atari
+					{
+						sendPS2(KEY_F8);
+						_delay_ms(50);
+						sendPS2(KEY_F10);
 
-				if ((matriz[A_G_ROW][A_COL] & 0x01) && (fkbmode == 1 || modo)) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (�Mejor cambiar a otra?)
+						_delay_ms(50);
+
+						sendPS2(0xF0);
+						sendPS2(KEY_F10);
+						_delay_ms(1000);
+						sendPS2(0xF0);
+						sendPS2(KEY_F8);
+						_delay_ms(50);
+
+						fnpulsada = 1;
+						fnpulsando = 1;
+					}
+					if (modo == c64) //Ctrl + F12 para C64
+					{
+						pulsafn(A_G_ROW, S_COL, KEY_F12, 0, 0, 1, 0, 5);
+					}
+				}
+				if ((matriz[A_G_ROW][A_COL] & 0x01) && (fkbmode == 1 || modo)) pulsafn(A_G_ROW, A_COL, KEY_F10, 0, 0, 0, 0, 5);       //F10 para el NEXT (¿Mejor cambiar a otra?)
 
 				if ((matriz[Y_P_ROW][Y_COL] & 0x01) && (fkbmode != 2 || modo)) pulsafn(Y_P_ROW, Y_COL, KEY_F5, 0, 0, 1, 1, 5);        //ZXUNO NMI (Control+Alt+F5)
 				if ((matriz[B_M_ROW][B_COL] & 0x01) && (fkbmode != 2 || modo)) pulsafn(B_M_ROW, B_COL, KEY_BACKSP, 0, 0, 1, 1, 5);    //ZXUNO Hard Reset (Control+Alt+Backsp)
@@ -1373,6 +1400,8 @@ void setup()
   if (issigned)
   {
     modo = cambiarmodo2(eeprom_read_byte((uint8_t*)5));   
+	fkbmode = eeprom_read_byte((uint8_t*)6);
+	fkbmode = fkbmode > 2 ? 0 : fkbmode;
   }
   else
   {
