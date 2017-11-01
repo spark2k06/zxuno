@@ -8,7 +8,7 @@ Entre otros cambios, este fork sale de la línea de envío de scancodes especial
 
 En su lugar se envían los scancodes una sola vez y se vuelven a enviar la liberación de los mismos una vez soltada la tecla.
 
-Release 5
+Release 6
 
 -> textos de modos .DEFAULT, .FULL y .PURE sustituidos por .ZXPARTIALCOMBOS, .ZXFULLCOMBOS y .ZXPURE, y al cambiar de modo se guardan automaticamente en la EEPROM.
 
