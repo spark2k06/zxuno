@@ -557,7 +557,6 @@ void matrixInit()
 enum KBMODE cambiarmodo2(enum KBMODE modokb)
 {
 	opqa_cursors = 0;
-	fkbmode = 0;
 	if (modokb == zx)  CKm = nomZX[nomZX[0] + 1];
 	if (modokb == cpc) CKm = nomCPC[nomCPC[0] + 1];
 	if (modokb == msx) CKm = nomMSX[nomMSX[0] + 1];
@@ -578,7 +577,6 @@ enum KBMODE cambiarmodo2(enum KBMODE modokb)
 enum KBMODE cambiarmodo(enum KBMODE modokb)
 {
 	opqa_cursors = 0;
-	fkbmode = 0;
 	if (modokb == zx)  imprimecore(nomZX);
 	if (modokb == cpc) imprimecore(nomCPC);
 	if (modokb == msx) imprimecore(nomMSX);
