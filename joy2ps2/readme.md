@@ -2,6 +2,8 @@
 
 http://spark2k06.sytes.net/joy2ps2
 
+![alt text](Joy2PS2_2_3.png "Esquema")
+
 [![Alt text](https://img.youtube.com/vi/GII2eh_ROhA/0.jpg)](https://www.youtube.com/watch?v=GII2eh_ROhA)
 
 http://www.zxuno.com/forum/viewtopic.php?f=63&t=1508
