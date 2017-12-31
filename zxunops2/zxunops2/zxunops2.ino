@@ -95,6 +95,7 @@ uint16_t      typematic = 0;
 uint16_t      typematicfirst = 0;
 unsigned char typematic_code = 0;
 uint8_t       typematic_codeaux = 0;
+uint8_t       kbalt = 0;
 
 //Teclas Modificadoras (para teclado spectrum)
 unsigned char CAPS_SHIFT = KEY_LSHIFT;  //Caps Shift   (NO necesita E0)
@@ -609,7 +610,7 @@ enum KBMODE cambiarmodo(enum KBMODE modokb)
 void pulsafn(unsigned char row, unsigned char col, unsigned char key, unsigned char key_E0, unsigned char shift, unsigned char ctrl, unsigned char alt, unsigned char useg)
 { 	
 	if (espera) { _delay_us(5); espera = 0; }
-	if (shift) { if (codeset == 2) { sendPS2(KEY_RSHIFT); espera++; } else { sendPS2(KS1_RSHIFT); espera++; } }//El Shift derecho no necesita E0
+	if (shift) { if (codeset == 2) { sendPS2(KEY_LSHIFT); espera++; } else { sendPS2(KS1_LSHIFT); espera++; } }//El Shift no necesita E0
 	if (ctrl) { if (codeset == 2) { sendPS2(0xE0); sendPS2(KEY_RCTRL);  espera++; } else { sendPS2(0xE0); sendPS2(KS1_RCTRL);  espera++; } }//Se manda E0 para el control derecho (que vale para ambos casos)
 	if (alt) { if (codeset == 2) { sendPS2(KEY_LALT);   espera++; } else { sendPS2(KS1_LALT);   espera++; } }//Usamos el Alt izdo siempre
 	if (espera) { _delay_us(5); espera = 0; }
@@ -620,12 +621,13 @@ void pulsafn(unsigned char row, unsigned char col, unsigned char key, unsigned c
 	if (codeset == 2) sendPS2(0xF0);
 	if (codeset == 2) sendPS2(key);  else sendPS2(key + KS1_RELEASE);
 	matriz[row][col] = 0;
-	if (shift) { if (codeset == 2) { sendPS2(0xF0); sendPS2(KEY_RSHIFT); } else { sendPS2(KS1_RSHIFT + KS1_RELEASE); } }
+	if (shift) { if (codeset == 2) { sendPS2(0xF0); sendPS2(KEY_LSHIFT); } else { sendPS2(KS1_LSHIFT + KS1_RELEASE); } }
 	if (ctrl) { if (codeset == 2) { sendPS2(0xE0); sendPS2(0xF0); sendPS2(KEY_RCTRL); } else { sendPS2(0xE0); sendPS2(KS1_RCTRL + KS1_RELEASE); } }
 	if (alt) { if (codeset == 2) { sendPS2(0xF0); sendPS2(KEY_LALT); } else { sendPS2(KS1_RALT + KS1_RELEASE); } }
 	_delay_us(5);
 	fnpulsada = 1;
 	fnpulsando = 1;
+  kbalt = 0;
 }
 
 unsigned char traducekey(unsigned char key, enum KBMODE modokb) // con esta funcion ahorramos muchas matrices de mapas y por tanto memoria dinamica del AVR
@@ -799,7 +801,7 @@ void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modok
 		if (modokb == pc && codeset == 1) { key = mapXT1[row][col]; shift = modXT1[row][col]; }
 		else { shift = !(key & 0x80); if (!shift) key ^= 0x80; }
 
-	    if (shift) { if (codeset == 2) { sendPS2(KEY_RSHIFT); typematic_codeaux = KEY_RSHIFT; } else { sendPS2(KS1_RSHIFT); typematic_codeaux = KS1_RSHIFT; } }   
+	    if (shift) { if (codeset == 2) { sendPS2(KEY_LSHIFT); typematic_codeaux = KEY_LSHIFT; } else { sendPS2(KS1_LSHIFT); typematic_codeaux = KS1_LSHIFT; } }   
 	    sendPS2(key);
 	    typematic_code = key;
   } 
@@ -817,7 +819,7 @@ void sueltateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modo
 		if (codeset == 2) { sendPS2(0xF0); sendPS2(key); }
 		else sendPS2(key + KS1_RELEASE);
 
-		if (shift) { if (codeset == 2) { sendPS2(0xF0); sendPS2(KEY_RSHIFT); } else sendPS2(KS1_RSHIFT + KS1_RELEASE); }
+		if (shift) { if (codeset == 2) { sendPS2(0xF0); sendPS2(KEY_LSHIFT); } else sendPS2(KS1_LSHIFT + KS1_RELEASE); }
 				
 	}	
 }
@@ -827,7 +829,7 @@ void pulsateclaconshift(unsigned char row, unsigned char col, unsigned char key)
   	typematic_codeaux = 0;
 	if (!key) //si no esta mapeada saca la mayuscula
 	{
-    	if (codeset == 2) { sendPS2(KEY_RSHIFT); typematic_codeaux = KEY_RSHIFT; } else { sendPS2(KS1_RSHIFT); typematic_codeaux = KS1_RSHIFT; }
+    	if (codeset == 2) { sendPS2(KEY_LSHIFT); typematic_codeaux = KEY_LSHIFT; } else { sendPS2(KS1_LSHIFT); typematic_codeaux = KS1_LSHIFT; }
     	if (codeset == 2) { sendPS2(mapZX[row][col]); typematic_code = mapZX[row][col]; } else { sendPS2(mapSET1[row][col]); typematic_code = mapSET1[row][col]; }
 	}
 	else
@@ -844,8 +846,8 @@ void sueltateclaconshift(unsigned char row, unsigned char col, unsigned char key
   	typematic_code = 0;
 	if (!key) //si no esta mapeada saca la mayuscula
 	{
-		if (codeset == 2) { sendPS2(0xF0); sendPS2(mapZX[row][col]); sendPS2(0xF0); sendPS2(KEY_RSHIFT); }
-		else { sendPS2(mapSET1[row][col] + KS1_RELEASE); sendPS2(KS1_RSHIFT + KS1_RELEASE); }
+		if (codeset == 2) { sendPS2(0xF0); sendPS2(mapZX[row][col]); sendPS2(0xF0); sendPS2(KEY_LSHIFT); }
+		else { sendPS2(mapSET1[row][col] + KS1_RELEASE); sendPS2(KS1_LSHIFT + KS1_RELEASE); }
 	}
 	else
 	{
@@ -1142,6 +1144,7 @@ void matrixScan()
 			if (modo == pc)
 			{
 				if (matriz[Z_V_ROW][C_COL] & 0x01) opqa_cursors = !opqa_cursors; // OPQA -> Cursores (Activacion / Desactivacion)
+        if (matriz[H_L_ROW][L_COL] & 0x01) kbalt = 1; // Modo Alt activado para F1 - F12
 				_delay_ms(200);
 			}
 
@@ -1160,20 +1163,19 @@ void matrixScan()
 					LED_ON; 
 					#endif
 				} //Activa el cambio de modo lo que dejara en bucle hasta que se pulse una tecla. El led se enciende.
-				if ((matriz[N1_N5_ROW][N1_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N1_COL, KEY_F1, 0, 0, 0, 0, 5);  //F1
-				if ((matriz[N1_N5_ROW][N2_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N2_COL, KEY_F2, 0, 0, 0, 0, 5);  //F2
-				if ((matriz[N1_N5_ROW][N3_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N3_COL, KEY_F3, 0, 0, 0, 0, 5);  //F3
-				if ((matriz[N1_N5_ROW][N4_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N4_COL, KEY_F4, 0, 0, 0, 0, 5);  //F4
-				if ((matriz[N1_N5_ROW][N5_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N5_COL, KEY_F5, 0, 0, 0, 0, 5);  //F5
-				if ((matriz[N6_N0_ROW][N6_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N6_COL, KEY_F6, 0, 0, 0, 0, 5);  //F6 
-				if ((matriz[N6_N0_ROW][N7_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N7_COL, KEY_F7, 0, 0, 0, 0, 5);  //F7
-				if ((matriz[N6_N0_ROW][N8_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N8_COL, KEY_F8, 0, 0, 0, 0, 5);  //F8
-				if ((matriz[N6_N0_ROW][N9_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N9_COL, KEY_F9, 0, 0, 0, 0, 5);  //F9
-				if ((matriz[N6_N0_ROW][N0_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N0_COL, KEY_F10, 0, 0, 0, 0, 5); //F10
-								
-					
-				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && modo) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, 0, 50); //F11  
-				if ((matriz[Q_T_ROW][W_COL] & 0x01) && modo) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12  
+				if ((matriz[N1_N5_ROW][N1_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N1_COL, KEY_F1, 0, 0, 0, kbalt, 5);  //F1
+				if ((matriz[N1_N5_ROW][N2_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N2_COL, KEY_F2, 0, 0, 0, kbalt, 5);  //F2
+				if ((matriz[N1_N5_ROW][N3_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N3_COL, KEY_F3, 0, 0, 0, kbalt, 5);  //F3
+				if ((matriz[N1_N5_ROW][N4_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N4_COL, KEY_F4, 0, 0, 0, kbalt, 5);  //F4
+				if ((matriz[N1_N5_ROW][N5_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N5_COL, KEY_F5, 0, 0, 0, kbalt, 5);  //F5
+				if ((matriz[N6_N0_ROW][N6_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N6_COL, KEY_F6, 0, 0, 0, kbalt, 5);  //F6
+				if ((matriz[N6_N0_ROW][N7_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N7_COL, KEY_F7, 0, 0, 0, kbalt, 5);  //F7
+				if ((matriz[N6_N0_ROW][N8_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N8_COL, KEY_F8, 0, 0, 0, kbalt, 5);  //F8
+				if ((matriz[N6_N0_ROW][N9_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N9_COL, KEY_F9, 0, 0, 0, kbalt, 5);  //F9
+				if ((matriz[N6_N0_ROW][N0_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N0_COL, KEY_F10, 0, 0, 0, kbalt, 5); //F10
+				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && modo) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, kbalt, 50); //F11
+				if ((matriz[Q_T_ROW][W_COL] & 0x01) && modo) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, kbalt, 50); //F12
+        
 				if ((matriz[A_G_ROW][S_COL] & 0x01) && modo)
 				{
 					if (modo == at8) //F8 + F10 para Atari
@@ -1217,23 +1219,26 @@ void matrixScan()
 			}
 			else if (codeset == 1)
 			{
-				if (matriz[N1_N5_ROW][N1_COL] & 0x01) pulsafn(N1_N5_ROW, N1_COL, KS1_F1, 0, 0, 0, 0, 5);  //F1
-				if (matriz[N1_N5_ROW][N2_COL] & 0x01) pulsafn(N1_N5_ROW, N2_COL, KS1_F2, 0, 0, 0, 0, 5);  //F2
-				if (matriz[N1_N5_ROW][N3_COL] & 0x01) pulsafn(N1_N5_ROW, N3_COL, KS1_F3, 0, 0, 0, 0, 5);  //F3
-				if (matriz[N1_N5_ROW][N4_COL] & 0x01) pulsafn(N1_N5_ROW, N4_COL, KS1_F4, 0, 0, 0, 0, 5);  //F4
-				if (matriz[N1_N5_ROW][N5_COL] & 0x01) pulsafn(N1_N5_ROW, N5_COL, KS1_F5, 0, 0, 0, 0, 5);  //F5
-				if (matriz[N6_N0_ROW][N6_COL] & 0x01) pulsafn(N6_N0_ROW, N6_COL, KS1_F6, 0, 0, 0, 0, 5);  //F6 
-				if (matriz[N6_N0_ROW][N7_COL] & 0x01) pulsafn(N6_N0_ROW, N7_COL, KS1_F7, 0, 0, 0, 0, 5);  //F7
-				if (matriz[N6_N0_ROW][N8_COL] & 0x01) pulsafn(N6_N0_ROW, N8_COL, KS1_F8, 0, 0, 0, 0, 5);  //F8
-				if (matriz[N6_N0_ROW][N9_COL] & 0x01) pulsafn(N6_N0_ROW, N9_COL, KS1_F9, 0, 0, 0, 0, 5);  //F9
-				if (matriz[N6_N0_ROW][N0_COL] & 0x01) pulsafn(N6_N0_ROW, N0_COL, KS1_F10, 0, 0, 0, 0, 5); //F10
-				if (matriz[Q_T_ROW][Q_COL] & 0x01) pulsafn(Q_T_ROW, Q_COL, KS1_F11, 0, 0, 0, 0, 5);		  //F11  
-				if (matriz[Q_T_ROW][W_COL] & 0x01) pulsafn(Q_T_ROW, W_COL, KS1_F12, 0, 0, 0, 0, 5);		  //F12  
+				if (matriz[N1_N5_ROW][N1_COL] & 0x01) pulsafn(N1_N5_ROW, N1_COL, KS1_F1, 0, 0, 0, kbalt, 5);  //F1
+				if (matriz[N1_N5_ROW][N2_COL] & 0x01) pulsafn(N1_N5_ROW, N2_COL, KS1_F2, 0, 0, 0, kbalt, 5);  //F2
+				if (matriz[N1_N5_ROW][N3_COL] & 0x01) pulsafn(N1_N5_ROW, N3_COL, KS1_F3, 0, 0, 0, kbalt, 5);  //F3
+				if (matriz[N1_N5_ROW][N4_COL] & 0x01) pulsafn(N1_N5_ROW, N4_COL, KS1_F4, 0, 0, 0, kbalt, 5);  //F4
+				if (matriz[N1_N5_ROW][N5_COL] & 0x01) pulsafn(N1_N5_ROW, N5_COL, KS1_F5, 0, 0, 0, kbalt, 5);  //F5
+				if (matriz[N6_N0_ROW][N6_COL] & 0x01) pulsafn(N6_N0_ROW, N6_COL, KS1_F6, 0, 0, 0, kbalt, 5);  //F6 
+				if (matriz[N6_N0_ROW][N7_COL] & 0x01) pulsafn(N6_N0_ROW, N7_COL, KS1_F7, 0, 0, 0, kbalt, 5);  //F7
+				if (matriz[N6_N0_ROW][N8_COL] & 0x01) pulsafn(N6_N0_ROW, N8_COL, KS1_F8, 0, 0, 0, kbalt, 5);  //F8
+				if (matriz[N6_N0_ROW][N9_COL] & 0x01) pulsafn(N6_N0_ROW, N9_COL, KS1_F9, 0, 0, 0, kbalt, 5);  //F9
+				if (matriz[N6_N0_ROW][N0_COL] & 0x01) pulsafn(N6_N0_ROW, N0_COL, KS1_F10, 0, 0, 0, kbalt, 5); //F10
+				if (matriz[Q_T_ROW][Q_COL] & 0x01) pulsafn(Q_T_ROW, Q_COL, KS1_F11, 0, 0, 0, kbalt, 5);		  //F11  
+				if (matriz[Q_T_ROW][W_COL] & 0x01) pulsafn(Q_T_ROW, W_COL, KS1_F12, 0, 0, 0, kbalt, 5);		  //F12  
 				if (matriz[B_M_ROW][B_COL] & 0x01) pulsafn(B_M_ROW, B_COL, KS1_BACKSP, 0, 0, 1, 1, 5);    //ZXUNO Hard Reset (Control+Alt+Backsp)
 				if (matriz[B_M_ROW][N_COL] & 0x01) pulsafn(B_M_ROW, N_COL, KS1_DELETE, 0, 0, 1, 1, 5);    //ZXUNO Soft Reset (Control+Alt+Supr)
+       
 			}
 		}
+   
 	}
+ 
 	else fnpulsando = 0; //Fin de escaneo de combos
 
 						 //Control de teclado
