@@ -1,4 +1,4 @@
-# JOY2PS2 Release 5
+# JOY2PS2 Release 6
 
 http://spark2k06.sytes.net/joy2ps2
 
