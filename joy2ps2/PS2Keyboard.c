@@ -16,7 +16,7 @@ const unsigned char P1Map0[] = { // Mapa 0 - Player 1 -> Por defecto al iniciar 
 	KEY_1,		    // START
 	KEY_SPACE,      // BUTTON 1
 	KEY_X,       	// BUTTON 2		-> Cambio a 'X' para adaptarnos a cores arcade y Sega Master System
-	KEY_R,       	// BUTTON 3
+	KEY_M,       	// BUTTON 3
 	KEY_D,       	// BUTTON 4
 	KEY_F,       	// BUTTON 5
 	KEY_C        	// BUTTON 6
@@ -207,27 +207,30 @@ uint8_t ps2Stat()
 void FreeKBBuffer()
 {
 	while (QueueIn != QueueOut && !ps2Stat()) // Liberamos buffer de scancodes si las lineas estan en alto
-	{	
-	
-		QueuePS2Get(&sendcode, &wait_ms);
-
-		while ((sendcode == 0xE0 || sendcode == 0xF0))
+	{
+		if (!ps2Stat())
 		{
+
+			QueuePS2Get(&sendcode, &wait_ms);
+
+			while ((sendcode == 0xE0 || sendcode == 0xF0))
+			{
+				sendPS2fromqueue(sendcode);
+				if (QueueIn != QueueOut)
+				{
+					QueuePS2Get(&sendcode, &wait_ms);
+				}
+				else
+				{
+					return;
+				}
+
+			}
 			sendPS2fromqueue(sendcode);
-			if (QueueIn != QueueOut)
-			{
-				QueuePS2Get(&sendcode, &wait_ms);
-			}
-			else
-			{
-				return;
-			}
+			my_delay_ms_10ms_steps(wait_ms);
+			break;
 
 		}
-		sendPS2fromqueue(sendcode);
-		my_delay_ms_10ms_steps(wait_ms);
-		break;
-
 	}
 }
 
@@ -315,6 +318,8 @@ void sendPS2fromqueue(unsigned char code)
 	unsigned char parity = 1;
 	int i = 0;
 
+	LED_OFF;
+
 	//iniciamos transmisión
 	ps2Mode(PS2_DAT, LO);
 	my_delay_us_4us_steps(CK1 * ckt);
@@ -362,6 +367,8 @@ void sendPS2fromqueue(unsigned char code)
 	my_delay_us_4us_steps(CK1 * ckt);
 
 	_delay_us(50);
+
+	LED_ON;
 	
 }
 

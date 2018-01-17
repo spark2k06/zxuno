@@ -14,6 +14,10 @@
 #include "report.h"
 #include "direct.h"
 
+#define LED_CONFIG	DDRB |= (1<<5)
+#define LED_ON	PORTB |= (1<<5)		
+#define LED_OFF	PORTB &= ~(1<<5)
+
 const unsigned char MenuOptions[] = { KEY_R, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 };
 const unsigned char Keys[] = { KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L,
                                KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X,
@@ -167,6 +171,9 @@ int main()
 
 	hostdata = 0;
 	scancodeset = 2;
+
+	LED_CONFIG;
+	LED_ON;
 
 	// Loop
 	while (1) {
@@ -334,6 +341,7 @@ int main()
 
 		if (shiftmode)
 		{
+			
 			if (p1.start && p1prev.up && !p1.up) // Reducimos CK1 y CK2 hasta 4 / 8 minimo en tramos de 4 / 8
 			{
 				if (ckt > 1)
@@ -420,9 +428,10 @@ int main()
 				db15 = !db15;
 			}
 
-			if (p1.button1 && p1.left) // Desactivacion de escucha del Host
+			if (p1.button1 && p1.left) // Desactivacion de escucha del Host y cambio de set de scancodes de (1 o 2)
 			{
 				_delay_ms(500);
+				if (scancodeset == 2) scancodeset = 1; else scancodeset = 2;
 				shiftmode = 0;
 				p1.button1 = 0; p1.left = 0;
 				p1prev.button1 = 0; p1prev.left = 0;
@@ -534,7 +543,7 @@ int main()
 
 		}
 		else
-		{
+		{						
 
 			if (extraoptions == 0) // modo KEYSTROKES
 			{
