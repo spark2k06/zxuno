@@ -1294,9 +1294,9 @@ general purpose rectifier, 1 A</description>
 <label x="-20.32" y="104.14" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="Q1" gate="1" pin="D"/>
-<wire x1="-55.88" y1="109.22" x2="-35.56" y2="109.22" width="0.1524" layer="91"/>
-<label x="-38.1" y="109.22" size="1.778" layer="95"/>
+<pinref part="Q1" gate="1" pin="S"/>
+<wire x1="-55.88" y1="99.06" x2="-35.56" y2="99.06" width="0.1524" layer="91"/>
+<label x="-38.1" y="99.06" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="A0" class="0">
@@ -1344,11 +1344,6 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="KB_DATA'" class="0">
 <segment>
-<pinref part="Q1" gate="1" pin="S"/>
-<wire x1="-55.88" y1="99.06" x2="-35.56" y2="99.06" width="0.1524" layer="91"/>
-<label x="-38.1" y="99.06" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="1" gate="A" pin="1"/>
 <wire x1="-55.88" y1="66.04" x2="-71.12" y2="66.04" width="0.1524" layer="91"/>
 <label x="-76.2" y="66.04" size="1.778" layer="95"/>
@@ -1357,6 +1352,11 @@ general purpose rectifier, 1 A</description>
 <pinref part="D1" gate="1" pin="C"/>
 <wire x1="7.62" y1="104.14" x2="22.86" y2="104.14" width="0.1524" layer="91"/>
 <label x="20.32" y="104.14" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="Q1" gate="1" pin="D"/>
+<wire x1="-55.88" y1="109.22" x2="-35.56" y2="109.22" width="0.1524" layer="91"/>
+<label x="-38.1" y="109.22" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
