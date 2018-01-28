@@ -1045,7 +1045,7 @@ general purpose rectifier, 1 A</description>
 </classes>
 <parts>
 <part name="_" library="GeekAmmo" deviceset="TACTILE-SWITCH" device="-PTH"/>
-<part name="J1" library="SparkFun-Connectors" deviceset="DB9" device="MALE"/>
+<part name="DB9" library="SparkFun-Connectors" deviceset="DB9" device="MALE"/>
 <part name="IC1" library="adafruit" deviceset="ATMEGA168*P" device="ROUND"/>
 <part name="1" library="pinhead" deviceset="PINHD-1X6" device=""/>
 <part name="2" library="pinhead" deviceset="PINHD-1X6" device=""/>
@@ -1059,7 +1059,7 @@ general purpose rectifier, 1 A</description>
 </plain>
 <instances>
 <instance part="_" gate="G$1" x="-63.5" y="83.82"/>
-<instance part="J1" gate="G$1" x="7.62" y="86.36"/>
+<instance part="DB9" gate="G$1" x="7.62" y="86.36"/>
 <instance part="IC1" gate="G$1" x="2.54" y="40.64"/>
 <instance part="1" gate="A" x="-53.34" y="58.42"/>
 <instance part="2" gate="A" x="-53.34" y="33.02"/>
@@ -1072,7 +1072,7 @@ general purpose rectifier, 1 A</description>
 <nets>
 <net name="D2" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="3"/>
+<pinref part="DB9" gate="G$1" pin="3"/>
 <wire x1="0" y1="86.36" x2="-12.7" y2="86.36" width="0.1524" layer="91"/>
 <label x="-12.7" y="86.36" size="1.778" layer="95"/>
 </segment>
@@ -1084,7 +1084,7 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="D3" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="4"/>
+<pinref part="DB9" gate="G$1" pin="4"/>
 <wire x1="0" y1="83.82" x2="-12.7" y2="83.82" width="0.1524" layer="91"/>
 <label x="-12.7" y="83.82" size="1.778" layer="95"/>
 </segment>
@@ -1096,7 +1096,7 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="D4" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="6"/>
+<pinref part="DB9" gate="G$1" pin="6"/>
 <wire x1="15.24" y1="88.9" x2="27.94" y2="88.9" width="0.1524" layer="91"/>
 <label x="25.4" y="88.9" size="1.778" layer="95"/>
 </segment>
@@ -1108,7 +1108,7 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="D5" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="9"/>
+<pinref part="DB9" gate="G$1" pin="9"/>
 <wire x1="15.24" y1="81.28" x2="27.94" y2="81.28" width="0.1524" layer="91"/>
 <label x="25.4" y="81.28" size="1.778" layer="95"/>
 </segment>
@@ -1152,7 +1152,7 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="+5V" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="5"/>
+<pinref part="DB9" gate="G$1" pin="5"/>
 <wire x1="0" y1="81.28" x2="-12.7" y2="81.28" width="0.1524" layer="91"/>
 <label x="-12.7" y="81.28" size="1.778" layer="95"/>
 </segment>
@@ -1179,7 +1179,7 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="A5" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="2"/>
+<pinref part="DB9" gate="G$1" pin="2"/>
 <wire x1="0" y1="88.9" x2="-12.7" y2="88.9" width="0.1524" layer="91"/>
 <label x="-12.7" y="88.9" size="1.778" layer="95"/>
 </segment>
@@ -1191,7 +1191,7 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="A4" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="1"/>
+<pinref part="DB9" gate="G$1" pin="1"/>
 <wire x1="0" y1="91.44" x2="-12.7" y2="91.44" width="0.1524" layer="91"/>
 <label x="-12.7" y="91.44" size="1.778" layer="95"/>
 </segment>
@@ -1252,7 +1252,7 @@ general purpose rectifier, 1 A</description>
 <label x="-78.74" y="81.28" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="J1" gate="G$1" pin="8"/>
+<pinref part="DB9" gate="G$1" pin="8"/>
 <wire x1="15.24" y1="83.82" x2="27.94" y2="83.82" width="0.1524" layer="91"/>
 <label x="25.4" y="83.82" size="1.778" layer="95"/>
 </segment>
@@ -1301,7 +1301,7 @@ general purpose rectifier, 1 A</description>
 </net>
 <net name="A0" class="0">
 <segment>
-<pinref part="J1" gate="G$1" pin="7"/>
+<pinref part="DB9" gate="G$1" pin="7"/>
 <wire x1="15.24" y1="86.36" x2="27.94" y2="86.36" width="0.1524" layer="91"/>
 <label x="25.4" y="86.36" size="1.778" layer="95"/>
 </segment>
