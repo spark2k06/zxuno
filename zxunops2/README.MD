@@ -2,11 +2,15 @@
 
 http://www.zxuno.com/forum/viewtopic.php?f=63&t=1680
 
+Manual de uso por juanjose, miembro del foro de ZX-Uno: https://github.com/jsanjose/ZXGO-Manual
+
 Modificacion a partir del código de Neuro (enlace indicado en el archivo de licencia).
 
 Entre otros cambios, este fork sale de la línea de envío de scancodes especiales de forma reiterada, mediante pulsacion de shift o symbol. 
 
 En su lugar se envían los scancodes una sola vez y se vuelven a enviar la liberación de los mismos una vez soltada la tecla.
+
+
 
 Release 7
 
