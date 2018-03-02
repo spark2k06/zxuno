@@ -1163,19 +1163,20 @@ void matrixScan()
 					LED_ON; 
 					#endif
 				} //Activa el cambio de modo lo que dejara en bucle hasta que se pulse una tecla. El led se enciende.
-				if ((matriz[N1_N5_ROW][N1_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N1_COL, KEY_F1, 0, 0, 0, kbalt, 5);  //F1
-				if ((matriz[N1_N5_ROW][N2_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N2_COL, KEY_F2, 0, 0, 0, kbalt, 5);  //F2
-				if ((matriz[N1_N5_ROW][N3_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N3_COL, KEY_F3, 0, 0, 0, kbalt, 5);  //F3
-				if ((matriz[N1_N5_ROW][N4_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N4_COL, KEY_F4, 0, 0, 0, kbalt, 5);  //F4
-				if ((matriz[N1_N5_ROW][N5_COL] & 0x01) && modo) pulsafn(N1_N5_ROW, N5_COL, KEY_F5, 0, 0, 0, kbalt, 5);  //F5
-				if ((matriz[N6_N0_ROW][N6_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N6_COL, KEY_F6, 0, 0, 0, kbalt, 5);  //F6
-				if ((matriz[N6_N0_ROW][N7_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N7_COL, KEY_F7, 0, 0, 0, kbalt, 5);  //F7
-				if ((matriz[N6_N0_ROW][N8_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N8_COL, KEY_F8, 0, 0, 0, kbalt, 5);  //F8
-				if ((matriz[N6_N0_ROW][N9_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N9_COL, KEY_F9, 0, 0, 0, kbalt, 5);  //F9
-				if ((matriz[N6_N0_ROW][N0_COL] & 0x01) && modo) pulsafn(N6_N0_ROW, N0_COL, KEY_F10, 0, 0, 0, kbalt, 5); //F10
-				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && modo) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, kbalt, 50); //F11
-				if ((matriz[Q_T_ROW][W_COL] & 0x01) && modo) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, kbalt, 50); //F12
-        
+				if ((matriz[N1_N5_ROW][N1_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N1_COL, KEY_F1, 0, 0, 0, 0, 5);  //F1
+				if ((matriz[N1_N5_ROW][N2_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N2_COL, KEY_F2, 0, 0, 0, 0, 5);  //F2
+				if ((matriz[N1_N5_ROW][N3_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N3_COL, KEY_F3, 0, 0, 0, 0, 5);  //F3
+				if ((matriz[N1_N5_ROW][N4_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N4_COL, KEY_F4, 0, 0, 0, 0, 5);  //F4
+				if ((matriz[N1_N5_ROW][N5_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N5_COL, KEY_F5, 0, 0, 0, 0, 5);  //F5
+				if ((matriz[N6_N0_ROW][N6_COL] & 0x01) && fkbmode != 2) pulsafn(N6_N0_ROW, N6_COL, KEY_F6, 0, 0, 0, 0, 5);  //F6 
+				if ((matriz[N6_N0_ROW][N7_COL] & 0x01) && fkbmode != 2) pulsafn(N6_N0_ROW, N7_COL, KEY_F7, 0, 0, 0, 0, 5);  //F7
+				if ((matriz[N6_N0_ROW][N8_COL] & 0x01) && fkbmode != 2) pulsafn(N6_N0_ROW, N8_COL, KEY_F8, 0, 0, 0, 0, 5);  //F8
+				if ((matriz[N6_N0_ROW][N9_COL] & 0x01) && fkbmode != 2) pulsafn(N6_N0_ROW, N9_COL, KEY_F9, 0, 0, 0, 0, 5);  //F9
+				if ((matriz[N6_N0_ROW][N0_COL] & 0x01) && fkbmode != 2) pulsafn(N6_N0_ROW, N0_COL, KEY_F10, 0, 0, 0, 0, 5); //F10
+
+				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && fkbmode != 2) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, 0, 50); //F11  
+				if ((matriz[Q_T_ROW][W_COL] & 0x01) && fkbmode != 2) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12  
+
 				if ((matriz[A_G_ROW][S_COL] & 0x01) && modo)
 				{
 					if (modo == at8) //F8 + F10 para Atari
