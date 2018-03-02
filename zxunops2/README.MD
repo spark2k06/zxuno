@@ -1,6 +1,6 @@
 http://www.zxuno.com/forum/viewtopic.php?f=63&t=1680
 
-Manual de uso por juanjose, miembro del foro de ZX-Uno: https://github.com/jsanjose/ZXGO-Manual
+Manual de uso por jsj, miembro del foro de ZX-Uno: https://github.com/jsanjose/ZXGO-Manual
 
 Modificacion a partir del código de Neuro (enlace indicado en el archivo de licencia).
 
