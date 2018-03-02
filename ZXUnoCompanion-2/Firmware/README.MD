@@ -1,6 +1,6 @@
 Alpha 1
 
--> Proyecto original ZX-Uno.
+-> Se incluye el proyecto original ZXUnoPS2, adaptado a los AVR atmega128 y atmega2560.
 
 -> Gestión de encendido/apagado.
 
