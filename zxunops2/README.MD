@@ -8,6 +8,14 @@ Entre otros cambios, este fork sale de la línea de envío de scancodes especial
 
 En su lugar se envían los scancodes una sola vez y se vuelven a enviar la liberación de los mismos una vez soltada la tecla.
 
+Release 7
+
+-> Ahora el modo ZX también admite todos las teclas de función con CS+SS+numero, excepto para el modo .ZXPURE del mismo.
+
+-> CS+SS+L -> Activa modo ALT sólo en PC y sólo para las F1 a F12, éste queda desactivado tras el uso de la función correspondiente.
+
+-> Cambio de SHIFT derecho a izquierdo en símbolos y mayúsculas para compatibilizar el uso como teclado externo en el core de CPC de la Mist.
+
 Release 6
 
 -> textos de modos .DEFAULT, .FULL y .PURE sustituidos por .ZXPARTIALCOMBOS, .ZXFULLCOMBOS y .ZXPURE, y al cambiar de modo se guardan automaticamente en la EEPROM.
