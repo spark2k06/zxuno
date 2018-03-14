@@ -1,6 +1,19 @@
 Alpha 3
 
--> Se incluye una versión simplificada del proyecto Joy2PS2, y sin posibilidad de redefinición de teclas (OPQA-SPC-XMDFC-51)
+-> Se incluye una versión simplificada del proyecto Joy2PS2, y sin posibilidad de redefinición de teclas por el momento:
+
+	KEY_Q,       	// UP
+	KEY_A,       	// DOWN
+	KEY_O,       	// LEFT
+	KEY_P,       	// RIGHT
+	KEY_5,	      // SELECT
+	KEY_1,		    // START
+	KEY_SPACE,    // BUTTON 1
+	KEY_X,       	// BUTTON 2
+	KEY_M,       	// BUTTON 3
+	KEY_D,       	// BUTTON 4
+	KEY_F,       	// BUTTON 5
+	KEY_C        	// BUTTON 6
 
 -> Nuevos modos de teclado (.PC, .PCXT, .ZXEXT)
 
