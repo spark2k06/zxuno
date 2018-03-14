@@ -17,7 +17,7 @@ Alpha 3
 
 -> Nuevos modos de teclado (.PC, .PCXT, .KBEXT)
 
--> Codigo configurable en tiempo de compilación para poder intercambiar tecla break-borrar y cursores por "." y "," (proximamente se podrá hacer mediante atajo, quedando guardada la configuración en la EEPROM de forma permanente)
+-> Código configurable en tiempo de compilación para poder intercambiar tecla break-borrar y cursores por "." y "," (proximamente se podrá hacer mediante atajo, quedando guardada la configuración en la EEPROM de forma permanente)
 
 -> Mejora de la gestión de combos para evitar la repetición de sus teclas asociadas a la función seleccionada.
 
