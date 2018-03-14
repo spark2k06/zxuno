@@ -1,8 +1,11 @@
 Alpha 3
 
 -> Se incluye una versión simplificada del proyecto Joy2PS2, y sin posibilidad de redefinición de teclas (OPQA-SPC-XMDFC-51)
+
 -> Nuevos modos de teclado (.PC, .PCXT, .ZXEXT)
+
 -> Codigo configurable en tiempo de compilación para poder intercambiar tecla break-borrar y cursores por "." y "," (proximamente se podrá hacer mediante atajo, quedando guardada la configuración en la EEPROM de forma permanente)
+
 -> Mejora de la gestión de combos para evitar la repetición de sus teclas asociadas a la función seleccionada.
 
 Alpha 2
