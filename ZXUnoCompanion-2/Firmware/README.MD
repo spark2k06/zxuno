@@ -15,7 +15,7 @@ Alpha 3
 	KEY_F,        // BUTTON 5
 	KEY_C         // BUTTON 6
 
--> Nuevos modos de teclado (.PC, .PCXT, .ZXEXT)
+-> Nuevos modos de teclado (.PC, .PCXT, .KBEXT)
 
 -> Codigo configurable en tiempo de compilación para poder intercambiar tecla break-borrar y cursores por "." y "," (proximamente se podrá hacer mediante atajo, quedando guardada la configuración en la EEPROM de forma permanente)
 
