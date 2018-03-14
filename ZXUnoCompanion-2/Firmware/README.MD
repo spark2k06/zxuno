@@ -1,6 +1,6 @@
 Alpha 3
 
--> Se incluye una versión simplificada del proyecto Joy2PS2 para el segundo puerto de Joystick de Sugarless +2, y sin posibilidad de redefinición de teclas por el momento:
+-> Se incluye una versión simplificada del proyecto Joy2PS2 para el segundo puerto de Joystick de Sugarless +2, sin posibilidad de redefinición de teclas por el momento:
 
 	KEY_Q,        // UP
 	KEY_A,        // DOWN
