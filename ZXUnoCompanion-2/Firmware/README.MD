@@ -1,3 +1,7 @@
+Alpha 4
+
+-> Nueva mejora de la gestión de combos para evitar la repetición de sus teclas asociadas a la función seleccionada.
+
 Alpha 3
 
 -> Se incluye una versión simplificada del proyecto Joy2PS2 para el segundo puerto de Joystick de Sugarless +2, sin posibilidad de redefinición de teclas por el momento:
