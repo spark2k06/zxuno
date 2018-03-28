@@ -1,3 +1,7 @@
+Beta 1
+
+-> Primera versión beta con un funcionamiento muy básico pero con todas las características principales disponibles.
+
 Alpha 4
 
 -> Nueva mejora de la gestión de combos para evitar la repetición de sus teclas asociadas a la función seleccionada.
