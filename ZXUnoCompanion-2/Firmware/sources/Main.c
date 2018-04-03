@@ -1362,38 +1362,38 @@ void matrixScan()
 	}		
 	
 	if (cambiomodo)
-	{ 
+	{
 		if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x04) { matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(CAPS_SHIFT); } }
 		if (matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] & 0x04) { matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); } }
 		
-		if (matriz[Z_V_ROW][C_COL] & 0x01) // UP
+		if (matriz[A_G_ROW][G_COL] & 0x01) // UP
 		{
 			TZXDUINO_pushbutton(TZX_UP_PIN, TZX_UP_BCD); 
-			matriz[Z_V_ROW][C_COL] = 0;
+			matriz[A_G_ROW][G_COL] = 0;
 		}
 
-		if (matriz[Z_V_ROW][V_COL] & 0x01) // DOWN
+		if (matriz[H_L_ROW][H_COL] & 0x01) // DOWN
 		{
 			TZXDUINO_pushbutton(TZX_DOWN_PIN, TZX_DOWN_BCD);
-			matriz[Z_V_ROW][V_COL] = 0;
+			matriz[H_L_ROW][H_COL] = 0;
 		}
 
-		if (matriz[B_M_ROW][B_COL] & 0x01) // STOP
+		if (matriz[H_L_ROW][J_COL] & 0x01) // STOP
 		{
 			TZXDUINO_pushbutton(TZX_STOP_PIN, TZX_STOP_BCD);
-			matriz[B_M_ROW][B_COL] = 0;
+			matriz[H_L_ROW][J_COL] = 0;
 		}
 
-		if (matriz[B_M_ROW][N_COL] & 0x01) // PLAY
+		if (matriz[H_L_ROW][K_COL] & 0x01) // PLAY
 		{
 			TZXDUINO_pushbutton(TZX_PLAY_PIN, TZX_PLAY_BCD);
-			matriz[B_M_ROW][N_COL] = 0;
+			matriz[H_L_ROW][K_COL] = 0;
 		}
 
-		if (matriz[B_M_ROW][M_COL] & 0x01) // ROOT
+		if (matriz[H_L_ROW][L_COL] & 0x01) // ROOT
 		{
 			TZXDUINO_pushbutton(TZX_ROOT_PIN, TZX_ROOT_BCD);
-			matriz[B_M_ROW][M_COL] = 0;
+			matriz[H_L_ROW][L_COL] = 0;
 		}
 
 
