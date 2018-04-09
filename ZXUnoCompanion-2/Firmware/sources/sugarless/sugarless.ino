@@ -515,6 +515,7 @@ void sendCodeMR(unsigned char key, uint16_t release, unsigned char scancodeset)
 void PressKey(unsigned char key, unsigned char scancodeset)
 {
 	sendCodeMR(key, 0, scancodeset); //Make	
+    _delay_ms(100); // Delay corto de 100 milisegundos antes de liberar la tecla
 	sendCodeMR(key, 1, scancodeset); //Release
 }
 
