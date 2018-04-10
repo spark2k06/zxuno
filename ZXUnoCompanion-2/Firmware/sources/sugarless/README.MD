@@ -1,3 +1,7 @@
+Beta 4
+
+-> Comportamiento de los botones select y start igual que el resto de botones, se pulsan y mantienen pulsados hasta que son soltados. El uso anterior tenia sentido en la versión original de Joy2PS2 ya que estos botones también se usaban para realizar ciertos combos, pero ya no es necesario al disponer de un teclado siempre conectado.
+
 Beta 3
 
 -> 100 ms de delay tras la pulsacion de start y select en el puerto joy2ps2 para que le de tiempo a procesarlo al ZX-Uno.
