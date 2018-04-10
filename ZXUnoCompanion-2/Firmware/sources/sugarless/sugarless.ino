@@ -1226,8 +1226,8 @@ void joy2ps2Scan()
 	if (p1.left != p1prev.left) sendCodeMR(P1KeyMap[2], !p1.left, codeset);
 	if (p1.right != p1prev.right) sendCodeMR(P1KeyMap[3], !p1.right, codeset);
 
-	if (p1prev.select & !p1.select) PressKey(P1KeyMap[4], codeset);
-	if (p1prev.start & !p1.start) PressKey(P1KeyMap[5], codeset);
+	if (p1.select != p1prev.select) sendCodeMR(P1KeyMap[4], !p1.select, codeset);
+	if (p1.start != p1prev.start) sendCodeMR(P1KeyMap[5], !p1.start, codeset);
 
 	if (p1.button1 != p1prev.button1) sendCodeMR(P1KeyMap[6], !p1.button1, codeset);
 	if (p1.button2 != p1prev.button2) sendCodeMR(P1KeyMap[7], !p1.button2, codeset);
