@@ -5,4 +5,4 @@ http://www.va-de-retro.com/foros/viewtopic.php?f=63&t=6551
 
 Infografía de la configuracion de Jumpers por yoxxxoy.
 
-[![Alt text](https://github.com/spark2k06/zxuno/raw/master/ZXUnoCompanion-2/Jumpers_CFG.png)]
+![Alt text](Jumpers_CFG.png?raw=true "Configuración de Jumpers")
