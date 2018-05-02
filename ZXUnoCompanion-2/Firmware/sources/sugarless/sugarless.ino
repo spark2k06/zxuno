@@ -3,9 +3,10 @@ Firmware Sugarless +2 (A ZX-Uno Companion)
 Alfa 1
 Basado en ZXUnoPS2 y Joy2PS2
 Adaptado y mejorado por spark2k06
+Algunos ajustes en los tipos de variables por yombo para que compile correctamente en el entorno IDE de arduino
 Gracias Quest por tus aportaciones al código de envío de scancodes por el puerto PS/2 en el proyecto uart2ps2
 Gracias neuro_999 por tus aportaciones a parte del código de ZXUnoPS2
-Gracias a a todo equipo de ZX-Uno por desarrollar un gran producto como es el ZX-Uno.
+Gracias a a todo equipo de ZX-Uno por desarrollar un gran producto como es el ZX-Uno
 */
 
 #include <stdio.h>
@@ -40,11 +41,11 @@ unsigned char fnpulsada = 0;
 unsigned char fnpulsando = 0;
 unsigned char zxuno_encendido = 0;
 
-uint16_t tiemout_poweroff = 400;
+uint16_t tiemout_poweroff = 300;
 
 
 //uint8_t modo=0; //Modo teclado 0=ZX NATIVO / 1=CPC MAPEADO /2=MSX MAPEADO
-enum KBMODE modo; //Modo teclado 0=ZX=NATIVO /Resto otros mapas
+KBMODE modo; //Modo teclado 0=ZX=NATIVO /Resto otros mapas
 uint8_t cambiomodo = 0;
 uint8_t soltarteclas;
 uint8_t cs_counter = 0, ss_counter = 0;
@@ -310,6 +311,81 @@ void ReadDB9()
 	_delay_us(14);
 
 }
+
+/* --> Futura adaptacion Famicom DB9, requiere adaptador
+uchar FamicomReadByte(void)
+{
+	uchar i = 0, j;
+
+	for (j = 0; j < 8; j++)
+	{
+		i = i >> 1;
+		if (pinStat(FAM_DAT, FAM_DAT_BCD)) i |= (1 << 7);	// button pressed
+		pinPut(FAM_CLK, FAM_CLK_BCD, LO);					// clock low
+		_delay_us(FAMDELAY);
+		pinPut(FAM_CLK, FAM_CLK_BCD, HI);					// clock high
+		_delay_us(FAMDELAY);
+	}
+
+	return i;
+}
+
+void ReadFamicom()
+{
+	static	uchar	vbmode = 0;			// Virtual Boy mode flag
+		
+	uchar	byte0, byte1, byte2;
+
+	pinSet(FAM_DAT, FAM_DAT_BCD, HI);	// Data as input
+	pinPut(FAM_DAT, FAM_DAT_BCD, HI);	// with pull-up
+
+	pinSet(FAM_LAT, FAM_LAT_BCD, LO);	// Latch as output
+	pinPut(FAM_LAT, FAM_LAT_BCD, HI);	// starting high
+
+	pinSet(FAM_CLK, FAM_CLK_BCD, LO);	// Clock as output
+	pinPut(FAM_CLK, FAM_CLK_BCD, HI);	// starting high
+
+	_delay_us(FAMDELAY * 2);			// latch pulse
+	pinPut(FAM_LAT, FAM_LAT_BCD, LO);	// latch low again
+	_delay_us(FAMDELAY);				// settle time
+
+	byte0 = FamicomReadByte();
+	byte1 = FamicomReadByte();
+	byte2 = FamicomReadByte();
+
+	// Common to all controllers
+	p1.right = byte0 & (1 << 7);
+	p1.left = byte0 & (1 << 6);
+	p1.down = byte0 & (1 << 5);
+	p1.up = byte0 & (1 << 4);
+	p1.start = byte0 & (1 << 3);
+	p1.select = byte0 & (1 << 2);
+
+	if ((byte1 & 0xC0) == 0xC0)	// Famicom mode
+	{
+		if (byte1 != 0xff) vbmode = 1;	// Virtual Boy detection
+
+		if (vbmode == 0)				// Famicom
+		{
+			p1.button1 = byte0 & (1 << 0);
+			p1.button2 = byte0 & (1 << 1);			
+		}
+	}
+	else if ((byte1 & 0xf0) == 0)		// Super Famicom mode or no pad
+	{
+		vbmode = 0;
+
+		p1.button1 = byte1 & (1 << 0);
+		p1.button2 = byte0 & (1 << 0);
+		p1.button3 = byte1 & (1 << 1);
+		p1.button4 = byte0 & (1 << 1);
+		p1.button5 = byte1 & (1 << 2);
+		p1.button6 = byte1 & (1 << 3);
+	}	
+	else vbmode = 0;
+
+}
+*/
 
 void ps2Init()
 {
@@ -672,15 +748,15 @@ void Joy2PS2Init()
 void TZXDUINO_pushbutton(uint8_t pin, uint8_t bcd)
 {
 	// Pulsa
-	pinPut(TZX_ROOT_PIN, TZX_ROOT_BCD, LO);
-	pinSet(TZX_ROOT_PIN, TZX_ROOT_BCD, _OUT);
+	pinPut(pin, bcd, LO);
+	pinSet(pin, bcd, _OUT);
 	
 	// Delay de 250 ms
 	_delay_ms(250);
 
 	// Suelta
-	pinSet(TZX_ROOT_PIN, TZX_ROOT_BCD, _IN);
-	pinPut(TZX_ROOT_PIN, TZX_ROOT_BCD, HI);
+	pinSet(pin, bcd, _IN);
+	pinPut(pin, bcd, HI);
 
 }
 
@@ -720,7 +796,7 @@ void matrixInit()
 	}
 }
 
-enum KBMODE cambiarmodo2(enum KBMODE modokb)
+KBMODE cambiarmodo2(KBMODE modokb)
 {
 	kbescucha = 0;
 	KBEXT_BIDIR_OFF;	
@@ -744,7 +820,7 @@ enum KBMODE cambiarmodo2(enum KBMODE modokb)
 	return modokb;
 }
 
-enum KBMODE cambiarmodo(enum KBMODE modokb)
+KBMODE cambiarmodo(KBMODE modokb)
 {
 	kbescucha = 0;
 	KBEXT_BIDIR_OFF;	
@@ -800,7 +876,7 @@ void pulsafn(unsigned char row, unsigned char col, unsigned char key, unsigned c
 	soltarteclas = 1; // Forzamos a que despues todas las teclas esten soltadas para evitar que se quede pulsada la letra asociada al combo.	
 }
 
-unsigned char traducekey(unsigned char key, enum KBMODE modokb) // con esta funcion ahorramos muchas matrices de mapas y por tanto memoria dinamica del AVR
+unsigned char traducekey(unsigned char key, KBMODE modokb) // con esta funcion ahorramos muchas matrices de mapas y por tanto memoria dinamica del AVR
 {
 	// Se hace OR 0x80 al key que no requiera shift (KEY_F7 es el unico scancode incompatible, ya se resolveria en caso de necesidad)
 	// combinaciones no usables, comun a todos los cores
@@ -962,7 +1038,7 @@ unsigned char traducekey(unsigned char key, enum KBMODE modokb) // con esta func
 	return key;
 }
 
-void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
+void pulsateclaconsymbol(unsigned char row, unsigned char col, KBMODE modokb)
 {
 	unsigned char key = 0, shift = 0;
 	typematicfirst = 0;
@@ -978,7 +1054,7 @@ void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modok
 	    typematic_code = key;
   } 
 }
-void sueltateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
+void sueltateclaconsymbol(unsigned char row, unsigned char col, KBMODE modokb)
 {
 	unsigned char key = 0, shift = 0;
 	typematic_code = 0;
@@ -1254,7 +1330,7 @@ void matrixScan()
 				_delay_ms(10);
 				if (tiemout_poweroff < 100)
 				{
-					tiemout_poweroff = 400;
+					tiemout_poweroff = 300;
 					zxuno_encendido = 0;
 					POWER_OFF;
 					while (pinStat(SYSTEM_PIN, SYSTEM_BCD)) _delay_ms(250);				
@@ -1262,7 +1338,7 @@ void matrixScan()
 			}
 			else // Encender ZX-Uno
 			{
-				tiemout_poweroff = 400;
+				tiemout_poweroff = 300;
 				zxuno_encendido = 1;
 				POWER_ON;
 				_delay_ms(250);
@@ -1271,14 +1347,14 @@ void matrixScan()
 	}
 	else
 	{
-		if (tiemout_poweroff < 400)
+		if (tiemout_poweroff < 300)
 		{
 			RESET_ON;
 			_delay_ms(100);
 			RESET_OFF;
 			_delay_ms(250);
 		}
-		tiemout_poweroff = 400;
+		tiemout_poweroff = 300;
 	}
 
 	rescan:
@@ -1398,7 +1474,7 @@ void matrixScan()
 		}
 
 
-		for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) modo = cambiarmodo(mapMODO[r][c]);
+		for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) modo = cambiarmodo( ((KBMODE)(mapMODO[r][c])) );
 		
 		fnpulsada = 1; //Si no se pulsa ninguna tecla sigue en bucle hasta que se pulse
 	}
@@ -1696,14 +1772,14 @@ void setup()
 	for (int n = 0; n < 5; n++) if (checksignature[n] != ZXUNO_SIGNATURE[n]) issigned = 0;
 	if (issigned)
 	{
-		modo = cambiarmodo2(eeprom_read_byte((uint8_t*)5));
+		modo = cambiarmodo2(((KBMODE)eeprom_read_byte((uint8_t*)5)));
 		fkbmode = eeprom_read_byte((uint8_t*)6);
 		fkbmode = fkbmode > 2 ? 0 : fkbmode;
 
 	}
 	else
 	{
-		eeprom_write_block((void*)&ZXUNO_SIGNATURE, (const void*)0, 5); // Guardamos la firma
+		eeprom_write_block((const void*)&ZXUNO_SIGNATURE, (void*)0, 5); // Guardamos la firma
 		eeprom_write_byte((uint8_t*)5, (uint8_t)0); // y modo ZX por defecto
 	}
 }
