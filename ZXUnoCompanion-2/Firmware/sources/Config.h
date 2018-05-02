@@ -63,7 +63,7 @@ uint8_t pinsR[ROWS] = { 4,  6,  3,  0,  2,  4,  6,  0,  0,  2,  4,  6,  7 };
 uint8_t bcdR[ROWS] = { PB, PB, PG, PD, PD, PD, PD, PG, PC, PC, PC, PC, PC };
 
 //{PE5(1), PE4(2), PE3(3), PE2(4), PE1(6), PE0(7), PC5(9)};
-uint8_t pinsJOY2PS2[7] = { 5, 4, 3, 2, 1, 0, 9 };
+uint8_t pinsJOY2PS2[7] = { 5, 4, 3, 2, 1, 0, 5 };
 uint8_t bcdJOY2PS2[7] = { PE, PE, PE, PE, PE, PC};
 
 uint8_t TZX_ROOT_PIN = 2, TZX_ROOT_BCD = PB;
