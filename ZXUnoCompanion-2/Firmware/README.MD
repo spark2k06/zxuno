@@ -1,6 +1,10 @@
 Beta 5
 
--> Correcciones relativas al control del tzxduino y modificacion de tipos de variables propuesto por yombo para su correcta compilacion en entorno IDE de arduino.
+-> Correcciones relativas al control del tzxduino.
+
+-> Modificacion de tipos de variables propuesto por yombo para su correcta compilacion en entorno IDE de arduino.
+
+-> Bajada de tiempo necesario manteniendo el boton de reset pulsado para apagar el ZX-Uno.
 
 Beta 4
 
