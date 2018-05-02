@@ -358,7 +358,7 @@ const uint8_t fkbmode0[15] = { KEY_Z,KEY_X,KEY_P,KEY_A,KEY_R,KEY_T,KEY_I,KEY_A,K
 const uint8_t fkbmode1[12] = { KEY_Z,KEY_X, KEY_F,KEY_U,KEY_L,KEY_L,KEY_C,KEY_O,KEY_M,KEY_B,KEY_O,KEY_S };
 const uint8_t fkbmode2[6] = { KEY_Z,KEY_X,KEY_P,KEY_U,KEY_R,KEY_E };
 
-enum KBMODE { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, pc, pcxt, kbext };
+typedef enum { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, pc, pcxt, kbext } KBMODE;
 
 #ifdef membrane13x11
 const uint8_t mapZX[ROWS][COLS] = {
