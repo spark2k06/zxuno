@@ -10,7 +10,7 @@
 //KEY_ENTER: NADA KEY_L: =        KEY_K: +        KEY_J: -        KEY_H: (flecha)
 //KEY_SPACE: NADA NADA            KEY_M: .        KEY_N: ,        KEY_B: *
 
-const uint8_t version[8] = { 0,1,0,3,2,0,1,8 }; //DDMMAAAA
+const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
 
 // Joy2PS2 Scancodes Index
 #define	JOY_UP      1 // E0
@@ -357,6 +357,13 @@ const uint8_t eepromsavename[10] = { KEY_C,KEY_F,KEY_G,KEY_F,KEY_L,KEY_A,KEY_S,K
 const uint8_t fkbmode0[15] = { KEY_Z,KEY_X,KEY_P,KEY_A,KEY_R,KEY_T,KEY_I,KEY_A,KEY_L,KEY_C,KEY_O,KEY_M,KEY_B,KEY_O,KEY_S };
 const uint8_t fkbmode1[12] = { KEY_Z,KEY_X, KEY_F,KEY_U,KEY_L,KEY_L,KEY_C,KEY_O,KEY_M,KEY_B,KEY_O,KEY_S };
 const uint8_t fkbmode2[6] = { KEY_Z,KEY_X,KEY_P,KEY_U,KEY_R,KEY_E };
+
+const uint8_t enable[3] = { KEY_O, KEY_N, KEY_SPACE };
+const uint8_t disable[4] = { KEY_O, KEY_F, KEY_F, KEY_SPACE };
+
+const uint8_t del_break[9] = { KEY_D, KEY_E, KEY_L, KEY_SPACE, KEY_B, KEY_R, KEY_E, KEY_A, KEY_K };
+const uint8_t cursors_kbpc[12] = { KEY_C, KEY_U, KEY_R, KEY_S, KEY_O, KEY_R, KEY_S, KEY_SPACE, KEY_K, KEY_B, KEY_P, KEY_C };
+const uint8_t tzxduino[8] = { KEY_T, KEY_Z, KEY_X, KEY_D, KEY_U, KEY_I, KEY_N, KEY_O };
 
 typedef enum { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, pc, pcxt, kbext } KBMODE;
 

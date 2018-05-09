@@ -20,8 +20,6 @@
 #define ROWS 13		//Numero de Filas de teclado 13x11
 #define COLS 11		//Numero de Columnas de teclado 13x11
 
-//#define xchg_del_break // Solo aplicable a teclados +2A/+3
-//#define cursors_kbpc // Solo aplicable a teclados +2A/+3
 // Mapa de la matriz
 // 1x1 = '1', 1x2 = '2'
 // 2x1 = 'Q', 2x2 = 'W'
@@ -120,3 +118,15 @@ uint8_t TZX_PLAY_PIN = 3, TZX_PLAY_BCD = PE;
 uint8_t TZX_STOP_PIN = 3, TZX_STOP_BCD = PH;
 
 #endif
+
+/* --> Futura adaptacion Famicom DB9, requiere adaptador
+#define	FAM_DAT	(1<<pinsJOY2PS2[1])
+#define	FAM_LAT	(1<<pinsJOY2PS2[2])
+#define	FAM_CLK	(1<<pinsJOY2PS2[3])
+
+#define	FAM_DAT_BCD	(1<<bcdJOY2PS2[1])
+#define	FAM_LAT_BCD	(1<<bcdJOY2PS2[2])
+#define	FAM_CLK_BCD	(1<<bcdJOY2PS2[3])
+
+#define FAMDELAY	24 //12
+*/
