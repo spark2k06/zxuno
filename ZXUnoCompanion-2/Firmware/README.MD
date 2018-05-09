@@ -1,3 +1,16 @@
+Release 1 (09/05/2018)
+----------------------
+
+* Unificacion de configuraciones en atmega128 y atmega2560 mediante el uso de la EEPROM, ahora solo tenemos un archivo por AVR.
+
+* Activacion/Desactivacion de modo TZXDuino mediante atajo (Extra+U -> T). Controles: UP, DOWN, ENTER (PLAY/PAUSE), RIGHT (STOP/END), LEFT (ROOT)
+
+* Intercambio de teclas Borrar y Break mediante atajo (Extra+U -> O), se guarda la configuracion en la EEPROM.
+
+* Intercambio de teclas de cursor mediante atajo (Entra+U -> P), se guarda la configuracion en la EEPROM.
+
+* Ahora con la EEPROM sin inicializar, por defecto el modo de teclado en el mapa .ZX es .ZXFULLCOMBOS en lugar de .ZXPARTIALCOMBOS para evitar confusiones y que inicialmente esten disponibles todos los atajos.
+
 Beta 5
 
 -> Correcciones relativas al control del tzxduino.
