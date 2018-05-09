@@ -1,4 +1,4 @@
-Release 7
+Release 7.1
 
 zxunops2-DDMMAAAA-go: Configuración de pines del ZXGo+, así como sus botones físicos adicionales de NMI y VGA-SWITCH.
 
