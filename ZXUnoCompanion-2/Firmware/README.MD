@@ -12,6 +12,7 @@ Release 1 (09/05/2018)
 * Ahora con la EEPROM sin inicializar, por defecto el modo de teclado en el mapa .ZX es .ZXFULLCOMBOS en lugar de .ZXPARTIALCOMBOS para evitar confusiones y que inicialmente esten disponibles todos los atajos.
 
 Beta 5
+------
 
 -> Correcciones relativas al control del tzxduino.
 
@@ -20,26 +21,32 @@ Beta 5
 -> Bajada de tiempo necesario manteniendo el boton de reset pulsado para apagar el ZX-Uno.
 
 Beta 4
+------
 
 -> Comportamiento de los botones select y start igual que el resto de botones, se pulsan y mantienen pulsados hasta que son soltados. El uso anterior tenia sentido en la versión original de Joy2PS2 ya que estos botones también se usaban para realizar ciertos combos, pero ya no es necesario al disponer de un teclado siempre conectado.
 
 Beta 3
+------
 
 -> 100 ms de delay tras la pulsacion de start y select en el puerto joy2ps2 para que le de tiempo a procesarlo al ZX-Uno.
 
 Beta 2
+------
 
 -> Cambio de control de TZXDUINO a EXTRA + U y GHJKL para no entrar en conflicto con B y C en el cambio de layout de teclado.
 
 Beta 1
+------
 
 -> Primera versión beta con un funcionamiento muy básico pero con todas las características principales disponibles.
 
 Alpha 4
+------
 
 -> Nueva mejora de la gestión de combos para evitar la repetición de sus teclas asociadas a la función seleccionada.
 
 Alpha 3
+------
 
 -> Se incluye una versión simplificada del proyecto Joy2PS2 para el segundo puerto de Joystick de Sugarless +2, sin posibilidad de redefinición de teclas por el momento:
 
@@ -63,10 +70,12 @@ Alpha 3
 -> Mejora de la gestión de combos para evitar la repetición de sus teclas asociadas a la función seleccionada.
 
 Alpha 2
+------
 
 Mejora en la gestión del encendido/apagado + reset físico. Ahora para apagar se requiere que esté pulsado 3 segundos el boton de reset, de lo contrario se producirá un reset físico. 
 
 Alpha 1
+------
 
 -> Se incluye el proyecto original ZXUnoPS2, adaptado a los AVR atmega128 y atmega2560.
 
