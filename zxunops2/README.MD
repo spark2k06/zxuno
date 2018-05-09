@@ -8,7 +8,11 @@ Entre otros cambios, este fork sale de la línea de envío de scancodes especial
 
 En su lugar se envían los scancodes una sola vez y se vuelven a enviar la liberación de los mismos una vez soltada la tecla.
 
+Release 7.1
 
+-> Ahora con la EEPROM sin inicializar, por defecto el modo de teclado en el mapa .ZX es .ZXFULLCOMBOS en lugar de .ZXPARTIALCOMBOS para evitar confusiones y que inicialmente esten disponibles todos los atajos.
+
+-> Optimizaciones aplicadas en el proyecto Sugarless +2.
 
 Release 7
 
