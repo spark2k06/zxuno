@@ -38,6 +38,11 @@ uint8_t matriz[ROWS][ROWS]; // Probando a no inicializarlo (por defecto deberia 
 uint8_t opqa_cursors = 0;
 uint8_t fkbmode = 0;
 
+uint8_t del_break_value = 0;
+uint8_t cursors_kbpc_value = 0;
+uint8_t tzxduino_value = 0;
+uint8_t tzxduino_stop = 0;
+
 unsigned char espera = 0;
 unsigned char fnpulsada = 0;
 unsigned char fnpulsando = 0;
@@ -79,6 +84,10 @@ unsigned char SYMBOL_SHIFT = KEY_LCTRL; //Symbol Shift (NO necesita E0)
 										//SPACE (Escape)
 #define SPACE_ROW 7 
 #define SPACE_COL 0 
+
+										//ENTER
+#define ENTER_ROW 6 
+#define ENTER_COL 0 
 
 										//Row 1..5
 #define N1_N5_ROW 0
@@ -656,6 +665,13 @@ void imprimecore(const uint8_t nomcore[]) //Imprime el nombre del core
 {
 	int n;
 	char pausa = 100;
+
+	if (!modo)
+	{
+		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
+		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
+	}
+
 	_delay_ms(pausa); sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
 	_delay_ms(pausa); sendPS2(KEY_PUNTO); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_PUNTO);
 	for (n = 1; n<nomcore[0] + 1; n++)
@@ -669,6 +685,187 @@ void imprimecore(const uint8_t nomcore[]) //Imprime el nombre del core
 	}
 	CKm = nomcore[nomcore[0] + 1]; //Valor de CKm en la configuracion de nomcore[]
 
+}
+
+void cambia_tzxduino()
+{
+	int n;
+	char pausa = 50;
+	opqa_cursors = 0;
+
+	tzxduino_value = tzxduino_value ? 0 : 1;
+
+	if (tzxduino_value) tzxduino_stop = 0;
+
+	if (!modo)
+	{
+		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
+		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
+	}
+
+	if (codeset == 2)
+	{
+		_delay_ms(pausa); sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
+		_delay_ms(pausa); sendPS2(KEY_PUNTO); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_PUNTO);
+		
+		if (tzxduino_value)
+		{			
+			for (n = 0; n < 3; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(enable[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(enable[n]);
+				_delay_ms(pausa);
+			}
+		}
+		else
+		{
+			for (n = 0; n < 4; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(disable[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(disable[n]);
+				_delay_ms(pausa);
+			}
+		}
+
+		for (n = 0; n < 8; n++)
+		{
+			_delay_ms(pausa);
+			sendPS2(tzxduino[n]);
+			_delay_ms(pausa);
+			sendPS2(0xF0);
+			sendPS2(tzxduino[n]);
+			_delay_ms(pausa);
+		}
+
+	}
+	fnpulsada = 1;
+	fnpulsando = 1;
+}
+
+void cambia_del_break()
+{
+	int n;
+	char pausa = 50;
+
+	del_break_value = del_break_value ? 0 : 1;
+
+	if (!modo)
+	{
+		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
+		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
+	}
+
+	if (codeset == 2)
+	{
+		_delay_ms(pausa); sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
+		_delay_ms(pausa); sendPS2(KEY_PUNTO); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_PUNTO);
+
+		if (del_break_value)
+		{
+			for (n = 0; n < 3; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(enable[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(enable[n]);
+				_delay_ms(pausa);				
+			}
+		}
+		else
+		{
+			for (n = 0; n < 4; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(disable[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(disable[n]);
+				_delay_ms(pausa);
+			}
+		}
+		
+		for (n = 0; n < 9; n++)
+		{
+			_delay_ms(pausa);
+			sendPS2(del_break[n]);
+			_delay_ms(pausa);
+			sendPS2(0xF0);
+			sendPS2(del_break[n]);
+			_delay_ms(pausa);
+		}
+		eeprom_write_byte((uint8_t*)7, (uint8_t)del_break_value);
+
+
+	}
+	fnpulsada = 1;
+	fnpulsando = 1;
+}
+
+void cambia_cursors_kbpc()
+{
+	int n;
+	char pausa = 50;
+
+	cursors_kbpc_value = cursors_kbpc_value ? 0 : 1;
+
+	if (!modo)
+	{
+		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
+		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
+	}
+
+	if (codeset == 2)
+	{
+		_delay_ms(pausa); sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
+		_delay_ms(pausa); sendPS2(KEY_PUNTO); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_PUNTO);
+
+		if (cursors_kbpc_value)
+		{
+			for (n = 0; n < 3; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(enable[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(enable[n]);
+				_delay_ms(pausa);
+			}
+		}
+		else
+		{
+			for (n = 0; n < 4; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(disable[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(disable[n]);
+				_delay_ms(pausa);
+			}
+		}
+
+		for (n = 0; n < 12; n++)
+		{
+			_delay_ms(pausa);
+			sendPS2(cursors_kbpc[n]);
+			_delay_ms(pausa);
+			sendPS2(0xF0);
+			sendPS2(cursors_kbpc[n]);
+			_delay_ms(pausa);
+		}
+		eeprom_write_byte((uint8_t*)8, (uint8_t)cursors_kbpc_value);
+
+
+	}
+	fnpulsada = 1;
+	fnpulsando = 1;
 }
 
 void cambiafkbmode()
@@ -824,6 +1021,7 @@ KBMODE cambiarmodo2(KBMODE modokb)
 
 KBMODE cambiarmodo(KBMODE modokb)
 {
+	KBMODE auxmodo = modo;
 	kbescucha = 0;
 	KBEXT_BIDIR_OFF;	
 	opqa_cursors = 0;
@@ -840,8 +1038,10 @@ KBMODE cambiarmodo(KBMODE modokb)
 	if (modokb == sam) imprimecore(nomSAM);
 	if (modokb == jup) imprimecore(nomJUP);
 	if (modokb == pc) { kbescucha = 1; timeout_escucha = 0; codeset = 2; imprimecore(nomPC); } // Iniciamos la escucha para que se pueda cambiar al core de PC/XT.
-	if (modokb == kbext) { kbescucha = 1; timeout_escucha = 0; codeset = 2; imprimecore(nomKBEXT); KBEXT_BIDIR_ON; } // Iniciamos la escucha y mantenemos activa bidireccionalidad, para que pueda ser usado como teclado externo.
 	if (modokb == pcxt) { kbescucha = 0; codeset = 1; imprimecore(nomPCXT); } // Sin escucha activa para ser usado de forma simultanea junto a un teclado externo.
+	if (modokb == kbext) { kbescucha = 1; timeout_escucha = 0; codeset = 2; imprimecore(nomKBEXT); KBEXT_BIDIR_ON; } // Iniciamos la escucha y mantenemos activa bidireccionalidad, para que pueda ser usado como teclado externo.
+	
+	if (modokb > kbext) modokb = auxmodo; // Si no se trata de un modo conocido, mantenemos el anterior.
 																							   
 	//Uso normal: CK1 = 20, CK2 = 40 // Para codigo sin optimizar (x12) CK1 = 240, CK2 = 480.  //JOyPs2 CK1=15 CK2=30 //Mio CK1=4 CK2=8
 	//if(modokb>0) CKm=4; else CKm=1; //Se coge del Nombrecore[]
@@ -849,7 +1049,7 @@ KBMODE cambiarmodo(KBMODE modokb)
 	fnpulsada = 1;
 	fnpulsando = 1;
 	cambiomodo = 0; //para salir del bucle del cambiomodo
-
+	
 	return modokb;
 
 }
@@ -1113,10 +1313,9 @@ void traduceextra2a(uint8_t r, uint8_t c, int8_t p)
 	uint8_t isextra2a = 1;
 	uint8_t re = 0, ce = 0, rt = 0, ct = 0;
 	uint8_t csss_status = 0;
-
+		
 	switch (mapZX[r][c])
 	{
-
 
 	case KEY_COMILLA:
 		re = SYMBOL_SHIFT_ROW;
@@ -1130,28 +1329,6 @@ void traduceextra2a(uint8_t r, uint8_t c, int8_t p)
 		ce = SYMBOL_SHIFT_COL;
 		rt = Y_P_ROW;
 		ct = O_COL;
-		ss_counter += p;
-		break;
-#ifdef cursors_kbpc
-	case KEY_LEFT:
-#else
-	case KEY_PUNTO:
-#endif
-		re = SYMBOL_SHIFT_ROW;
-		ce = SYMBOL_SHIFT_COL;
-		rt = B_M_ROW;
-		ct = M_COL;
-		ss_counter += p;
-		break;
-#ifdef cursors_kbpc
-	case KEY_RIGHT:
-#else
-	case KEY_COMA:
-#endif
-		re = SYMBOL_SHIFT_ROW;
-		ce = SYMBOL_SHIFT_COL;
-		rt = B_M_ROW;
-		ct = N_COL;
 		ss_counter += p;
 		break;
 	case KEY_F1:
@@ -1189,66 +1366,11 @@ void traduceextra2a(uint8_t r, uint8_t c, int8_t p)
 		ct = N2_COL;
 		cs_counter += p;
 		break;
-#ifdef cursors_kbpc
-	case KEY_UP:
-#else
-	case KEY_LEFT:
-#endif
-		re = CAPS_SHIFT_ROW;
-		ce = CAPS_SHIFT_COL;
-		rt = N1_N5_ROW;
-		ct = N5_COL;
-		cs_counter += p;
-		break;
 	case KEY_DOWN:
 		re = CAPS_SHIFT_ROW;
 		ce = CAPS_SHIFT_COL;
 		rt = N6_N0_ROW;
 		ct = N6_COL;
-		cs_counter += p;
-		break;
-#ifdef cursors_kbpc
-	case KEY_PUNTO:
-#else
-	case KEY_UP:
-#endif
-		re = CAPS_SHIFT_ROW;
-		ce = CAPS_SHIFT_COL;
-		rt = N6_N0_ROW;
-		ct = N7_COL;
-		cs_counter += p;
-		break;
-#ifdef cursors_kbpc
-	case KEY_COMA:
-#else
-	case KEY_RIGHT:
-#endif
-		re = CAPS_SHIFT_ROW;
-		ce = CAPS_SHIFT_COL;
-		rt = N6_N0_ROW;
-		ct = N8_COL;
-		cs_counter += p;
-		break;
-#ifdef xchg_del_break
-	case KEY_ESCAPE:
-#else
-	case KEY_BACKSP:
-#endif
-		re = CAPS_SHIFT_ROW;
-		ce = CAPS_SHIFT_COL;
-		rt = N6_N0_ROW;
-		ct = N0_COL;
-		cs_counter += p;
-		break;
-#ifdef xchg_del_break
-	case KEY_BACKSP:
-#else
-	case KEY_ESCAPE:
-#endif
-		re = CAPS_SHIFT_ROW;
-		ce = CAPS_SHIFT_COL;
-		rt = SPACE_ROW;
-		ct = SPACE_COL;
 		cs_counter += p;
 		break;
 	case KEY_TAB:
@@ -1262,6 +1384,165 @@ void traduceextra2a(uint8_t r, uint8_t c, int8_t p)
 	default:
 		isextra2a = 0;
 		break;
+	}	
+
+	if (del_break_value)
+	{
+		switch (mapZX[r][c])
+		{
+
+		case KEY_ESCAPE:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N6_N0_ROW;
+			ct = N0_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+
+		case KEY_BACKSP:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = SPACE_ROW;
+			ct = SPACE_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+
+		default:
+			break;
+		}
+
+	}
+	else
+	{
+		switch (mapZX[r][c])
+		{
+
+		case KEY_BACKSP:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N6_N0_ROW;
+			ct = N0_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+
+		case KEY_ESCAPE:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = SPACE_ROW;
+			ct = SPACE_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	if (cursors_kbpc_value)
+	{
+
+		switch (mapZX[r][c])
+		{
+
+		case KEY_LEFT:
+			re = SYMBOL_SHIFT_ROW;
+			ce = SYMBOL_SHIFT_COL;
+			rt = B_M_ROW;
+			ct = M_COL;
+			ss_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_RIGHT:
+			re = SYMBOL_SHIFT_ROW;
+			ce = SYMBOL_SHIFT_COL;
+			rt = B_M_ROW;
+			ct = N_COL;
+			ss_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_UP:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N1_N5_ROW;
+			ct = N5_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_PUNTO:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N6_N0_ROW;
+			ct = N7_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_COMA:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N6_N0_ROW;
+			ct = N8_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+
+		default:
+			break;
+		}
+		
+	}
+	else
+	{
+		switch (mapZX[r][c])
+		{
+
+		case KEY_PUNTO:
+			re = SYMBOL_SHIFT_ROW;
+			ce = SYMBOL_SHIFT_COL;
+			rt = B_M_ROW;
+			ct = M_COL;
+			ss_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_COMA:
+			re = SYMBOL_SHIFT_ROW;
+			ce = SYMBOL_SHIFT_COL;
+			rt = B_M_ROW;
+			ct = N_COL;
+			ss_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_LEFT:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N1_N5_ROW;
+			ct = N5_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_UP:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N6_N0_ROW;
+			ct = N7_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+		case KEY_RIGHT:
+			re = CAPS_SHIFT_ROW;
+			ce = CAPS_SHIFT_COL;
+			rt = N6_N0_ROW;
+			ct = N8_COL;
+			cs_counter += p;
+			isextra2a = 1;
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	if (isextra2a)
@@ -1443,38 +1724,11 @@ void matrixScan()
 	if (cambiomodo)
 	{ 
 		if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x04) { matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(CAPS_SHIFT); } }
-		if (matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] & 0x04) { matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); } }
-		
-		if (matriz[A_G_ROW][G_COL] & 0x01) // UP
-		{
-			TZXDUINO_pushbutton(TZX_UP_PIN, TZX_UP_BCD); 
-			matriz[A_G_ROW][G_COL] = 0;
-		}
+		if (matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] & 0x04) { matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); } }	
 
-		if (matriz[H_L_ROW][H_COL] & 0x01) // DOWN
-		{
-			TZXDUINO_pushbutton(TZX_DOWN_PIN, TZX_DOWN_BCD);
-			matriz[H_L_ROW][H_COL] = 0;
-		}
-
-		if (matriz[H_L_ROW][J_COL] & 0x01) // STOP
-		{
-			TZXDUINO_pushbutton(TZX_STOP_PIN, TZX_STOP_BCD);
-			matriz[H_L_ROW][J_COL] = 0;
-		}
-
-		if (matriz[H_L_ROW][K_COL] & 0x01) // PLAY
-		{
-			TZXDUINO_pushbutton(TZX_PLAY_PIN, TZX_PLAY_BCD);
-			matriz[H_L_ROW][K_COL] = 0;
-		}
-
-		if (matriz[H_L_ROW][L_COL] & 0x01) // ROOT
-		{
-			TZXDUINO_pushbutton(TZX_ROOT_PIN, TZX_ROOT_BCD);
-			matriz[H_L_ROW][L_COL] = 0;
-		}
-
+		if (matriz[Q_T_ROW][T_COL] & 0x01) cambia_tzxduino(); // TZXDUINO ON / OFF
+		if (matriz[Y_P_ROW][P_COL] & 0x01) cambia_cursors_kbpc(); // XCHG CURSORS KBPC ON / OFF
+		if (matriz[Y_P_ROW][O_COL] & 0x01) cambia_del_break(); // XCHG DEL BREAK ON / OFF	
 
 		for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) modo = cambiarmodo( ((KBMODE)(mapMODO[r][c])) );
 		
@@ -1555,7 +1809,13 @@ void matrixScan()
 				if ((matriz[A_G_ROW][G_COL] & 0x01) && (fkbmode != 2 || modo)) pulsafn(A_G_ROW, G_COL, KEY_SCRLCK, 0, 0, 0, 0, 5);    //ZXUNO RGB/VGA Swich (Bloq Despl)
 
 				if ((matriz[Z_V_ROW][V_COL] & 0x01) && (fkbmode == 1 || modo)) imprimeversion();
-				if ((matriz[Z_V_ROW][X_COL] & 0x01) && (fkbmode == 1 || modo)) eepromsave();											//Guarda en la EEPROM el modo actual de teclado
+				if ((matriz[Z_V_ROW][X_COL] & 0x01) && (fkbmode == 1 || modo)) eepromsave();										  //Guarda en la EEPROM el modo actual de teclado
+
+				/*
+				if ((matriz[Y_P_ROW][O_COL] & 0x01) && (fkbmode == 1 || modo)) cambia_del_break();
+				if ((matriz[Y_P_ROW][P_COL] & 0x01) && (fkbmode == 1 || modo)) cambia_cursors_kbpc();
+				if ((matriz[Q_T_ROW][T_COL] & 0x01) && (fkbmode == 1 || modo)) cambia_tzxduino();
+				*/
 
 				if ((matriz[Q_T_ROW][E_COL] & 0x01) && modo) pulsafn(Q_T_ROW, E_COL, KEY_PGUP, 1, 0, 0, 0, 5); //Re Pag / Pg Up   (Acorn: VGA) (C64 Disco Anterior)
 				if ((matriz[Q_T_ROW][R_COL] & 0x01) && modo) pulsafn(Q_T_ROW, R_COL, KEY_PGDW, 1, 0, 0, 0, 5); //Av Pag / Pg Down (Acorn: RGB) (C64 Disco Siguiente)
@@ -1588,9 +1848,58 @@ void matrixScan()
 	}
 	
 	//Control de teclado
-	if (!fnpulsada) //Si no se ha pulsado ningun tecla de funcion y el modo es 0 (ZX-Spectrum)
+	if (!fnpulsada) //Si no se ha pulsado ningun tecla de funcion 
 	{
-		if (!modo)
+		if (tzxduino_value)
+		{
+
+			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N7_COL] & 0x01)) // UP
+			{
+				TZXDUINO_pushbutton(TZX_UP_PIN, TZX_UP_BCD);
+				matriz[N6_N0_ROW][N7_COL] = 0;
+				tzxduino_stop = 0;
+			}
+
+			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N6_COL] & 0x01)) // DOWN
+			{
+				TZXDUINO_pushbutton(TZX_DOWN_PIN, TZX_DOWN_BCD);
+				matriz[N6_N0_ROW][N6_COL] = 0;
+				tzxduino_stop = 0;
+			}
+
+			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N1_N5_ROW][N5_COL] & 0x01)) // ROOT (LEFT)
+			{
+				TZXDUINO_pushbutton(TZX_ROOT_PIN, TZX_ROOT_BCD);
+				matriz[N1_N5_ROW][N5_COL] = 0;
+				tzxduino_stop = 0;
+			}
+
+			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N8_COL] & 0x01)) // STOP - OFF (RIGHT)
+			{
+				if (tzxduino_stop)
+				{
+					tzxduino_stop = 0;
+					tzxduino_value = 0;
+				}
+				else
+				{
+					TZXDUINO_pushbutton(TZX_STOP_PIN, TZX_STOP_BCD);
+					tzxduino_stop = 1;
+				}				
+				matriz[N6_N0_ROW][N8_COL] = 0;
+			}
+			
+
+			if (matriz[ENTER_ROW][ENTER_COL] & 0x01) // PLAY/PAUSE (ENTER)
+			{
+				TZXDUINO_pushbutton(TZX_PLAY_PIN, TZX_PLAY_BCD);
+				matriz[ENTER_ROW][ENTER_COL] = 0;
+				tzxduino_stop = 0;
+			}
+
+		}
+
+		if (!modo) // Si el modo es 0 (ZX-Spectrum)
 		{
 			//Enviar la pulsacion de Caps Shift y/o Symbol Shift si estamos en modo ZX)
 			if ((matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x01) && !(matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x02)) { sendPS2(CAPS_SHIFT);    matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] |= 0x02;     espera++; } // Probar a suprimir matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] |= 0x02; (Ya se deja mantenido durante el scan)
@@ -1607,8 +1916,6 @@ void matrixScan()
 		}
 		else // Manejo de los otros modos de Keymap
 		{
-
-
 			if (!antighosting && cs_counter == 0 && ss_counter == 0)
 			{
 				if (((matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x01) && !(matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x02)) ||
@@ -1765,9 +2072,10 @@ int main()
 	pinPut(SYSTEM_PIN, SYSTEM_BCD, HI);
 	//
 
-	const uint8_t ZXUNO_SIGNATURE[] = { 'Z','X','U','N','O' };
+	const uint8_t ZXUNO_SIGNATURE[] = { 'S','U','G','A','R' };
 	uint8_t checksignature[5];
 	uint8_t issigned = 1;
+
 	eeprom_read_block((void*)&checksignature, (const void*)0, 5);
 
 	for (int n = 0; n < 5; n++) if (checksignature[n] != ZXUNO_SIGNATURE[n]) issigned = 0;
@@ -1777,11 +2085,20 @@ int main()
 		fkbmode = eeprom_read_byte((uint8_t*)6);
 		fkbmode = fkbmode > 2 ? 0 : fkbmode;
 
+		del_break_value = eeprom_read_byte((uint8_t*)7);
+		del_break_value = del_break_value > 1 ? 0 : del_break_value;
+
+		cursors_kbpc_value = eeprom_read_byte((uint8_t*)8);
+		cursors_kbpc_value = cursors_kbpc_value > 1 ? 0 : cursors_kbpc_value;
+
 	}
 	else
 	{
 		eeprom_write_block((const void*)&ZXUNO_SIGNATURE, (void*)0, 5); // Guardamos la firma
-		eeprom_write_byte((uint8_t*)5, (uint8_t)0); // y modo ZX por defecto
+		eeprom_write_byte((uint8_t*)5, (uint8_t)0); // Guardamos modo ZX por defecto
+		eeprom_write_byte((uint8_t*)6, (uint8_t)1); // Guardamos ZXFULLCOMBOS por defecto
+		eeprom_write_byte((uint8_t*)7, (uint8_t)0); // Guardamos del_break por defecto
+		eeprom_write_byte((uint8_t*)8, (uint8_t)0); // Guardamos cursors_kbpc por defecto
 	}
 
 	while (1)

@@ -20,8 +20,6 @@
 #define ROWS 13		//Numero de Filas de teclado 13x11
 #define COLS 11		//Numero de Columnas de teclado 13x11
 
-//#define xchg_del_break // Solo aplicable a teclados +2A/+3
-//#define cursors_kbpc // Solo aplicable a teclados +2A/+3
 // Mapa de la matriz
 // 1x1 = '1', 1x2 = '2'
 // 2x1 = 'Q', 2x2 = 'W'
