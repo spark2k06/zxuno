@@ -80,7 +80,7 @@ unsigned char fnpulsando = 0;
 
 
 //uint8_t modo=0; //Modo teclado 0=ZX NATIVO / 1=CPC MAPEADO /2=MSX MAPEADO
-enum KBMODE modo; //Modo teclado 0=ZX=NATIVO /Resto otros mapas
+KBMODE modo; //Modo teclado 0=ZX=NATIVO /Resto otros mapas
 uint8_t cambiomodo = 0;
 uint8_t soltarteclas;
 uint8_t cs_counter = 0, ss_counter = 0;
@@ -449,6 +449,13 @@ void imprimecore(const uint8_t nomcore[]) //Imprime el nombre del core
 {
 	int n;
 	char pausa = 100;
+
+	if (!modo)
+	{
+		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
+		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
+	}
+
 	_delay_ms(pausa); sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
 	_delay_ms(pausa); sendPS2(KEY_PUNTO); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_PUNTO);
 	for (n = 1; n<nomcore[0] + 1; n++)
@@ -557,7 +564,7 @@ void matrixInit()
 
 
 
-enum KBMODE cambiarmodo2(enum KBMODE modokb)
+KBMODE cambiarmodo2(KBMODE modokb)
 {
 	opqa_cursors = 0;
 	if (modokb == zx)  CKm = nomZX[nomZX[0] + 1];
@@ -577,8 +584,9 @@ enum KBMODE cambiarmodo2(enum KBMODE modokb)
 	return modokb;
 }
 
-enum KBMODE cambiarmodo(enum KBMODE modokb)
+KBMODE cambiarmodo(KBMODE modokb)
 {
+	KBMODE auxmodo = modo;
 	opqa_cursors = 0;
 	if (modokb == zx)  imprimecore(nomZX);
 	if (modokb == cpc) imprimecore(nomCPC);
@@ -594,6 +602,7 @@ enum KBMODE cambiarmodo(enum KBMODE modokb)
 	if (modokb == jup) imprimecore(nomJUP);
   if (modokb == pc) { kbescucha = 1; timeout_escucha = 0; codeset = 2; imprimecore(nompc); } // Iniciamos la escucha para que se pueda cambiar al core de PC/XT.
 
+	if (modokb > pc) modokb = auxmodo; // Si no se trata de un modo conocido, mantenemos el anterior.
 	//Uso normal: CK1 = 20, CK2 = 40 // Para codigo sin optimizar (x12) CK1 = 240, CK2 = 480.  //JOyPs2 CK1=15 CK2=30 //Mio CK1=4 CK2=8
 	//if(modokb>0) CKm=4; else CKm=1; //Se coge del Nombrecore[]
 	if (modokb<MAXKB) codeset = 2;
@@ -627,10 +636,11 @@ void pulsafn(unsigned char row, unsigned char col, unsigned char key, unsigned c
 	_delay_us(5);
 	fnpulsada = 1;
 	fnpulsando = 1;
-  kbalt = 0;
+	kbalt = 0;
+	soltarteclas = 1; // Forzamos a que despues todas las teclas esten soltadas para evitar que se quede pulsada la letra asociada al combo.	
 }
 
-unsigned char traducekey(unsigned char key, enum KBMODE modokb) // con esta funcion ahorramos muchas matrices de mapas y por tanto memoria dinamica del AVR
+unsigned char traducekey(unsigned char key, KBMODE modokb) // con esta funcion ahorramos muchas matrices de mapas y por tanto memoria dinamica del AVR
 {
 	// Se hace OR 0x80 al key que no requiera shift (KEY_F7 es el unico scancode incompatible, ya se resolveria en caso de necesidad)
 	// combinaciones no usables, comun a todos los cores
@@ -790,7 +800,7 @@ unsigned char traducekey(unsigned char key, enum KBMODE modokb) // con esta func
 	return key;
 }
 
-void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
+void pulsateclaconsymbol(unsigned char row, unsigned char col, KBMODE modokb)
 {
 	unsigned char key = 0, shift = 0;
   typematicfirst = 0;
@@ -806,7 +816,7 @@ void pulsateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modok
 	    typematic_code = key;
   } 
 }
-void sueltateclaconsymbol(unsigned char row, unsigned char col, enum KBMODE modokb)
+void sueltateclaconsymbol(unsigned char row, unsigned char col, KBMODE modokb)
 {
 	unsigned char key=0, shift=0;
   	typematic_code = 0;
@@ -1047,6 +1057,7 @@ void matrixScan()
 		}
 	} //Fin de la comprobacion de botones
 #endif
+	rescan:
 
 	  //Escaneo de la matriz del teclado
 	if (!fnpulsada) for (r = 0; r<ROWS; r++)
@@ -1120,20 +1131,23 @@ void matrixScan()
 		pinSet(pinsR[r], bcdR[r], _IN);
 	} //fin escaneo de Rows/Filas de la matriz del teclado	
 
+	if (soltarteclas)
+	{
+		soltarteclas = 0;
+		for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) soltarteclas = 1;
+		goto rescan;
+	}		
+	
 	if (cambiomodo)
-	{ //Primero verifica que se han soltado todas las teclas antes de pulsar la del modo que se desea.
-		if (soltarteclas)
-		{
-			soltarteclas = 0;
-			for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) soltarteclas = 1;
-		}
-		if (!soltarteclas)
-		{
-			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x04) { matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(CAPS_SHIFT); } }
-			if (matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] & 0x04) { matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); } }
-			for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) modo = cambiarmodo(mapMODO[r][c]);
-		}
-		if (cambiomodo) fnpulsada = 1; //Si no se pulsa ninguna tecla sigue en bucle hasta que se pulse
+	{ 
+		if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x04) { matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(CAPS_SHIFT); } }
+		if (matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] & 0x04) { matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0; if (!modo) { sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); } }	
+
+
+
+		for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) modo = cambiarmodo( ((KBMODE)(mapMODO[r][c])) );
+		
+		fnpulsada = 1; //Si no se pulsa ninguna tecla sigue en bucle hasta que se pulse
 	}
 	//Comprobacion de Teclas especiales al tener pulsado Caps Shift y Symbol Shift
 	if (!fnpulsada && (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] & 0x01) && (matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] & 0x01))
@@ -1147,7 +1161,12 @@ void matrixScan()
         if (matriz[H_L_ROW][L_COL] & 0x01) kbalt = 1; // Modo Alt activado para F1 - F12
 				_delay_ms(200);
 			}
+			if ((matriz[Y_P_ROW][U_COL] & 0x01) && (fkbmode == 1 || modo))
+			{
+				kbescucha = 0;
+				cambiomodo = 1; fnpulsada = 1; soltarteclas = 1;				
 
+			}
 			if (codeset == 2)
 			{		
 				if ((matriz[H_L_ROW][J_COL] & 0x01) && !modo)
@@ -1155,14 +1174,8 @@ void matrixScan()
 					fkbmode++; 
 					fkbmode = fkbmode > 2 ? 0 : fkbmode;
 					cambiafkbmode();
-				}
-				if ((matriz[Y_P_ROW][U_COL] & 0x01) && (fkbmode == 1 || modo))
-				{
-					cambiomodo = 1; fnpulsada = 1; soltarteclas = 1; 
-					#ifndef atmega644 
-					LED_ON; 
-					#endif
-				} //Activa el cambio de modo lo que dejara en bucle hasta que se pulse una tecla. El led se enciende.
+				}				 
+				//Activa el cambio de modo lo que dejara en bucle hasta que se pulse una tecla. El led se enciende.
 				if ((matriz[N1_N5_ROW][N1_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N1_COL, KEY_F1, 0, 0, 0, 0, 5);  //F1
 				if ((matriz[N1_N5_ROW][N2_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N2_COL, KEY_F2, 0, 0, 0, 0, 5);  //F2
 				if ((matriz[N1_N5_ROW][N3_COL] & 0x01) && fkbmode != 2) pulsafn(N1_N5_ROW, N3_COL, KEY_F3, 0, 0, 0, 0, 5);  //F3
@@ -1234,12 +1247,9 @@ void matrixScan()
 				if (matriz[Q_T_ROW][W_COL] & 0x01) pulsafn(Q_T_ROW, W_COL, KS1_F12, 0, 0, 0, kbalt, 5);		  //F12  
 				if (matriz[B_M_ROW][B_COL] & 0x01) pulsafn(B_M_ROW, B_COL, KS1_BACKSP, 0, 0, 1, 1, 5);    //ZXUNO Hard Reset (Control+Alt+Backsp)
 				if (matriz[B_M_ROW][N_COL] & 0x01) pulsafn(B_M_ROW, N_COL, KS1_DELETE, 0, 0, 1, 1, 5);    //ZXUNO Soft Reset (Control+Alt+Supr)
-       
 			}
 		}
-   
 	}
- 
 	else fnpulsando = 0; //Fin de escaneo de combos
 
 						 //Control de teclado
@@ -1407,15 +1417,15 @@ void setup()
   for (int n = 0; n < 5; n++) if (checksignature[n] != ZXUNO_SIGNATURE[n]) issigned = 0;
   if (issigned)
   {
-    modo = cambiarmodo2(eeprom_read_byte((uint8_t*)5));   
+		modo = cambiarmodo2(((KBMODE)eeprom_read_byte((uint8_t*)5)));
 	fkbmode = eeprom_read_byte((uint8_t*)6);
 	fkbmode = fkbmode > 2 ? 0 : fkbmode;
   }
   else
   {
-    eeprom_write_block((void*)&ZXUNO_SIGNATURE, (const void*)0, 5); // Guardamos la firma
-    eeprom_write_byte((uint8_t*)5, (uint8_t)0); // y modo ZX por defecto
-  }  
+		eeprom_write_block((const void*)&ZXUNO_SIGNATURE, (void*)0, 5); // Guardamos la firma
+		eeprom_write_byte((uint8_t*)5, (uint8_t)0); // Guardamos modo ZX por defecto
+		eeprom_write_byte((uint8_t*)6, (uint8_t)1); // Guardamos ZXFULLCOMBOS por defecto
 }
 
 void loop()

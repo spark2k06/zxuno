@@ -1,6 +1,6 @@
 // Fichero de configuracion
 
-//#define switches // Activado para el ZXGo+
+#define switches // Activado para el ZXGo+
 //#define atmega644 // Activado para teclado +2A/+3 con atmega644
 
 #define PA 1 //
