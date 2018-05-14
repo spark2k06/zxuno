@@ -1,3 +1,10 @@
+Release 1.1 (14/05/2018)
+------------------------
+
+* Con el control del tzxduino activado, entra en juego una nueva combinacion: EDIT
+
+- EDIT habilita el control del teclado con Cursores/Enter inhabilitando el control de tzxduino y viceversa. Necesario para controlar temporalmente ciertos cores como el spectrum cuando el control del tzxduino se encuentra activo.
+
 Release 1 (09/05/2018)
 ----------------------
 
