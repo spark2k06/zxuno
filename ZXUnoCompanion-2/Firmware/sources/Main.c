@@ -42,6 +42,7 @@ uint8_t del_break_value = 0;
 uint8_t cursors_kbpc_value = 0;
 uint8_t tzxduino_value = 0;
 uint8_t tzxduino_stop = 0;
+uint8_t tzxduino_snooze = 0;
 
 unsigned char espera = 0;
 unsigned char fnpulsada = 0;
@@ -1853,49 +1854,70 @@ void matrixScan()
 		if (tzxduino_value)
 		{
 
-			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N7_COL] & 0x01)) // UP
+			if (!tzxduino_snooze)
 			{
-				TZXDUINO_pushbutton(TZX_UP_PIN, TZX_UP_BCD);
-				matriz[N6_N0_ROW][N7_COL] = 0;
-				tzxduino_stop = 0;
-			}
 
-			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N6_COL] & 0x01)) // DOWN
-			{
-				TZXDUINO_pushbutton(TZX_DOWN_PIN, TZX_DOWN_BCD);
-				matriz[N6_N0_ROW][N6_COL] = 0;
-				tzxduino_stop = 0;
-			}
-
-			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N1_N5_ROW][N5_COL] & 0x01)) // ROOT (LEFT)
-			{
-				TZXDUINO_pushbutton(TZX_ROOT_PIN, TZX_ROOT_BCD);
-				matriz[N1_N5_ROW][N5_COL] = 0;
-				tzxduino_stop = 0;
-			}
-
-			if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N8_COL] & 0x01)) // STOP - OFF (RIGHT)
-			{
-				if (tzxduino_stop)
+				if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N7_COL] & 0x01)) // UP
 				{
+					TZXDUINO_pushbutton(TZX_UP_PIN, TZX_UP_BCD);
+					matriz[N6_N0_ROW][N7_COL] = 0;
 					tzxduino_stop = 0;
-					tzxduino_value = 0;
 				}
-				else
-				{
-					TZXDUINO_pushbutton(TZX_STOP_PIN, TZX_STOP_BCD);
-					tzxduino_stop = 1;
-				}				
-				matriz[N6_N0_ROW][N8_COL] = 0;
-			}
-			
 
-			if (matriz[ENTER_ROW][ENTER_COL] & 0x01) // PLAY/PAUSE (ENTER)
-			{
-				TZXDUINO_pushbutton(TZX_PLAY_PIN, TZX_PLAY_BCD);
-				matriz[ENTER_ROW][ENTER_COL] = 0;
-				tzxduino_stop = 0;
+				if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N6_COL] & 0x01)) // DOWN
+				{
+					TZXDUINO_pushbutton(TZX_DOWN_PIN, TZX_DOWN_BCD);
+					matriz[N6_N0_ROW][N6_COL] = 0;
+					tzxduino_stop = 0;
+				}
+
+				if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N1_N5_ROW][N5_COL] & 0x01)) // ROOT (LEFT)
+				{
+					TZXDUINO_pushbutton(TZX_ROOT_PIN, TZX_ROOT_BCD);
+					matriz[N1_N5_ROW][N5_COL] = 0;
+					tzxduino_stop = 0;
+				}
+
+				if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N6_N0_ROW][N8_COL] & 0x01)) // STOP - OFF (RIGHT)
+				{
+					if (tzxduino_stop)
+					{
+						tzxduino_stop = 0;
+						tzxduino_value = 0;
+						tzxduino_snooze = 0;
+					}
+					else
+					{
+						TZXDUINO_pushbutton(TZX_STOP_PIN, TZX_STOP_BCD);
+						tzxduino_stop = 1;
+					}
+					matriz[N6_N0_ROW][N8_COL] = 0;
+				}
+
+
+				if (matriz[ENTER_ROW][ENTER_COL] & 0x01) // PLAY/PAUSE (ENTER)
+				{
+					TZXDUINO_pushbutton(TZX_PLAY_PIN, TZX_PLAY_BCD);
+					matriz[ENTER_ROW][ENTER_COL] = 0;
+					tzxduino_stop = 0;
+				}
+
+				if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N1_N5_ROW][N1_COL] & 0x01)) // EDIT (CONTROL CURSORES/ENTER TECLADO) 
+				{					
+					matriz[N1_N5_ROW][N1_COL] = 0;
+					tzxduino_snooze = 1;
+				}
+
 			}
+			else
+			{
+				if (matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] > 0 && (matriz[N1_N5_ROW][N1_COL] & 0x01)) // EDIT (CONTROL CURSORES/ENTER TZXDUINO)
+				{
+					matriz[N1_N5_ROW][N1_COL] = 0;
+					tzxduino_snooze = 0;
+				}
+			}
+
 
 		}
 

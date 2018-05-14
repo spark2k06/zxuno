@@ -10,7 +10,7 @@
 //KEY_ENTER: NADA KEY_L: =        KEY_K: +        KEY_J: -        KEY_H: (flecha)
 //KEY_SPACE: NADA NADA            KEY_M: .        KEY_N: ,        KEY_B: *
 
-const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
+const uint8_t version[8] = { 1,4,0,5,2,0,1,8 }; //DDMMAAAA
 
 // Joy2PS2 Scancodes Index
 #define	JOY_UP      1 // E0
