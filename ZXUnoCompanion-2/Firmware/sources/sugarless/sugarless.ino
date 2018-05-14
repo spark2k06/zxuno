@@ -40,6 +40,7 @@ uint8_t del_break_value = 0;
 uint8_t cursors_kbpc_value = 0;
 uint8_t tzxduino_value = 0;
 uint8_t tzxduino_stop = 0;
+uint8_t tzxduino_snooze = 0;
 
 unsigned char espera = 0;
 unsigned char fnpulsada = 0;
