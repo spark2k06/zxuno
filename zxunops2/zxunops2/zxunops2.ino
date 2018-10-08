@@ -1426,6 +1426,7 @@ void setup()
 		eeprom_write_block((const void*)&ZXUNO_SIGNATURE, (void*)0, 5); // Guardamos la firma
 		eeprom_write_byte((uint8_t*)5, (uint8_t)0); // Guardamos modo ZX por defecto
 		eeprom_write_byte((uint8_t*)6, (uint8_t)1); // Guardamos ZXFULLCOMBOS por defecto
+  }
 }
 
 void loop()
