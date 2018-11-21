@@ -6,4 +6,4 @@ http://www.va-de-retro.com/foros/viewtopic.php?f=63&t=6551
 
 Infografía de la configuracion de Jumpers por yoxxxoy:
 
-![alt text](Jumpers_CFG.png "Configuracion de Jumpers")
+![alt text](Jumpers_CFG.png "Jumpers")
