@@ -1,4 +1,5 @@
 Lista BOM: http://spark2k06.info.tm/ZXUno_Companion_2_BOM.html
+
 FAQ por Uto: http://uto.speccy.org/sugarlessfaq.html
 
 http://www.zxuno.com/forum/viewtopic.php?f=63&t=1858
