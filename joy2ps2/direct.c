@@ -9,9 +9,7 @@ void ReadDB9P1(report_t *p1)
 	// Get D-PAD, B, C buttons state
 	PORTC |= (1 << 0);
 	_delay_us(14);
-		
-	p1->keymapper = !(DB15_PIN02 & (1 << 4));  // Keymapper
-
+	
 	p1->up = CHECKUP;					  // Up
 	p1->down = CHECKDOWN;				  // Down
 	p1->left = !(DB15_PIN01 & (1 << 2));  // Left	

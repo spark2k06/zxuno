@@ -109,8 +109,8 @@
 #define PS2_CLK   PC2
 
 #define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
-#define CHECKUP (!(PINC & (1 << 4)) | !(DB15_PIN01 & (1 << 0)))
-#define CHECKDOWN (!(PINC & (1 << 5)) | !(DB15_PIN01 & (1 << 1)))
+#define CHECKUP !(PINC & (1 << 4))  //(!(PINC & (1 << 4)) | !(DB15_PIN01 & (1 << 0)))
+#define CHECKDOWN !(PINC & (1 << 5)) //(!(PINC & (1 << 5)) | !(DB15_PIN01 & (1 << 1)))
 
 #define HI 1
 #define LO 0
@@ -128,7 +128,7 @@ uint8_t ckt;
 
 uint16_t DB15_PIN;
 
-uint8_t p1map, p2map;
+unsigned char p1map, p2map;
 
 #define QUEUE_ELEMENTS 64
 #define QUEUE_SIZE (QUEUE_ELEMENTS + 2)

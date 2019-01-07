@@ -10,13 +10,17 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/eeprom.h>
 #include "PS2Keyboard.h"
 #include "report.h"
 #include "direct.h"
+#include "famicom.h"
 
 #define LED_CONFIG	DDRB |= (1<<5)
 #define LED_ON	PORTB |= (1<<5)		
 #define LED_OFF	PORTB &= ~(1<<5)
+
+
 
 const unsigned char MenuOptions[] = { KEY_R, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 };
 const unsigned char Keys[] = { KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L,
@@ -36,7 +40,7 @@ unsigned char			scancodeset;
 
 void CheckP1SelectStartNesClon()
 {
-	if (p1.up & p1.down)
+	if (p1.up && p1.down)
 	{
 		p1.select = 1;
 		p1selectnesclon = 1;
@@ -50,11 +54,11 @@ void CheckP1SelectStartNesClon()
 			p1.select = 0;
 			p1selectnesclon = 0;
 		}
-		p1.up = p1.up & !p1prev.select;
-		p1.down = p1.down & !p1prev.select;
+		p1.up = p1.up && !p1prev.select;
+		p1.down = p1.down && !p1prev.select;
 	}
 
-	if (p1.left & p1.right)
+	if (p1.left && p1.right)
 	{
 		p1.start = 1;
 		p1startnesclon = 1;
@@ -68,14 +72,14 @@ void CheckP1SelectStartNesClon()
 			p1.start = 0;
 			p1startnesclon = 0;
 		}
-		p1.left = p1.left & !p1prev.start;
-		p1.right = p1.right & !p1prev.start;
+		p1.left = p1.left && !p1prev.start;
+		p1.right = p1.right && !p1prev.start;
 	}
 }
 
 void CheckP2SelectStartNesClon()
 {
-	if (p2.up & p2.down)
+	if (p2.up && p2.down)
 	{
 		p2.select = 1;
 		p2selectnesclon = 1;
@@ -89,11 +93,11 @@ void CheckP2SelectStartNesClon()
 			p2.select = 0;
 			p2selectnesclon = 0;
 		}
-		p2.up = p2.up & !p2prev.select;
-		p2.down = p2.down & !p2prev.select;
+		p2.up = p2.up && !p2prev.select;
+		p2.down = p2.down && !p2prev.select;
 	}
 
-	if (p2.left & p2.right)
+	if (p2.left && p2.right)
 	{
 		p2.start = 1;
 		p2startnesclon = 1;
@@ -107,8 +111,8 @@ void CheckP2SelectStartNesClon()
 			p2.start = 0;
 			p2startnesclon = 0;
 		}
-		p2.left = p2.left & !p2prev.start;
-		p2.right = p2.right & !p2prev.start;
+		p2.left = p2.left && !p2prev.start;
+		p2.right = p2.right && !p2prev.start;
 	}
 }
 
@@ -133,8 +137,9 @@ int main()
 	uchar shiftmode = 0;
 	int menuoption = -1, resetoption = -1, combioption = -1, extraoptions = -1;	
 	int keystrokes_idx = 35;
-	int rshift = 0;	
-	db15 = 1;
+	int rshift = 0;
+	uchar famicom_p1 = 0, famicom_p2 = 0; 
+	db15 = 0; // Modo DB9 por defecto.
 	keybinit = 0; // Por defecto, escucha deshabilitada para evitar conflictos con teclados reales
 	p1map = 0, p2map = 0;
 	keystrokes_supr = 0;	
@@ -142,15 +147,11 @@ int main()
 		
 	ps2Init();
 	QueuePS2Init();	
-	SetMapP1(p1map);
-	SetMapP2(p2map);
-
+	
 	p1selectnesclon = 0;
 	p1startnesclon = 0;
 	p2selectnesclon = 0;
-	p2startnesclon = 0;
-
-	Cursors(); // Direcciones del joystick como cursores y ENTER por defecto en el inicio
+	p2startnesclon = 0;		
 
 	// Entrada desde DB15, activamos resistencias internas pullup en pines digitales 0 a 12
 	DDRC &= ~(1 << 4);	//set UP_BUTTON		as input -> Analogic Pin 4 <-> Digital 0
@@ -166,8 +167,8 @@ int main()
 	DDRC |= (1 << 0);		// Select as output (Pin A0 -> Player 1)
 	DDRC |= (1 << 1);		// Select as output (Pin A1 -> Player 2)
 	
-	PORTC |= (1 << 0);					// Select Player 1 high
-	PORTC |= (1 << 1);					// Select Player 2 high		
+	PORTC |= (1 << 0);		// Select Player 1 high
+	PORTC |= (1 << 1);		// Select Player 2 high		
 
 	hostdata = 0;
 	scancodeset = 2;
@@ -175,10 +176,27 @@ int main()
 	LED_CONFIG;
 	LED_ON;
 
-	// Loop
-	while (1) {
+	SetMapP1(p1map);
+	SetMapP2(p2map);
 
-		if ((keybinit | shiftmode) & ps2Stat()) // Lineas CLK y/o DATA a 0
+	Cursors(); // Direcciones del joystick como cursores y ENTER por defecto en el inicio
+		
+	if (!db15)
+	{
+		if ((DB15_PIN01 & (1 << 2)) && (DB15_PIN01 & (1 << 3))) // Nos aseguramos que Left y Right en norma Atari no se encuentran pulsados
+			famicom_p1 = CheckFamicomP1(); // Famicom se considera detectado si se encuentra pulsado Select
+		
+		if ((DB15_PIN01 & (1 << 7)) && (DB15_PIN02 & (1 << 2))) // Nos aseguramos que Left y Right en norma Atari no se encuentran pulsados
+			famicom_p2 = CheckFamicomP2(); // Famicom se considera detectado si se encuentra pulsado Select
+
+		while (CheckFamicomP1());
+		while (CheckFamicomP2());
+	}
+
+	// Loop
+	while (1) {		
+
+		if ((keybinit | shiftmode) && ps2Stat()) // Lineas CLK y/o DATA a 0
 		{
 				
 			// wait for response
@@ -272,34 +290,50 @@ int main()
 		{
 			// Player 1
 			ReadDB9P1(&p1);
-			ReadDB15(&p1);
+			ReadDB15(&p1);			
 		}
 		else
 		{
-
 			// Player 1
-			ReadDB9P1(&p1);
+			if (famicom_p1) ReadFamicomP1(&p1);
+			else
+			{
+				ReadDB9P1(&p1);
+				CheckP1SelectStartNesClon();
+			}
 			// Player 2
-			ReadDB9P2(&p2);
-
-			CheckP2SelectStartNesClon();
+			if (famicom_p2) ReadFamicomP2(&p2);
+			else
+			{
+				ReadDB9P2(&p2);
+				CheckP2SelectStartNesClon();
+			}
+			
 		}
-
-		CheckP1SelectStartNesClon();
-
-		if
-			(
-			(p1.start & p1.button1) ||				// Start + Button 1 (SHIFT MODE)
-				(p1.select & p1.start) ||				// Select + Start (SHIFT MODE)
-				(p1prev.keymapper & !p1.keymapper)      // Keymapper (SHIFT MODE)	
-				)
-
-		{
-
+		p1.keymapper = !(DB15_PIN02 & (1 << 4));  // Keymapper
+		
+		if			
+			((p1.start && p1.button1) ||				// Start + Button 1 (SHIFT MODE)
+			(p1.select && p1.start) ||				// Select + Start (SHIFT MODE)
+			(p1prev.keymapper && !p1.keymapper)      // Keymapper (SHIFT MODE)	
+			)				
+			
+		{			
 			shiftmode = !shiftmode;
 			if (!shiftmode)
 			{
 				p1prev.select = 0; p1prev.start = 0; p1prev.button1 = 0;
+				if (!db15 && p1prev.keymapper && !p1.keymapper)
+				{
+					if ((DB15_PIN01 & (1 << 2)) && (DB15_PIN01 & (1 << 3))) // Nos aseguramos que Left y Right en norma Atari no se encuentran pulsados
+						famicom_p1 = CheckFamicomP1(); // Famicom se considera detectado si se encuentra pulsado Select
+
+					if ((DB15_PIN01 & (1 << 7)) && (DB15_PIN02 & (1 << 2))) // Nos aseguramos que Left y Right en norma Atari no se encuentran pulsados
+						famicom_p2 = CheckFamicomP2(); // Famicom se considera detectado si se encuentra pulsado Select
+
+					while (CheckFamicomP1());
+					while (CheckFamicomP2());
+				}
 			}
 
 			while (p1.select || p1.start || p1.button1 || p1.up || p1.down || p1.left || p1.right)
@@ -312,20 +346,27 @@ int main()
 				{
 					// Player 1
 					ReadDB9P1(&p1);
-					ReadDB15(&p1);
+					ReadDB15(&p1);					
 				}
 				else
 				{
 
 					// Player 1
-					ReadDB9P1(&p1);
+					if (famicom_p1) ReadFamicomP1(&p1);
+					else
+					{
+						ReadDB9P1(&p1);
+						CheckP1SelectStartNesClon();
+					}
 					// Player 2
-					ReadDB9P2(&p2);
-
-					CheckP2SelectStartNesClon();
-				}
-
-				CheckP1SelectStartNesClon();
+					if (famicom_p2) ReadFamicomP2(&p2);
+					else
+					{
+						ReadDB9P2(&p2);
+						CheckP2SelectStartNesClon();
+					}
+				}				
+				p1.keymapper = !(DB15_PIN02 & (1 << 4));  // Keymapper
 				continue;
 			}
 
@@ -338,10 +379,10 @@ int main()
 			_delay_ms(200);
 
 		}
-
+		
 		if (shiftmode)
 		{
-			
+						
 			if (p1.start && p1prev.up && !p1.up) // Reducimos CK1 y CK2 hasta 4 / 8 minimo en tramos de 4 / 8
 			{
 				if (ckt > 1)
@@ -366,7 +407,7 @@ int main()
 			}
 
 			// Up -> add menuoption counter
-			if (p1prev.up & !p1.up)
+			if (p1prev.up && !p1.up)			
 			{
 				menuoption += (int)(menuoption < 10);
 				combioption = -1;
@@ -376,7 +417,7 @@ int main()
 			}
 
 			// Down -> add resetoption counter
-			if (p1prev.down & !p1.down)
+			if (p1prev.down && !p1.down)
 			{
 				resetoption += (int)(resetoption < 4);
 				combioption = -1;
@@ -385,7 +426,7 @@ int main()
 			}
 
 			// Right -> add combioption counter
-			if (p1prev.right & !p1.right)
+			if (p1prev.right && !p1.right)
 			{
 				combioption += (int)(combioption < 2);
 				menuoption = -1;
@@ -394,7 +435,7 @@ int main()
 			}
 
 			// Left -> Extraoptions
-			if (p1prev.left & !p1.left)
+			if (p1prev.left && !p1.left)
 			{
 				extraoptions += (int)(extraoptions < 3);
 				menuoption = -1;
@@ -402,7 +443,7 @@ int main()
 				combioption = -1;
 			}
 
-			if (p2prev.button1 & !p2.button1) // Final combo P2
+			if (p2prev.button1 && !p2.button1) // Final combo P2
 			{
 				_delay_ms(200);
 				shiftmode = 0;
@@ -447,7 +488,7 @@ int main()
 				keybinit = 1;
 			}
 
-			if (p1prev.button1 & !p1.button1) // Final combo
+			if (p1prev.button1 && !p1.button1) // Final combo
 			{
 				_delay_ms(200);
 				shiftmode = 0;
@@ -548,7 +589,7 @@ int main()
 			if (extraoptions == 0) // modo KEYSTROKES
 			{
 
-				if (p1prev.button1 & !p1.button1 && keystrokes_supr) // Button 1 -> Hará de KEY_RSHIFT para acceder a mayusculas y a caractéres especiales.									
+				if (p1prev.button1 && !p1.button1 && keystrokes_supr) // Button 1 -> Hará de KEY_RSHIFT para acceder a mayusculas y a caractéres especiales.									
 				{
 					rshift = !rshift;
 					PressKey(KEY_DELETE, 0, scancodeset);
@@ -632,8 +673,8 @@ int main()
 				if (p1.left != p1prev.left) sendCodeMR(P1KeyMap[2], !p1.left, 0, scancodeset);
 				if (p1.right != p1prev.right) sendCodeMR(P1KeyMap[3], !p1.right, 0, scancodeset);
 
-				if (p1prev.select & !p1.select) PressKey(P1KeyMap[4], 200, scancodeset);
-				if (p1prev.start & !p1.start) PressKey(P1KeyMap[5], 200, scancodeset);
+				if ((p1.select != p1prev.select) && !p1.select) PressKey(P1KeyMap[4], 200, scancodeset);
+				if ((p1.start != p1prev.start) && !p1.start) PressKey(P1KeyMap[5], 200, scancodeset);				
 
 				if (p1.button1 != p1prev.button1) sendCodeMR(P1KeyMap[6], !p1.button1, 0, scancodeset);
 				if (p1.button2 != p1prev.button2) sendCodeMR(P1KeyMap[7], !p1.button2, 0, scancodeset);
@@ -649,8 +690,8 @@ int main()
 		if (p2.left != p2prev.left) sendCodeMR(P2KeyMap[2], !p2.left, 0, scancodeset);
 		if (p2.right != p2prev.right) sendCodeMR(P2KeyMap[3], !p2.right, 0, scancodeset);
 
-		if ((p2.select != p2prev.select) & !p2.select) PressKey(P2KeyMap[4], 200, scancodeset);
-		if ((p2.start != p2prev.start) & !p2.start) PressKey(P2KeyMap[5], 200, scancodeset);
+		if ((p2.select != p2prev.select) && !p2.select) PressKey(P2KeyMap[4], 200, scancodeset);
+		if ((p2.start != p2prev.start) && !p2.start) PressKey(P2KeyMap[5], 200, scancodeset);
 
 		if (p2.button1 != p2prev.button1) sendCodeMR(P2KeyMap[6], !p2.button1, 0, scancodeset);
 		if (p2.button2 != p2prev.button2) sendCodeMR(P2KeyMap[7], !p2.button2, 0, scancodeset);
