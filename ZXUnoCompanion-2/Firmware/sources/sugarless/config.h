@@ -64,6 +64,14 @@ uint8_t bcdR[ROWS] = { PB, PB, PG, PD, PD, PD, PD, PG, PC, PC, PC, PC, PC };
 uint8_t pinsJOY2PS2[7] = { 5, 4, 3, 2, 1, 0, 5 };
 uint8_t bcdJOY2PS2[7] = { PE, PE, PE, PE, PE, PC};
 
+#define	FAM_DAT_PIN			PINE
+#define	FAM_DAT_DDR			DDRE
+#define	FAM_LAT_DDR			DDRE
+#define	FAM_CLK_DDR			DDRE
+#define	FAM_DAT_PORT		PORTE
+#define	FAM_LAT_PORT		PORTE
+#define	FAM_CLK_PORT		PORTE
+
 uint8_t TZX_ROOT_PIN = 2, TZX_ROOT_BCD = PB;
 uint8_t TZX_UP_PIN = 1, TZX_UP_BCD = PB;
 uint8_t TZX_DOWN_PIN = 0, TZX_DOWN_BCD = PB;
@@ -111,6 +119,14 @@ uint8_t bcdR[ROWS] = { PA, PA, PA, PA, PC, PC, PC, PC, PG, PG, PL, PL, PL };
 uint8_t pinsJOY2PS2[7] = { 4, 5, 6, 4, 5, 6, 5 };
 uint8_t bcdJOY2PS2[7] = { PH, PH, PH, PB, PB, PB, PL };
 
+#define	FAM_DAT_PIN			PINH
+#define	FAM_DAT_DDR			DDRH
+#define	FAM_LAT_DDR			DDRH
+#define	FAM_CLK_DDR			DDRB
+#define	FAM_DAT_PORT		PORTH
+#define	FAM_LAT_PORT		PORTH
+#define	FAM_CLK_PORT		PORTB
+
 uint8_t TZX_ROOT_PIN = 4, TZX_ROOT_BCD = PE;
 uint8_t TZX_UP_PIN = 5, TZX_UP_BCD = PE;
 uint8_t TZX_DOWN_PIN = 5, TZX_DOWN_BCD = PG;
@@ -119,14 +135,9 @@ uint8_t TZX_STOP_PIN = 3, TZX_STOP_BCD = PH;
 
 #endif
 
-/* --> Futura adaptacion Famicom DB9, requiere adaptador
+// Famicom DB9 comun
 #define	FAM_DAT	(1<<pinsJOY2PS2[1])
 #define	FAM_LAT	(1<<pinsJOY2PS2[2])
 #define	FAM_CLK	(1<<pinsJOY2PS2[3])
 
-#define	FAM_DAT_BCD	(1<<bcdJOY2PS2[1])
-#define	FAM_LAT_BCD	(1<<bcdJOY2PS2[2])
-#define	FAM_CLK_BCD	(1<<bcdJOY2PS2[3])
-
 #define FAMDELAY	24 //12
-*/
