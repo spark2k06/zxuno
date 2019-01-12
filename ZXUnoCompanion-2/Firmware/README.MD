@@ -1,3 +1,12 @@
+Release 2 (12/01/2019)
+----------------------
+
+* Compatibilidad con gamepads famicom en Joy2PS2 mediante atajo (Extra+U -> J)
+* Extra+H -> Keypad - (C64, C16, Atari 800XL, BBC Micro y Apple II: Scanlines)
+* Extra+M -> Keypad * (Atari 800XL: PAL/NTSC)
+
+Al hacer el atajo de Extra+U -> J, pasará de famicom a atari/megadrive y viceversa, mostrandose por pantalla ".JOY FAMICOM" ó ".JOY ATARISMD" y guardando la configuracion en la EEPROM, de manera que la última selección se encontrará disponible en siguientes arranques. 
+
 Release 1.1 (14/05/2018)
 ------------------------
 
