@@ -69,6 +69,7 @@ uint16_t      typematicfirst = 0;
 unsigned char typematic_code = 0;
 uint8_t       typematic_codeaux = 0;
 uint8_t       kbalt = 0;
+uint8_t		  famicom = 0;
 
 //Teclas Modificadoras (para teclado spectrum)
 unsigned char CAPS_SHIFT = KEY_LSHIFT;  //Caps Shift   (NO necesita E0)
@@ -324,7 +325,6 @@ void ReadDB9()
 
 }
 
-/* --> Futura adaptacion Famicom DB9, requiere adaptador
 uchar FamicomReadByte(void)
 {
 	uchar i = 0, j;
@@ -332,10 +332,10 @@ uchar FamicomReadByte(void)
 	for (j = 0; j < 8; j++)
 	{
 		i = i >> 1;
-		if (pinStat(FAM_DAT, FAM_DAT_BCD)) i |= (1 << 7);	// button pressed
-		pinPut(FAM_CLK, FAM_CLK_BCD, LO);					// clock low
+		if (!(FAM_DAT_PIN & FAM_DAT)) i |= (1 << 7);	// button pressed
+		FAM_CLK_PORT &= ~(FAM_CLK);						// clock low
 		_delay_us(FAMDELAY);
-		pinPut(FAM_CLK, FAM_CLK_BCD, HI);					// clock high
+		FAM_CLK_PORT |= FAM_CLK;						// clock high
 		_delay_us(FAMDELAY);
 	}
 
@@ -344,60 +344,39 @@ uchar FamicomReadByte(void)
 
 void ReadFamicom()
 {
-	static	uchar	vbmode = 0;			// Virtual Boy mode flag
-		
-	uchar	byte0, byte1, byte2;
+	uchar	byte0;
 
-	pinSet(FAM_DAT, FAM_DAT_BCD, HI);	// Data as input
-	pinPut(FAM_DAT, FAM_DAT_BCD, HI);	// with pull-up
+	FAM_DAT_DDR &= ~(FAM_DAT);			// Data as input
+	FAM_DAT_PORT |= FAM_DAT;			// with pull-up
 
-	pinSet(FAM_LAT, FAM_LAT_BCD, LO);	// Latch as output
-	pinPut(FAM_LAT, FAM_LAT_BCD, HI);	// starting high
+	FAM_LAT_DDR |= FAM_LAT;				// Latch as output
+	FAM_LAT_PORT |= FAM_LAT;			// starting high
 
-	pinSet(FAM_CLK, FAM_CLK_BCD, LO);	// Clock as output
-	pinPut(FAM_CLK, FAM_CLK_BCD, HI);	// starting high
+	FAM_CLK_DDR |= FAM_CLK;				// Clock as output
+	FAM_CLK_PORT |= FAM_CLK;			// starting high
 
 	_delay_us(FAMDELAY * 2);			// latch pulse
-	pinPut(FAM_LAT, FAM_LAT_BCD, LO);	// latch low again
+	FAM_LAT_PORT &= ~(FAM_LAT);			// latch low again
 	_delay_us(FAMDELAY);				// settle time
 
 	byte0 = FamicomReadByte();
-	byte1 = FamicomReadByte();
-	byte2 = FamicomReadByte();
 
-	// Common to all controllers
-	p1.right = byte0 & (1 << 7);
-	p1.left = byte0 & (1 << 6);
-	p1.down = byte0 & (1 << 5);
-	p1.up = byte0 & (1 << 4);
-	p1.start = byte0 & (1 << 3);
-	p1.select = byte0 & (1 << 2);
+	p1.button1 = (byte0 & (1 << 0));	// A
+	p1.button2 = (byte0 & (1 << 1));	// B
+	p1.select = (byte0 & (1 << 2));		// Select
+	p1.start = (byte0 & (1 << 3));		// Start
+	p1.up = (byte0 & (1 << 4));			// Up
+	p1.down = (byte0 & (1 << 5));		// Down
+	p1.left = (byte0 & (1 << 6));		// Left
+	p1.right = (byte0 & (1 << 7));		// Right
 
-	if ((byte1 & 0xC0) == 0xC0)	// Famicom mode
-	{
-		if (byte1 != 0xff) vbmode = 1;	// Virtual Boy detection
+	FAM_LAT_DDR &= ~(FAM_LAT);			// Latch as input
+	FAM_LAT_PORT |= FAM_LAT;			// with pull-up
 
-		if (vbmode == 0)				// Famicom
-		{
-			p1.button1 = byte0 & (1 << 0);
-			p1.button2 = byte0 & (1 << 1);			
-		}
-	}
-	else if ((byte1 & 0xf0) == 0)		// Super Famicom mode or no pad
-	{
-		vbmode = 0;
-
-		p1.button1 = byte1 & (1 << 0);
-		p1.button2 = byte0 & (1 << 0);
-		p1.button3 = byte1 & (1 << 1);
-		p1.button4 = byte0 & (1 << 1);
-		p1.button5 = byte1 & (1 << 2);
-		p1.button6 = byte1 & (1 << 3);
-	}	
-	else vbmode = 0;
+	FAM_CLK_DDR &= ~(FAM_CLK);			// Clock  as input
+	FAM_CLK_PORT |= FAM_CLK;			// with pull-up
 
 }
-*/
 
 void ps2Init()
 {
@@ -749,6 +728,54 @@ void cambia_tzxduino()
 	fnpulsando = 1;
 }
 
+void cambia_joy2ps2()
+{
+	int n;
+	char pausa = 50;
+	famicom = !famicom;
+
+	if (!modo)
+	{
+		sendPS2(0xF0); sendPS2(CAPS_SHIFT); matriz[CAPS_SHIFT_ROW][CAPS_SHIFT_COL] = 0;
+		sendPS2(0xF0); sendPS2(SYMBOL_SHIFT); matriz[SYMBOL_SHIFT_ROW][SYMBOL_SHIFT_COL] = 0;
+	}
+
+	if (codeset == 2)
+	{
+		_delay_ms(pausa); sendPS2(KEY_SPACE); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_SPACE);
+		_delay_ms(pausa); sendPS2(KEY_PUNTO); _delay_ms(pausa); sendPS2(0xF0); sendPS2(KEY_PUNTO);
+
+		if (famicom)
+		{
+			for (n = 0; n < 11; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(joy_famicom[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(joy_famicom[n]);
+				_delay_ms(pausa);
+			}
+		}
+		else
+		{
+			for (n = 0; n < 12; n++)
+			{
+				_delay_ms(pausa);
+				sendPS2(joy_atarismd[n]);
+				_delay_ms(pausa);
+				sendPS2(0xF0);
+				sendPS2(joy_atarismd[n]);
+				_delay_ms(pausa);
+			}
+		}
+		eeprom_write_byte((uint8_t*)9, (uint8_t)famicom);
+	}
+
+	fnpulsada = 1;
+	fnpulsando = 1;
+}
+
 void cambia_del_break()
 {
 	int n;
@@ -941,8 +968,7 @@ void Joy2PS2Init()
 		pinPut(pinsJOY2PS2[p], bcdJOY2PS2[p], HI);
 	}
 
-	pinSet(pinsJOY2PS2[5], bcdJOY2PS2[5], _OUT); // Select como salida y en alto.
-	
+	pinSet(pinsJOY2PS2[5], bcdJOY2PS2[5], _OUT); // Select como salida y en alto.	
 }
 
 void TZXDUINO_pushbutton(uint8_t pin, uint8_t bcd)
@@ -1576,10 +1602,14 @@ void joy2ps2Scan()
 	p1prev.button5 = p1.button5; p1.button5 = 0;
 	p1prev.button6 = p1.button6; p1.button6 = 0;
 
-	_delay_ms(10); // Para evitar efecto rebote en la lectura de pulsaciones de los gamepads
-					   
-	ReadDB9();
-	CheckP1SelectStartNesClon();
+	_delay_ms(10); // Para evitar efecto rebote en la lectura de pulsaciones de los gamepads				   
+
+	if (famicom) ReadFamicom();
+	else
+	{
+		ReadDB9();
+		CheckP1SelectStartNesClon();
+	}
 
 	if (p1.up != p1prev.up) sendCodeMR(P1KeyMap[0], !p1.up, codeset);
 	if (p1.down != p1prev.down) sendCodeMR(P1KeyMap[1], !p1.down, codeset);
@@ -1730,6 +1760,7 @@ void matrixScan()
 		if (matriz[Q_T_ROW][T_COL] & 0x01) cambia_tzxduino(); // TZXDUINO ON / OFF
 		if (matriz[Y_P_ROW][P_COL] & 0x01) cambia_cursors_kbpc(); // XCHG CURSORS KBPC ON / OFF
 		if (matriz[Y_P_ROW][O_COL] & 0x01) cambia_del_break(); // XCHG DEL BREAK ON / OFF	
+		if (matriz[H_L_ROW][J_COL] & 0x01) cambia_joy2ps2(); // Famicom <-> Atari/Megadrive
 
 		for (r = 0; r<ROWS8; r++) for (c = 0; c<COLS5; c++) if (matriz[r][c] & 0x01) modo = cambiarmodo( ((KBMODE)(mapMODO[r][c])) );
 		
@@ -1775,7 +1806,7 @@ void matrixScan()
 				if ((matriz[N6_N0_ROW][N0_COL] & 0x01) && fkbmode != 2) pulsafn(N6_N0_ROW, N0_COL, KEY_F10, 0, 0, 0, 0, 5); //F10
 
 				if ((matriz[Q_T_ROW][Q_COL] & 0x01) && fkbmode != 2) pulsafn(Q_T_ROW, Q_COL, KEY_F11, 0, 0, 0, 0, 50); //F11  
-				if ((matriz[Q_T_ROW][W_COL] & 0x01) && fkbmode != 2) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12  
+				if ((matriz[Q_T_ROW][W_COL] & 0x01) && fkbmode != 2) pulsafn(Q_T_ROW, W_COL, KEY_F12, 0, 0, 0, 0, 50); //F12
 
 				if ((matriz[A_G_ROW][S_COL] & 0x01) && modo)
 				{
@@ -1823,6 +1854,8 @@ void matrixScan()
 				if ((matriz[A_G_ROW][D_COL] & 0x01) && modo) pulsafn(A_G_ROW, D_COL, KEY_PGUP, 1, 1, 0, 0, 5); //Re Pag / Pg Up   + Shift (C64 10 Discos Anteriores)
 				if ((matriz[A_G_ROW][F_COL] & 0x01) && modo) pulsafn(A_G_ROW, F_COL, KEY_PGDW, 1, 1, 0, 0, 5); //Av Pag / Pg Down + Shift (C64 10 Discos Siguientes)
 
+				if ((matriz[H_L_ROW][H_COL] & 0x01) && modo) pulsafn(H_L_ROW, H_COL, KEYPAD_MENOS, 0, 0, 0, 0, 5); // Keypad - (C64, C16, Atari 800XL, BBC Micro y Apple II: Scanlines)
+				if ((matriz[B_M_ROW][M_COL] & 0x01) && modo) pulsafn(B_M_ROW, M_COL, KEYPAD_ASTERISK, 0, 0, 0, 0, 5); //Keypad * (Atari 800XL: PAL/NTSC)
 
 
 			}
@@ -2113,6 +2146,9 @@ int main()
 		cursors_kbpc_value = eeprom_read_byte((uint8_t*)8);
 		cursors_kbpc_value = cursors_kbpc_value > 1 ? 0 : cursors_kbpc_value;
 
+		famicom = eeprom_read_byte((uint8_t*)9);
+		famicom = famicom > 1 ? 0 : famicom;
+
 	}
 	else
 	{
@@ -2121,6 +2157,7 @@ int main()
 		eeprom_write_byte((uint8_t*)6, (uint8_t)1); // Guardamos ZXFULLCOMBOS por defecto
 		eeprom_write_byte((uint8_t*)7, (uint8_t)0); // Guardamos del_break por defecto
 		eeprom_write_byte((uint8_t*)8, (uint8_t)0); // Guardamos cursors_kbpc por defecto
+		eeprom_write_byte((uint8_t*)9, (uint8_t)0); // Guardamos famicom por defecto
 	}
 
 	while (1)

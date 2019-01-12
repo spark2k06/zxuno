@@ -310,6 +310,9 @@ const uint8_t version[8] = { 1,4,0,5,2,0,1,8 }; //DDMMAAAA
 #define KS1_SLASH   0x35 //Izda del Shift Derecho
 #define KS1_LESS    0x56 //Izda de la Z
 
+#define KEYPAD_MENOS     0x7B // Keypad -
+#define KEYPAD_ASTERISK  0x7C // Keypad *
+
 #define MODO_A       ori
 #define MODO_B       sam
 #define MODO_C       jup
@@ -364,6 +367,8 @@ const uint8_t disable[4] = { KEY_O, KEY_F, KEY_F, KEY_SPACE };
 const uint8_t del_break[9] = { KEY_D, KEY_E, KEY_L, KEY_SPACE, KEY_B, KEY_R, KEY_E, KEY_A, KEY_K };
 const uint8_t cursors_kbpc[12] = { KEY_C, KEY_U, KEY_R, KEY_S, KEY_O, KEY_R, KEY_S, KEY_SPACE, KEY_K, KEY_B, KEY_P, KEY_C };
 const uint8_t tzxduino[8] = { KEY_T, KEY_Z, KEY_X, KEY_D, KEY_U, KEY_I, KEY_N, KEY_O };
+const uint8_t joy_atarismd[12] = { KEY_J, KEY_O, KEY_Y, KEY_SPACE, KEY_A, KEY_T, KEY_A, KEY_R, KEY_I, KEY_S, KEY_M, KEY_D };
+const uint8_t joy_famicom[11] = { KEY_J, KEY_O, KEY_Y, KEY_SPACE, KEY_F, KEY_A, KEY_M, KEY_I, KEY_C, KEY_O, KEY_M };
 
 typedef enum { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, pc, pcxt, kbext } KBMODE;
 
