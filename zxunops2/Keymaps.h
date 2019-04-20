@@ -10,10 +10,9 @@
 //KEY_ENTER: NADA KEY_L: =        KEY_K: +        KEY_J: -        KEY_H: (flecha)
 //KEY_SPACE: NADA NADA            KEY_M: .        KEY_N: ,        KEY_B: *
 
-const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
+const uint8_t version[8] = { 2,0,0,4,2,0,1,9 }; //DDMMAAAA
 
 #define KEY_ESCAPE 0x76
-#define KEY_DELETE 0x71
 #define KEY_BACKSP 0x66
 #define KEY_SCRLCK 0x7E
 
@@ -21,8 +20,11 @@ const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
 #define KEY_LALT    0x11
 
 												//Especiales, requieren E0
+#define KEY_INS		0x70
+#define KEY_DELETE  0x71
 #define KEY_RIGHT   0x74
 #define KEY_LEFT    0x6B
+#define KEY_HOME    0x6C
 #define KEY_DOWN    0x72
 #define KEY_UP      0x75
 #define KEY_RCTRL   0x14
@@ -32,6 +34,7 @@ const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
 #define KEY_APPS    0x2F
 #define KEY_PGUP    0x7D
 #define KEY_PGDW    0x7A
+#define KEY_END     0x69
 												//Fin Especiales
 
 #define KEY_A       0x1C
@@ -93,6 +96,7 @@ const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
 #define KEY_CAPS    0x58
 
 #define KEY_TAB     0x0D
+#define KEY_BLOQNUM 0x77
 
 #define KEY_TLD     0x0E //Izxda del 1
 #define KEY_MENOS	0x4E //Drcha del 0
@@ -197,6 +201,7 @@ const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
 #define KS1_CAPS    0x3A
 
 #define KS1_TAB     0x0F
+#define KS1_BLOQNUM 0x45
 
 #define KS1_TLD     0x29 //Izxda del 1
 #define KS1_MENOS	0x0C //Drcha del 0
@@ -211,12 +216,33 @@ const uint8_t version[8] = { 0,9,0,5,2,0,1,8 }; //DDMMAAAA
 #define KS1_SLASH   0x35 //Izda del Shift Derecho
 #define KS1_LESS    0x56 //Izda de la Z
 
+#define KS1PAD_MENOS     0x4A // Keypad -
+#define KS1PAD_MAS       0x4E // Keypad +
+#define KS1PAD_ASTERISK  0x37 // Keypad *
+
+
+#define KEYPAD_MENOS     0x7B // Keypad -
+#define KEYPAD_MAS       0x79 // Keypad +
+#define KEYPAD_ASTERISK  0x7C // Keypad *
+
+#define KEYPAD_0		 0x70 // Keypad 0
+#define KEYPAD_1		 0x69 // Keypad 1
+#define KEYPAD_2		 0x72 // Keypad 2
+#define KEYPAD_3		 0x7A // Keypad 3
+#define KEYPAD_4		 0x6B // Keypad 4
+#define KEYPAD_5		 0x73 // Keypad 5
+#define KEYPAD_6		 0x74 // Keypad 6
+#define KEYPAD_7		 0x6C // Keypad 7
+#define KEYPAD_8		 0x75 // Keypad 8
+#define KEYPAD_9		 0x7D // Keypad 9
+
+
 #define MODO_A       ori
 #define MODO_B       sam
 #define MODO_C       jup
-#define MODO_D       -1
-#define MODO_E       -1
-#define MODO_F       -1
+#define MODO_D       sms
+#define MODO_E       c16
+#define MODO_F       ht8
 #define MODO_G       -1
 #define MODO_H       -1
 #define MODO_I       -1
@@ -262,7 +288,7 @@ const uint8_t fkbmode0[15] = { KEY_Z,KEY_X,KEY_P,KEY_A,KEY_R,KEY_T,KEY_I,KEY_A,K
 const uint8_t fkbmode1[12] = { KEY_Z,KEY_X, KEY_F,KEY_U,KEY_L,KEY_L,KEY_C,KEY_O,KEY_M,KEY_B,KEY_O,KEY_S };
 const uint8_t fkbmode2[6] = { KEY_Z,KEY_X,KEY_P,KEY_U,KEY_R,KEY_E };
 
-typedef enum { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, pc, pcxt, kbext } KBMODE;
+typedef enum { zx, cpc, msx, c64, at8, bbc, aco, ap2, vic, ori, sam, jup, sms, c16, ht8, pc, pcxt, kbext } KBMODE;
 
 #ifdef atmega644
 const uint8_t mapZX[ROWS][COLS] = {
@@ -360,6 +386,8 @@ const uint8_t nomZX[] = { 2,KEY_Z,KEY_X,1 }; //Numero de Letras,(letras[n],,),CK
 const uint8_t nomCPC[] = { 3,KEY_C,KEY_P,KEY_C,4};
 const uint8_t nomMSX[] = { 3,KEY_M,KEY_S,KEY_X,4};
 const uint8_t nomC64[] = { 3,KEY_C,KEY_6,KEY_4,4};
+const uint8_t nomC16[] = { 3,KEY_C,KEY_1,KEY_6,4 };
+const uint8_t nomHT8[] = { 3,KEY_H,KEY_T,KEY_8,4 };
 const uint8_t nomAT8[] = { 5,KEY_A,KEY_T,KEY_A,KEY_R,KEY_I,4};
 const uint8_t nomBBC[] = { 3,KEY_B,KEY_B,KEY_C,4};
 const uint8_t nomACO[] = { 5,KEY_A,KEY_C,KEY_O,KEY_R,KEY_N,4};
@@ -369,4 +397,5 @@ const uint8_t nomSAM[] = { 3,KEY_S,KEY_A,KEY_M,4};
 const uint8_t nomJUP[] = { 7,KEY_J,KEY_U,KEY_P,KEY_I,KEY_T,KEY_E,KEY_R,4};
 const uint8_t nomAP2[] = { 5,KEY_A,KEY_P,KEY_P,KEY_L,KEY_E,4};
 const uint8_t nompc[] = { 4,KEY_P,KEY_C,KEY_X,KEY_T,4};
+const uint8_t nomSMS[] = { 3,KEY_S,KEY_M,KEY_S,4 };
 

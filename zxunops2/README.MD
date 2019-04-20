@@ -8,6 +8,12 @@ Entre otros cambios, este fork sale de la línea de envío de scancodes especial
 
 En su lugar se envían los scancodes una sola vez y se vuelven a enviar la liberación de los mismos una vez soltada la tecla.
 
+Release 8
+
+Nuevos modos de teclado e importantes cambios en los combos de teclado, según la siguiente tabla:
+
+[![Alt text](https://live.staticflickr.com/7868/46861159774_3d16989dd9_o_d.png)]
+
 Release 7.1
 
 -> Ahora con la EEPROM sin inicializar, por defecto el modo de teclado en el mapa .ZX es .ZXFULLCOMBOS en lugar de .ZXPARTIALCOMBOS para evitar confusiones y que inicialmente esten disponibles todos los atajos.
