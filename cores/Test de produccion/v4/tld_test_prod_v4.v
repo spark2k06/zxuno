@@ -69,15 +69,13 @@ module tld_test_prod_v4 (
 
    wire mode, vga;
    assign stdn = mode;
-   assign stdnb = ~mode;
-	
-	assign sram_addr[19] = 1'b0;
-   assign sram_addr[20] = 1'b0;
+   assign stdnb = ~mode;	
 
    wire [2:0] r_to_vga, g_to_vga, b_to_vga;
    wire hsync_to_vga, vsync_to_vga, csync_to_vga;
    
-   wire memtest_init_fast, memtest_init_slow, memtest_progress, memtest_result;
+   wire memtest_init_fast, memtest_init_slow, memtest_progress;
+	wire [2:0] memtest_result;
    wire sdtest_init, sdtest_progress, sdtest_result;
    wire flashtest_init, flashtest_progress, flashtest_result;
    
@@ -118,7 +116,7 @@ module tld_test_prod_v4 (
       .clks(clk14),
       .rstf(memtest_init_fast),
       .rsts(memtest_init_slow),
-      .sram_a(sram_addr[18:0]),
+      .sram_a(sram_addr[20:0]),
       .sram_d(sram_data),
       .sram_we_n(sram_we_n),
       .test_in_progress(memtest_progress),
