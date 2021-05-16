@@ -324,7 +324,7 @@ module updater (
    input wire vga,
    input wire [56:0] dna,
    input wire memtest_progress,
-   input wire memtest_result,
+   input wire [1:0] memtest_result,
    input wire [5:0] joystick,
    input wire [7:0] earcode,
    input wire sdtest_progress,
@@ -423,38 +423,40 @@ module updater (
       stringlist[40] = "R";
       stringlist[41] = "O";
       stringlist[42] = "R";
-      stringlist[43] = 8'hFF;
+		stringlist[43] = " ";
+      stringlist[44] = 8'hFF;
       
-      stringlist[44] = "w";
-      stringlist[45] = "a";
-      stringlist[46] = "i";
-      stringlist[47] = "t";
-      stringlist[48] = " ";
-      stringlist[49] = 8'hFF;
+      stringlist[45] = "w";
+      stringlist[46] = "a";
+      stringlist[47] = "i";
+      stringlist[48] = "t";
+      stringlist[49] = " ";
+		stringlist[50] = " ";
+      stringlist[51] = 8'hFF;
       
-      stringlist[50] = 8'd22;
-      stringlist[51] = 8'd7;
-      stringlist[52] = 8'd25;
-      stringlist[53] = "U";
-      stringlist[54] = "D";
-      stringlist[55] = "L";
-      stringlist[56] = "R";
-      stringlist[57] = "1";
-      stringlist[58] = "2";
-      stringlist[59] = 8'hFF;
+      stringlist[52] = 8'd22;
+      stringlist[53] = 8'd7;
+      stringlist[54] = 8'd25;
+      stringlist[55] = "U";
+      stringlist[56] = "D";
+      stringlist[57] = "L";
+      stringlist[58] = "R";
+      stringlist[59] = "1";
+      stringlist[60] = "2";
+      stringlist[61] = 8'hFF;
 
-      stringlist[60] = 8'd22;
-      stringlist[61] = 8'd8;
-      stringlist[62] = 8'd25;
-      stringlist[63] = 8'hFF;
+      stringlist[62] = 8'd22;
+      stringlist[63] = 8'd8;
+      stringlist[64] = 8'd25;
+      stringlist[65] = 8'hFF;
 
-      stringlist[64] = 8'd22;
-      stringlist[65] = 8'd11;
-      stringlist[66] = 8'd25;
-      stringlist[67] = " ";
-      stringlist[68] = " ";
+      stringlist[66] = 8'd22;
+      stringlist[67] = 8'd11;
+      stringlist[68] = 8'd25;
       stringlist[69] = " ";
-      stringlist[70] = 8'hFF;
+      stringlist[70] = " ";
+      stringlist[71] = " ";
+      stringlist[72] = 8'hFF;
 
       stringlist[78] = 8'd22;
       stringlist[79] = 8'd9;
@@ -465,6 +467,32 @@ module updater (
       stringlist[83] = 8'd10;
       stringlist[84] = 8'd25;
       stringlist[85] = 8'hFF;
+		
+		stringlist[86] = "5";
+      stringlist[87] = "1";
+      stringlist[88] = "2";
+      stringlist[89] = "K";
+      stringlist[90] = "B";
+		stringlist[91] = " ";		
+      stringlist[92] = 8'hFF;
+		
+		stringlist[93] = "1";
+      stringlist[94] = "0";
+      stringlist[95] = "2";
+      stringlist[96] = "4";
+      stringlist[97] = "K";
+		stringlist[98] = "B";		
+      stringlist[99] = 8'hFF;
+		
+      stringlist[100] = "2";
+      stringlist[101] = "0";
+      stringlist[102] = "4";
+      stringlist[103] = "8";
+      stringlist[104] = "K";
+		stringlist[105] = "B";		
+      stringlist[106] = 8'hFF;
+		
+		
    end
    reg [10:0] addrstr = 11'd0;
 
@@ -476,12 +504,15 @@ module updater (
       ADDRATMEM = 11'd28,
       ADDROK = 11'd32,
       ADDRERROR = 11'd38,
-      ADDRINPROGRESS = 11'd44,
-      ADDRJOYSTATE = 11'd50,
-      ADDREAR = 11'd60,
-      ADDRMOUSE = 11'd64,
+      ADDRINPROGRESS = 11'd45,
+      ADDRJOYSTATE = 11'd52,
+      ADDREAR = 11'd62,
+      ADDRMOUSE = 11'd66,
       ADDRATSD = 11'd78,
-      ADDRATFLASH = 11'd82
+      ADDRATFLASH = 11'd82,
+		ADDR512KB = 11'd86,
+		ADDR1024KB = 11'd93,
+		ADDR2048KB = 11'd100
       ;
    
    reg [4:0] estado = PUTVIDEO, 
@@ -547,13 +578,17 @@ module updater (
                addrstr <= ADDRATMEM;
                estado <= SENDSTR;
                retorno_de_sendstr <= PUTRAMTEST1;
-            end
+            end         
          PUTRAMTEST1:
             begin
                if (memtest_progress == 1'b1)
                   addrstr <= ADDRINPROGRESS;
-               else if (memtest_result == 1'b1)
-                  addrstr <= ADDROK;
+               else if (memtest_result == 2'd1)
+                  addrstr <= ADDR512KB;
+					else if (memtest_result == 2'd2)
+                  addrstr <= ADDR1024KB;
+					else if (memtest_result == 2'd3)
+                  addrstr <= ADDR2048KB;
                else
                   addrstr <= ADDRERROR;
                estado <= SENDSTR;

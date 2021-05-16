@@ -25,18 +25,18 @@ module ramtest (
    input wire clks,
    input wire rstf,
    input wire rsts,
-   output reg [18:0] sram_a,
+   output reg [20:0] sram_a,
    inout wire [7:0] sram_d,
    output reg sram_we_n,
    output reg test_in_progress,
-   output reg test_result
+   output reg [1:0] test_result
    );
    
    initial begin
-      sram_a = 17'h00000;
+      sram_a = 21'h000000;
       sram_we_n = 1'b1;
       test_in_progress = 1'b1;
-      test_result = 1'b0;
+      test_result = 2'd0;		
    end
    
    reg [3:0] estado = INIT, retorno_de_read = INIT, retorno_de_write = INIT;
@@ -44,26 +44,26 @@ module ramtest (
       INIT = 4'd0,
       DATOINICIAL = 4'd1,
       INCWRITE = 4'd2,
-      ADDSTORE = 4'd3,
-      ADD = 4'd4,
-      INCMODIFY = 4'd5,
-      CHECK = 4'd6,
-      INCCHECK = 4'd7,
-      HALT = 4'd8,
-      READ = 4'd9,
-      READ1 = 4'd10,
-      READ2 = 4'd11,
-      WRITE = 4'd12,
-      WRITE1 = 4'd13,
-      WRITE2 = 4'd14,
-      WRITE3 = 4'd15
+      CHECK = 4'd3,      
+      CHECK2 = 4'd4,
+      INCCHECK = 4'd5,
+      HALT = 4'd6,
+      READ = 4'd7,           
+      WRITE = 4'd8,
+      WRITE1 = 4'd9,
+      WRITE2 = 4'd10
       ;
       
    parameter
-      ENDADDRESS = 17'h7FFFF;
+      ENDADDRESS = 21'h1FFFFF,
+		// SRAM Checksums
+		CHECKSUM512KB = 32'h11000000, // 512KB		
+		CHECKSUM1024KB = 32'hCC000000, // 1024KB
+		CHECKSUM2048KB = 32'h07F80000; // 2048KB
       
+	reg [31:0] checksum;
    reg [7:0] sram_dout, data;
-   wire [7:0] sram_din = sram_d;
+   wire [7:0] sram_din = sram_d;	
    assign sram_d = (sram_we_n == 1'b0)? sram_dout : 8'hZZ;
    
    wire clk;
@@ -75,14 +75,16 @@ module ramtest (
       .S(fastslow)
       );
    
-   always @(posedge clk) begin
+   always @(posedge clk) begin	   
       case (estado)
+		// Fase 1. Volcado de datos
          INIT:
             begin
                test_in_progress <= 1'b1;
-               test_result <= 1'b0;
-               sram_a <= 1'h000000;
-               sram_dout <= 8'b01010101;
+               test_result <= 2'd0;
+					checksum <= 32'h00000000;
+               sram_a <= 21'h000000;
+               sram_dout <= 8'b00010001;					
                estado <= DATOINICIAL;
             end
          DATOINICIAL:
@@ -93,58 +95,55 @@ module ramtest (
          INCWRITE:
             begin
                if (sram_a == ENDADDRESS) begin
-                  sram_a <= 1'h000000;
-                  estado <= ADDSTORE;
+					   sram_a <= 21'h000000;
+                  estado <= CHECK;
+               end				   
+               else if ((sram_a & 21'h07FFFF) == 21'h07FFFF) begin						
+						sram_dout <= sram_dout << 1;
+						sram_a <= sram_a + 21'd1;
+                  estado <= DATOINICIAL;
                end
                else begin
                   sram_a <= sram_a + 1'd1;
                   estado <= DATOINICIAL;
                end
-            end
-         ADDSTORE:
-            begin
-               estado <= READ;
-               retorno_de_read <= ADD;
-            end
-         ADD:
-            begin
-               sram_dout <= data + 8'b01010101;
-               estado <= WRITE;
-               retorno_de_write <= INCMODIFY;
-            end
-         INCMODIFY:
-            begin
-               if (sram_a == ENDADDRESS) begin
-                  sram_a <= 1'h000000;
-                  estado <= CHECK;
-               end
-               else begin
-                  estado <= ADDSTORE;
-                  sram_a <= sram_a + 1'd1;
-               end
-            end
+            end			
+			
+			// Fase 2. Lectura de datos, obtencion de checksum y determinacion de modelo de SRAM
          CHECK:
             begin
                estado <= READ;
-               retorno_de_read <= INCCHECK;
+               retorno_de_read <= CHECK2;
+            end
+			CHECK2:
+            begin				   
+               checksum <= checksum + data;					
+               estado <= INCCHECK;               
             end
          INCCHECK:
             begin
-               if (data != 8'b10101010) begin
-                  test_in_progress <= 1'b0;
-                  test_result <= 1'b0;                 
-                  estado <= HALT;
+				   if (sram_a == ENDADDRESS) begin						
+						if (checksum == CHECKSUM512KB) begin
+							test_result <= 2'd1;
+						end
+						else if (checksum == CHECKSUM1024KB) begin
+							test_result <= 2'd2;
+						end
+						else if (checksum == CHECKSUM2048KB) begin
+							test_result <= 2'd3;
+						end						
+						else begin
+							test_result <= 2'd0;                  
+						end		
+						test_in_progress <= 1'b0;
+						estado <= HALT;						
                end
-               else if (sram_a == ENDADDRESS) begin
-                  test_in_progress <= 1'b0;
-                  test_result <= 1'b1;                 
-                  estado <= HALT;
+               else begin                  
+						sram_a <= sram_a + 21'd1;
+						estado <= CHECK;
                end
-               else begin
-                  sram_a <= sram_a + 17'd1;
-                  estado <= CHECK;
-               end             
             end
+         
          HALT:
             begin
                if (rstf == 1'b1) begin
@@ -156,55 +155,22 @@ module ramtest (
                   estado <= INIT;
                end
             end
-         
-//         READ:
-//            begin
-//               estado <= READ1;
-//            end
-//         READ1:
-//            begin
-//               data <= sram_din;
-//               estado <= READ2;
-//            end
-//         READ2:
-//            begin
-//               estado <= retorno_de_read;
-//            end
-//         
-//         WRITE:
-//            begin
-//               estado <= WRITE1;
-//            end
-//         WRITE1:
-//            begin
-//               sram_we_n <= 1'b0;
-//               estado <= WRITE2;
-//            end
-//         WRITE2:
-//            begin
-//               sram_we_n <= 1'b1;
-//               estado <= WRITE3;
-//            end
-//         WRITE3:
-//            begin
-//               estado <= retorno_de_write;
-//            end
-
-         READ:
+				
+         READ:			
             begin
-               data <= sram_din;
-               estado <= retorno_de_read;
+               data <= sram_din;					
+               estado <= retorno_de_read;					
             end
          
-         WRITE:
+         WRITE:			
             begin
                sram_we_n <= 1'b0;
                estado <= WRITE2;
             end
-         WRITE2:
+         WRITE2:			
             begin
                sram_we_n <= 1'b1;
-               estado <= retorno_de_write;
+               estado <= retorno_de_write;					
             end
 
       endcase
