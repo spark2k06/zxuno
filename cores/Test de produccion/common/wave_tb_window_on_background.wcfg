@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="D:/Users/rodriguj/Documents/zxspectrum/zxuno/repositorio/cores/cores_para_testar_la_placa/test_produccion/tb_window_on_background_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="glbl" />
+            <top_module name="tb_window_on_background" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="15" />
+   <wvobject fp_name="/tb_window_on_background/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/r" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">r[2:0]</obj_property>
+      <obj_property name="ObjectShortName">r[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/g" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">g[2:0]</obj_property>
+      <obj_property name="ObjectShortName">g[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/b" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">b[2:0]</obj_property>
+      <obj_property name="ObjectShortName">b[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/hsync" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">hsync</obj_property>
+      <obj_property name="ObjectShortName">hsync</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/vsync" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">vsync</obj_property>
+      <obj_property name="ObjectShortName">vsync</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/csync" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">csync</obj_property>
+      <obj_property name="ObjectShortName">csync</obj_property>
+   </wvobject>
+   <wvobject fp_name="divider9" type="divider">
+      <obj_property name="label">Internas</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="BkColor">128 128 255</obj_property>
+      <obj_property name="TextColor">230 230 230</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/uut/chc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">chc[7:0]</obj_property>
+      <obj_property name="ObjectShortName">chc[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/uut/cvc" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">cvc[6:0]</obj_property>
+      <obj_property name="ObjectShortName">cvc[6:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/uut/in_text_window" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">in_text_window</obj_property>
+      <obj_property name="ObjectShortName">in_text_window</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/uut/showing_text_window" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">showing_text_window</obj_property>
+      <obj_property name="ObjectShortName">showing_text_window</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/uut/charaddr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">charaddr[8:0]</obj_property>
+      <obj_property name="ObjectShortName">charaddr[8:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/uut/character" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">character[7:0]</obj_property>
+      <obj_property name="ObjectShortName">character[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_window_on_background/uut/shiftreg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">shiftreg[7:0]</obj_property>
+      <obj_property name="ObjectShortName">shiftreg[7:0]</obj_property>
+   </wvobject>
+</wave_config>

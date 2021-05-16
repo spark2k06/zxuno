@@ -1,0 +1,6 @@
+# Timing constraints
+NET "clk50mhz" PERIOD = 20 ns;
+NET "clk100" KEEP | S | PERIOD = 10 ns;
+NET "clk14" KEEP | S | PERIOD = 70 ns;
+NET "clk7" KEEP | S | PERIOD = 140 ns;
+NET "dna_fpga/clkdna" KEEP | S | PERIOD = 560 ns;
