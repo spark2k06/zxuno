@@ -47,7 +47,8 @@ module ps2_keyb(
     output wire [7:0] scancode_dout,
     output wire oe_scancode,
     output reg [7:0] kbstatus_dout,
-    output wire oe_kbstatus
+    output wire oe_kbstatus,
+	 output wire [1:0] monochrome_switcher
     );
 
 `include "config.vh"
@@ -119,7 +120,9 @@ module ps2_keyb(
         .master_reset(master_reset),
         .user_reset(user_reset),
         .user_nmi(user_nmi),
-        .user_fnt(user_fnt)
+        .user_fnt(user_fnt),
+		  .monochrome_switcher(monochrome_switcher)
+		  
     );
     
     keyboard_pressed_status teclado_limpio (

@@ -35,6 +35,7 @@ module zxuno (
   output wire hsync,
   output wire vsync,
   output wire csync,
+  output wire [1:0] monochrome_switcher,
   inout wire clkps2,
   inout wire dataps2,
   input wire ear_ext,
@@ -576,7 +577,8 @@ module zxuno (
     .scancode_dout(scancode_dout),
     .oe_scancode(oe_scancode),
     .kbstatus_dout(kbstatus_dout),
-    .oe_kbstatus(oe_kbstatus)
+    .oe_kbstatus(oe_kbstatus),
+	 .monochrome_switcher(monochrome_switcher)
   );
 
   joystick_protocols los_joysticks (

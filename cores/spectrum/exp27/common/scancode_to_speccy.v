@@ -43,6 +43,7 @@ module scancode_to_speccy (
     input wire cpuwrite,
     input wire cpuread,
     input wire rewind
+	 
     );
     
     // las 40 teclas del Spectrum. Se inicializan a "no pulsadas".
@@ -245,7 +246,8 @@ module kb_special_functions (
   output reg joyright,
   output reg joyfire,
   output reg video_output_change,
-  output reg [12:0] user_fnt
+  output reg [12:0] user_fnt,
+  output reg [1:0] monochrome_switcher
   );
   
   parameter
@@ -283,7 +285,8 @@ module kb_special_functions (
     PLAY        = 9'h134,
     STOP        = 9'h13b,
     PREVTRACK   = 9'h115,
-    FF          = 9'h130
+    FF          = 9'h130,
+	 END			 = 9'h169
     ;
   
   initial begin
@@ -300,6 +303,7 @@ module kb_special_functions (
     shift_pressed = 1'b0;
     ctrl_pressed = 1'b0;
     alt_pressed = 1'b0;
+	 monochrome_switcher = 1'b0;
   end
   
   always @(posedge clk) begin
@@ -319,7 +323,14 @@ module kb_special_functions (
     else begin
       if (video_output_change == 1'b1)
         video_output_change <= 1'b0;
+		 
       if (scan_received == 1'b1) begin
+		  if (extended == 1'b1 && released == 1'b1) begin
+				case ({extended, scancode})
+				END						  : monochrome_switcher <= monochrome_switcher + 1;
+				endcase
+			end
+		  
         case ({extended, scancode})
           LEFT_SHIFT,RIGHT_SHIFT: shift_pressed <= ~released;
           LEFT_CTRL,RIGHT_CTRL  : ctrl_pressed <= ~released;
@@ -369,7 +380,7 @@ module kb_special_functions (
           PLAY                  : user_fnt[9] <= ~released;
           PREVTRACK             : user_fnt[10] <= ~released;
           STOP                  : user_fnt[11] <= ~released;
-          FF                    : user_fnt[12] <= ~released;
+          FF                    : user_fnt[12] <= ~released;			 
           // 12 funciones especiales. Usaremos FF, STOP, PREVTRACK, PLAY, F1 F3 F4 F6 F7 F8 F9 F11 y F12
         endcase
       end

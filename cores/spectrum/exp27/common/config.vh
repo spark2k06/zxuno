@@ -51,7 +51,7 @@
 //`define FPGA_GENERATES_COLOR_CLOCK_OPTION
 
 // ZXUNO core ID string. Must be padded with zero bytes to the right (16 bytes total)
-  localparam COREID_STRING = {"EXP27-200820", 8'h00, 8'h00, 8'h00, 8'h00};
+  localparam COREID_STRING = {"EXP27-220521", 8'h00, 8'h00, 8'h00, 8'h00};
 
 // Power-on/FPGA PROG video configuration  
   localparam
