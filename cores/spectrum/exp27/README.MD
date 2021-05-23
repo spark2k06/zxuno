@@ -1,0 +1,1 @@
+core de spectrum
