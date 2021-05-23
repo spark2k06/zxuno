@@ -66,7 +66,7 @@ module tld_zxuno_v4 (
    output wire sd_mosi,    
    input wire sd_miso,
    output wire testled,   // nos servirá como testigo de uso de la SPI
-   
+	
    input wire joyup,
    input wire joydown,
    input wire joyleft,
@@ -74,12 +74,15 @@ module tld_zxuno_v4 (
    input wire joyfire,
    input wire joybtn2
    );
+	
+	wire [2:0] ri_monochrome, gi_monochrome, bi_monochrome;
+	wire [1:0] monochrome_switcher;
 
 `include "../common/config.vh"
 
    wire sysclk, mcolorclk;
    wire disable_genclk;
-   wire [2:0] pll_frequency_option;
+   wire [2:0] pll_frequency_option;	
    
    clock_generator relojes_maestros
    (// Clock in ports
@@ -95,7 +98,7 @@ module tld_zxuno_v4 (
    wire vga_enable, scanlines_enable;
    wire clk14en_tovga;
    wire clkcolor4x, ad724_enable_gencolorclk;
-
+	
    zxuno #(.FPGA_MODEL(3'b001), .MASTERCLK(28000000)) la_maquina (
     .sysclk(sysclk),
     .power_on_reset_n(1'b1),  // sólo para simulación. Para implementacion, dejar a 1
@@ -105,6 +108,7 @@ module tld_zxuno_v4 (
     .hsync(hsync_pal),
     .vsync(vsync_pal),
     .csync(csync_pal),
+	 .monochrome_switcher(monochrome_switcher),
     .clkps2(clkps2),
     .dataps2(dataps2),
     .ear_ext(~ear),  // negada porque el hardware tiene un transistor inversor
@@ -172,15 +176,26 @@ module tld_zxuno_v4 (
   assign clkcolor4x = 1'b1;   // VSYNC a 1 si no se genera el reloj de color
 `endif
 
+
+  monochrome monochromergb (
+    .monochrome_selection(monochrome_switcher),
+    .ri(ri),
+    .gi(gi),
+    .bi(bi),
+    .ro(ri_monochrome),
+    .go(gi_monochrome),
+    .bo(bi_monochrome)  
+  );
+
 	vga_scandoubler #(.CLKVIDEO(14000)) salida_vga (
 		.clk(sysclk),
     .clkcolor4x(clkcolor4x | ~ad724_enable_gencolorclk),
     .clk14en(clk14en_tovga),
     .enable_scandoubling(vga_enable),
     .disable_scaneffect(~scanlines_enable),
-		.ri(ri),
-		.gi(gi),
-		.bi(bi),
+		.ri(ri_monochrome),
+		.gi(gi_monochrome),
+		.bi(bi_monochrome),
 		.hsync_ext_n(hsync_pal),
 		.vsync_ext_n(vsync_pal),
     .csync_ext_n(csync_pal),
