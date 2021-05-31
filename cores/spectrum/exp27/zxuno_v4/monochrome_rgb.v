@@ -50,22 +50,52 @@ module monochrome (
 			monochrome_scale_spectrum = 'd0;
 		end
 		else if (ri == 1'b0 && gi == 1'b0 && bi > 1'b0) begin // Azul
-			monochrome_scale_spectrum = 'd1;
+			if (bi >= 3'b110) begin //Azul brillante
+				monochrome_scale_spectrum = 'd2;
+			end
+			else begin
+				monochrome_scale_spectrum = 'd1;
+			end
 		end
 		else if (ri > 1'b0 && gi == 1'b0 && bi == 1'b0) begin // Rojo
-			monochrome_scale_spectrum = 'd2;
+			if (ri >= 3'b110) begin //Rojo brillante
+				monochrome_scale_spectrum = 'd3;
+			end
+			else begin
+				monochrome_scale_spectrum = 'd2;
+			end
 		end
 		else if (ri > 1'b0 && gi == 1'b0 && bi > 1'b0) begin // Magenta
-			monochrome_scale_spectrum = 'd3;
+			if (ri >= 3'b110 && bi >= 3'b110) begin //Magenta brillante
+				monochrome_scale_spectrum = 'd4;
+			end
+			else begin
+				monochrome_scale_spectrum = 'd3;
+			end
 		end
 		else if (ri == 1'b0 && gi > 1'b0 && bi == 1'b0) begin // Verde
-			monochrome_scale_spectrum = 'd4;
+			if (gi >= 3'b110) begin // Verde brillante
+				monochrome_scale_spectrum = 'd5;
+			end
+			else begin
+				monochrome_scale_spectrum = 'd4;
+			end
 		end
 		else if (ri == 1'b0 && gi > 1'b0 && bi > 1'b0) begin // Cian
-			monochrome_scale_spectrum = 'd5;
+			if (gi >= 3'b110 && bi >= 3'b110) begin // Cian brillante
+				monochrome_scale_spectrum = 'd6;
+			end
+			else begin
+				monochrome_scale_spectrum = 'd5;
+			end
 		end
 		else if (ri > 1'b0 && gi > 1'b0 && bi == 1'b0) begin // Amarillo
-			monochrome_scale_spectrum = 'd6;
+			if (ri >= 3'b110 && gi >= 3'b110) begin // Amarillo brillante
+				monochrome_scale_spectrum = 'd7; 
+			end
+			else begin
+				monochrome_scale_spectrum = 'd6;
+			end
 		end
 		else if (ri > 1'b0 && gi > 1'b0 && bi > 1'b0) begin // Blanco
 			monochrome_scale_spectrum = 'd7;
