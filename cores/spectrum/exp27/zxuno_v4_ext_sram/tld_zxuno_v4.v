@@ -77,6 +77,7 @@ module tld_zxuno_v4 (
 	
 	wire [2:0] ri_monochrome, gi_monochrome, bi_monochrome;
 	wire [1:0] monochrome_switcher;
+	wire wifi_switcher;	
 
 `include "../common/config.vh"
 
@@ -97,7 +98,7 @@ module tld_zxuno_v4 (
    wire hsync_pal, vsync_pal, csync_pal;
    wire vga_enable, scanlines_enable;
    wire clk14en_tovga;
-   wire clkcolor4x, ad724_enable_gencolorclk;
+   wire clkcolor4x, ad724_enable_gencolorclk;	
 	
    zxuno #(.FPGA_MODEL(3'b001), .MASTERCLK(28000000)) la_maquina (
     .sysclk(sysclk),
@@ -109,6 +110,7 @@ module tld_zxuno_v4 (
     .vsync(vsync_pal),
     .csync(csync_pal),
 	 .monochrome_switcher(monochrome_switcher),
+	 .wifi_switcher(wifi_switcher),	 
     .clkps2(clkps2),
     .dataps2(dataps2),
     .ear_ext(~ear),  // negada porque el hardware tiene un transistor inversor
@@ -206,6 +208,7 @@ module tld_zxuno_v4 (
 		.vsync(vsync)
    );	 
        
-   assign testled = (!flash_cs_n || !sd_cs_n);
-   assign uart_reset = 1'bz;
+   assign testled = (!flash_cs_n || !sd_cs_n);	
+	assign uart_reset = (!wifi_switcher) ? 1'b0 : 1'bz;
+	
 endmodule
