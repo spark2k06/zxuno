@@ -303,7 +303,8 @@ module kb_special_functions (
     shift_pressed = 1'b0;
     ctrl_pressed = 1'b0;
     alt_pressed = 1'b0;
-	 monochrome_switcher = 1'b0;
+	 monochrome_switcher = 2'b0;	 
+	 
   end
   
   always @(posedge clk) begin
@@ -325,11 +326,15 @@ module kb_special_functions (
         video_output_change <= 1'b0;
 		 
       if (scan_received == 1'b1) begin
-		  if (extended == 1'b1 && released == 1'b1) begin
+		  if (released == 1'b1) begin
+									
 				case ({extended, scancode})
-				END						  : monochrome_switcher <= monochrome_switcher + 1;
+				  END						  : monochrome_switcher <= monochrome_switcher + 1; // MonochromeRGB
+				  F11                   : user_fnt[1] <= ~user_fnt[1]; // WiFi ON/OFF
+				  F12                   : user_fnt[0] <= ~user_fnt[0]; // Turbo-boost ON/OFF
 				endcase
-			end
+				
+		  end
 		  
         case ({extended, scancode})
           LEFT_SHIFT,RIGHT_SHIFT: shift_pressed <= ~released;
@@ -368,15 +373,15 @@ module kb_special_functions (
                                     joydown <= ~released;
                                     joyright <= ~released;
                                   end
-          F1                    : user_fnt[8] <= ~released;
+          F1                    : user_fnt[8] <= ~released;			 
           F3                    : user_fnt[7] <= ~released;
           F4                    : user_fnt[6] <= ~released;
           F6                    : user_fnt[5] <= ~released;
           F7                    : user_fnt[4] <= ~released;
           F8                    : user_fnt[3] <= ~released;
           F9                    : user_fnt[2] <= ~released;
-          F11                   : user_fnt[1] <= ~released;
-          F12                   : user_fnt[0] <= ~released;
+          //F11                   : user_fnt[1] <= ~released;			 
+          //F12                   : user_fnt[0] <= ~released;
           PLAY                  : user_fnt[9] <= ~released;
           PREVTRACK             : user_fnt[10] <= ~released;
           STOP                  : user_fnt[11] <= ~released;

@@ -23,6 +23,7 @@
 //
 //    Any distributed copy of this file must keep this notice intact.
 
+
 module zxuno (
   // Relojes
   input wire sysclk,
@@ -36,6 +37,7 @@ module zxuno (
   output wire vsync,
   output wire csync,
   output wire [1:0] monochrome_switcher,
+  output wire wifi_switcher,
   inout wire clkps2,
   inout wire dataps2,
   input wire ear_ext,
@@ -101,7 +103,7 @@ module zxuno (
   output wire ad724_enable_gencolorclk
   );
 
-`include "config.vh"
+`include "..\common\config.vh"
 
   parameter FPGA_MODEL = 3'b000;
   parameter MASTERCLK  = 28000000;
@@ -144,13 +146,13 @@ module zxuno (
   wire in_boot_mode;   // Vale 1 cuando el sistema está en modo boot (ejecutando la BIOS)
 
   // Señales de acceso al módulo Flash SPI
-  wire [7:0] spi_dout;
-  wire oe_spi;
-  wire wait_spi_n;
-  
+  wire [ 7:0] spi_dout;
+  wire        oe_spi;
+  wire        wait_spi_n;
+
   // Fuentes de sonido y control del mixer
-  wire mic;
-  wire spk;
+  wire        mic;
+  wire        spk;
   wire [7:0] ay1_audio;
   wire [7:0] ay2_audio;
   wire [7:0] ay1_cha, ay1_chb, ay1_chc;
@@ -159,17 +161,18 @@ module zxuno (
   wire [15:0] midi_left, midi_right;
   wire [7:0] mixer_dout;
   wire oe_mixer;
+  wire [ 7:0] saa_out_l, saa_out_r;
   
   // Interfaz de acceso al teclado
-  wire [4:0] kbdcol;
-  wire [7:0] kbdrow = cpuaddr[15:8];  // las filas del teclado son A8-A15 de la CPU;
-  wire mrst_n,rst_n;  // los dos resets suministrados por el teclado
-  wire [7:0] scancode_dout;  // scancode original desde el teclado PC
-  wire oe_scancode;
-  wire [7:0] keymap_dout;
-  wire oe_keymap;
-  wire [7:0] kbstatus_dout;
-  wire oe_kbstatus;
+  wire [4:0]  kbdcol;
+  wire [7:0]  kbdrow = cpuaddr[15:8];                    // las filas del teclado son A8-A15 de la CPU;
+  wire        mrst_n,rst_n;                              // los dos resets suministrados por el teclado
+  wire [7:0]  scancode_dout;                             // scancode original desde el teclado PC
+  wire        oe_scancode;
+  wire [7:0]  keymap_dout;
+  wire        oe_keymap;
+  wire [7:0]  kbstatus_dout;
+  wire        oe_kbstatus;
   
   wire [12:0] user_fnt;
   wire ff_pressed        = user_fnt[12];
@@ -183,8 +186,8 @@ module zxuno (
   wire f7_pressed        = user_fnt[4];   // PLAY del PZX
   wire f8_pressed        = user_fnt[3];   // REWIND al principio del PZX, o a la última posición marcada en el fichero
   wire f9_pressed        = user_fnt[2];   // STOP del PZX
-  wire f11_pressed       = user_fnt[1];
-  wire f12_pressed       = user_fnt[0];   // Turbo-boost (28 MHz) 
+  wire f11_pressed       = user_fnt[1];   // WiFi
+  wire f12_pressed       = user_fnt[0];   // Turbo-boost (28 MHz)  
   
   // Interfaz joystick configurable
   wire oe_joystick;
@@ -201,11 +204,11 @@ module zxuno (
   wire ioreqbank;
 
   // CoreID
-  wire oe_coreid;
+  wire 	     oe_coreid;
   wire [7:0] coreid_dout;
-  
+
   // Scratch register
-  wire oe_scratch;
+  wire 	     oe_scratch;
   wire [7:0] scratch_dout;
   
   // AD724 control
@@ -340,99 +343,96 @@ module zxuno (
   end        
 
   clk_enables enables_de_todos_los_relojes (
-    .clk(sysclk),
-    .CPUContention(CPUContention),
-    .cpu_speed(cpu_speed),
-    .clk14en(clk14en),
-    .clk7en(clk7en),
-    .clk7en_n(clk7en_n),
-    .clk35en(clk35en),
-    .clk35en_n(clk35en_n),
-    .clk175en(clk175en),
-    .clkcpu_enable(clkcpu_enable)
-	);
+    .clk                (sysclk         ),
+    .CPUContention      (CPUContention  ),
+    .cpu_speed          (cpu_speed      ),
+    .clk14en            (clk14en        ),
+    .clk7en             (clk7en         ),
+    .clk7en_n           (clk7en_n       ),
+    .clk35en            (clk35en        ),
+    .clk35en_n          (clk35en_n      ),
+    .clk175en           (clk175en       ),
+    .clkcpu_enable      (clkcpu_enable  ));
 
   cpu_and_dma el_z80_con_su_dma (
-    .m1_n(m1_n),
-    .mreq_n(mreq_n),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .wr_n(wr_n),
-    .rfsh_n(rfsh_n),
-    .halt_n(),
-    .busak_salida_n(busak_n),
-    .A(cpuaddr),
-    .dout(cpudout),
+    .m1_n               (m1_n           ),
+    .mreq_n             (mreq_n         ),
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .wr_n               (wr_n           ),
+    .rfsh_n             (rfsh_n         ),
+    .halt_n             (               ),
+    .busak_salida_n     (busak_n        ),
+    .A                  (cpuaddr        ),
+    .dout               (cpudout        ),
 
-    .reset_n(rst_n & mrst_n & power_on_reset_n),  // cualquiera de los tres resets
-    .clk(sysclk),
-    .clkcpuen(clkcpu_enable & wait_spi_n),
-    .wait_n(1'b1),
-    .int_n(int_n),
-    .nmi_n((nmi_n | enable_nmi_n) /*& nmispecial_n*/),
-    .di(cpudin),
-  
-    .zxuno_addr(zxuno_addr),
-    .regaddr_changed(regaddr_changed),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .dmadevicedin(cpudout),
-    .dmadevicedout(dma_dout),
-    .oe(oe_dma)
-  );
+    .reset_n            (rst_n & mrst_n & power_on_reset_n),  // cualquiera de los tres resets
+    .clk                (sysclk         ),
+    .clkcpuen           (clkcpu_enable & wait_spi_n),
+    .wait_n             (1'b1           ),
+    .int_n              (int_n          ),
+    .nmi_n              ((nmi_n | enable_nmi_n)                 /*& nmispecial_n*/),
+    .di                 (cpudin         ),
+
+    .zxuno_addr         (zxuno_addr     ),
+    .regaddr_changed    (regaddr_changed),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .dmadevicedin       (cpudout        ),
+    .dmadevicedout      (dma_dout       ),
+    .oe                 (oe_dma         ));
 
   ula_radas la_ula (
-	  // Clocks
-    .sysclk(sysclk),
-    .clk14en(clk14en),
-    .clk7en(clk7en),
-    .clk7en_n(clk7en_n),
-    .clk35en(clk35en),
-    .clk35en_n(clk35en_n),
-    .CPUContention(CPUContention),
-    .rst_n(mrst_n & rst_n & power_on_reset_n),
+     // Clocks
+    .sysclk             (sysclk         ),
+    .clk14en            (clk14en        ),
+    .clk7en             (clk7en         ),
+    .clk7en_n           (clk7en_n       ),
+    .clk35en            (clk35en        ),
+    .clk35en_n          (clk35en_n      ),
+    .CPUContention      (CPUContention  ),
+    .rst_n              (mrst_n & rst_n & power_on_reset_n),
 
-	 // CPU interface
-    .a(cpuaddr),
-    .access_to_contmem(access_to_screen),
-    .mreq_n(mreq_n),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .wr_n(wr_n),
-    .rfsh_n(rfsh_n),
-    .int_n(int_n),
-    .din(cpudout),
-    .dout(ula_dout),
-    .rasterint_enable(rasterint_enable),
+    // CPU interface
+    .a                  (cpuaddr        ),
+    .access_to_contmem  (access_to_screen),
+    .mreq_n             (mreq_n         ),
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .wr_n               (wr_n           ),
+    .rfsh_n             (rfsh_n         ),
+    .int_n              (int_n          ),
+    .din                (cpudout        ),
+    .dout               (ula_dout       ),
+    .rasterint_enable   (rasterint_enable),
     .vretraceint_disable(vretraceint_disable),
-    .raster_line(raster_line),
+    .raster_line        (raster_line    ),
     .raster_int_in_progress(raster_int_in_progress),
 
-  // VRAM interface
-    .va(vram_addr),  // 16KB videoram, 2 pages
-    .vramdata(vram_dout),
-	 
-  // ZX-UNO register interface
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .regaddr_changed(regaddr_changed),
+// VRAM interface
+    .va                 (vram_addr      ),                      // 16KB videoram, 2 pages
+    .vramdata           (vram_dout      ),
+// ZX-UNO register interface
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .regaddr_changed    (regaddr_changed),
   
-  // I/O ports
-    .ear(ear),
-    .mic(mic),
-    .spk(spk),
-    .kbd(kbdcol_to_ula),
-    .issue2_keyboard(issue2_keyboard),
-    .mode(timing_mode),
-    .ioreqbank(ioreqbank),
-    .disable_contention(disable_contention),
-    .doc_ext_option(doc_ext_option),
-    .enable_timexmmu(enable_timexmmu),
-    .disable_timexscr(disable_timexscr),
-    .disable_ulaplus(disable_ulaplus),
-    .disable_radas(disable_radas),
-    .csync_option(csync_option),
+// I/O ports
+    .ear                (ear            ),
+    .mic                (mic            ),
+    .spk                (spk            ),
+    .kbd                (kbdcol_to_ula  ),
+    .issue2_keyboard    (issue2_keyboard),
+    .mode               (timing_mode    ),
+    .ioreqbank          (ioreqbank      ),
+    .disable_contention (disable_contention),
+    .doc_ext_option     (doc_ext_option ),
+    .enable_timexmmu    (enable_timexmmu),
+    .disable_timexscr   (disable_timexscr),
+    .disable_ulaplus    (disable_ulaplus),
+    .disable_radas      (disable_radas  ),
+    .csync_option       (csync_option   ),
 
   // Debug	  
 //     .button_up(f4_pressed), 
@@ -440,57 +440,55 @@ module zxuno (
 //     .posint(v8_a),
 
   // Video
-    .r(rula),
-    .g(gula),
-    .b(bula),
-    .hcnt(hcnt),
-    .vcnt(vcnt),
-    .hsync(hsync),
-    .vsync(vsync),
-    .csync(csync)
-  );
+    .r                  (r              ),
+    .g                  (g              ),
+    .b                  (b              ),
+    .hcnt               (hcnt           ),
+    .vcnt               (vcnt           ),
+    .hsync              (hsync          ),
+    .vsync              (vsync          ),
+    .csync              (csync          ));
 
   zxunoregs addr_reg_zxuno (
     .clk(sysclk),
+
     .rst_n(rst_n & mrst_n & power_on_reset_n),
-    .a(cpuaddr),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .wr_n(wr_n),
-    .din(cpudout),
-    .dout(zxuno_addr_to_cpu),
-    .oe(oe_zxunoaddr),
-    .addr(zxuno_addr),
-    .read_from_reg(zxuno_regrd),
-    .write_to_reg(zxuno_regwr),
-    .regaddr_changed(regaddr_changed)
-  );
+    .a                  (cpuaddr        ),
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .wr_n               (wr_n           ),
+    .din                (cpudout        ),
+    .dout               (zxuno_addr_to_cpu),
+    .oe                 (oe_zxunoaddr   ),
+    .addr               (zxuno_addr     ),
+    .read_from_reg      (zxuno_regrd    ),
+    .write_to_reg       (zxuno_regwr    ),
+    .regaddr_changed    (regaddr_changed));
 
   flash_and_sd cacharros_con_spi (
-    .clk(sysclk),
-    .a(cpuaddr),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .wr_n(wr_n),
-    .addr(zxuno_addr),
-    .ior(zxuno_regrd),
-    .iow(zxuno_regwr),
-    .din(cpudout),
-    .dout(spi_dout),
-    .oe(oe_spi),
-    .wait_n(wait_spi_n),
-  
-    .in_boot_mode(in_boot_mode),
-    .flash_cs_n(flash_cs_n),
-    .flash_clk(flash_clk),
-    .flash_di(flash_di),
-    .flash_do(flash_do),
-    .disable_spisd(disable_spisd),
-    .sd_cs_n(sd_cs_n),
-    .sd_clk(sd_clk),
-    .sd_mosi(sd_mosi),
-    .sd_miso(sd_miso)
-  );
+    .clk                (sysclk         ),
+    .a                  (cpuaddr        ),
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .wr_n               (wr_n           ),
+    .addr               (zxuno_addr     ),
+    .ior                (zxuno_regrd    ),
+    .iow                (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .dout               (spi_dout       ),
+    .oe                 (oe_spi         ),
+    .wait_n             (wait_spi_n     ),
+
+    .in_boot_mode       (in_boot_mode   ),
+    .flash_cs_n         (flash_cs_n     ),
+    .flash_clk          (flash_clk      ),
+    .flash_di           (flash_di       ),
+    .flash_do           (flash_do       ),
+    .disable_spisd      (disable_spisd  ),
+    .sd_cs_n            (sd_cs_n        ),
+    .sd_clk             (sd_clk         ),
+    .sd_mosi            (sd_mosi        ),
+    .sd_miso            (sd_miso        ));
 
   new_memory bootrom_rom_y_ram (
   // Relojes y reset
@@ -498,104 +496,102 @@ module zxuno (
     .mrst_n(mrst_n & power_on_reset_n),
     .rst_n(rst_n & power_on_reset_n),
   
-  // Interface con la CPU
-    .a(cpuaddr),
-    .din(cpudout),  // proveniente del bus de datos de salida de la CPU
-    .dout(memory_dout), // hacia el bus de datos de entrada de la CPU
-    .oe(oe_romyram),       // el dato es valido   
-    .mreq_n(mreq_n),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .wr_n(wr_n),
-    .m1_n(m1_n),        // Necesarios para implementar DIVMMC
-    .rfsh_n(rfsh_n),
-    .busak_n(busak_n),
-    .enable_nmi_n(enable_nmi_n),
-    .page_configrom_active(page_configrom_active),  // Para habilitar la ROM de ayuda y configuración
-  
-  // Interface con la ULA
-    .vramaddr(vram_addr),
-    .vramdout(vram_dout),
-    .doc_ext_option(doc_ext_option),
-    .issue2_keyboard_enabled(issue2_keyboard),
-    .timing_mode(timing_mode),
-    .disable_contention(disable_contention),
-    .access_to_screen(access_to_screen),
-    .ioreqbank(ioreqbank),
-  
-  // Interface con el bus externo (TO-DO)
-    .inhibit_rom(1'b0),
-    .din_external(8'h00),
+// Interface con la CPU
+    .a                  (cpuaddr        ),
+    .din                (cpudout        ),                      // proveniente del bus de datos de salida de la CPU
+    .dout               (memory_dout    ),                      // hacia el bus de datos de entrada de la CPU
+    .oe                 (oe_romyram     ),                      // el dato es valido
+    .mreq_n             (mreq_n         ),
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .wr_n               (wr_n           ),
+    .m1_n               (m1_n           ),                      // Necesarios para implementar DIVMMC
+    .rfsh_n             (rfsh_n         ),
+    .busak_n            (busak_n        ),
+    .enable_nmi_n       (enable_nmi_n   ),
+    .page_configrom_active(page_configrom_active),              // Para habilitar la ROM de ayuda y configuración
 
-  // Interface para registros ZXUNO
-    .addr(zxuno_addr),
-    .ior(zxuno_regrd),
-    .iow(zxuno_regwr),
-    .in_boot_mode(in_boot_mode),
-  
-  // Interface con modulo de habilitacion de opciones
-    .disable_7ffd(disable_7ffd),
-    .disable_1ffd(disable_1ffd),
-    .disable_romsel7f(disable_romsel7f),
-    .disable_romsel1f(disable_romsel1f),
-    .enable_timexmmu(enable_timexmmu),
-  
-  // Interface con el lector PZX
-    .pzx_addr(pzx_addr),
-    .enable_pzx(enable_pzx),
-    .in48kmode(in48kmode),
-    .data_from_pzx(data_from_pzx),
-    .data_to_pzx(data_to_pzx),
-    .write_data_pzx(write_data_pzx),
-  
-  // Interface con la SRAM
-    .sram_addr(sram_addr),
-    .sram_data(sram_data),
-    .sram_we_n(sram_we_n)
-  );
+// Interface con la ULA
+    .vramaddr           (vram_addr      ),
+    .vramdout           (vram_dout      ),
+    .doc_ext_option     (doc_ext_option ),
+    .issue2_keyboard_enabled(issue2_keyboard),
+    .timing_mode        (timing_mode    ),
+    .disable_contention (disable_contention),
+    .access_to_screen   (access_to_screen),
+    .ioreqbank          (ioreqbank      ),
+
+// Interface con el bus externo (TO-DO)
+    .inhibit_rom        (1'b0           ),
+    .din_external       (8'h00          ),
+
+// Interface para registros ZXUNO
+    .addr               (zxuno_addr     ),
+    .ior                (zxuno_regrd    ),
+    .iow                (zxuno_regwr    ),
+    .in_boot_mode       (in_boot_mode   ),
+
+// Interface con modulo de habilitacion de opciones
+    .disable_7ffd       (disable_7ffd   ),
+    .disable_1ffd       (disable_1ffd   ),
+    .disable_romsel7f   (disable_romsel7f),
+    .disable_romsel1f   (disable_romsel1f),
+    .enable_timexmmu (enable_timexmmu   ),
+
+// Interface con el lector PZX
+    .pzx_addr           (pzx_addr       ),
+    .enable_pzx         (enable_pzx     ),
+    .in48kmode          (in48kmode      ),
+    .data_from_pzx      (data_from_pzx  ),
+    .data_to_pzx        (data_to_pzx    ),
+    .write_data_pzx     (write_data_pzx ),
+
+// Interface con la SRAM
+    .sram_addr          (sram_addr      ),
+    .sram_data          (sram_data      ),
+    .sram_we_n          (sram_we_n      ));
 
   ps2_keyb el_teclado (
-    .clk(sysclk),
-    .clkps2(clkps2),
-    .dataps2(dataps2),
-    .rows(kbdrow),
-    .cols(kbdcol),
-    .joy(kbd_joy), // Implementación joystick en teclado numerico
-    .rst_out_n(rst_n),   // esto son salidas, no entradas
-    .nmi_out_n(nmi_n),   // Señales de reset y NMI
-    .mrst_out_n(mrst_n),  // generadas por pulsaciones especiales del teclado
-    .user_fnt(user_fnt),  // funciones de usuario
+    .clk                (sysclk         ),
+    .clkps2             (clkps2         ),
+    .dataps2            (dataps2        ),
+    .rows               (kbdrow         ),
+    .cols               (kbdcol         ),
+    .joy                (kbd_joy        ),                      // Implementación joystick en teclado numerico
+    .rst_out_n          (rst_n          ),                      // esto son salidas, no entradas
+    .nmi_out_n          (nmi_n          ),                      // Señales de reset y NMI
+    .mrst_out_n         (mrst_n         ),                      // generadas por pulsaciones especiales del teclado
+    .user_fnt           (user_fnt       ),                      // funciones de usuario
     .video_output_change(video_output_change),
   //----------------------------
     .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .regaddr_changed(regaddr_changed),
-    .din(cpudout),
-    .keymap_dout(keymap_dout),
-    .oe_keymap(oe_keymap),
-    .scancode_dout(scancode_dout),
-    .oe_scancode(oe_scancode),
-    .kbstatus_dout(kbstatus_dout),
-    .oe_kbstatus(oe_kbstatus),
-	 .monochrome_switcher(monochrome_switcher)
-  );
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .regaddr_changed    (regaddr_changed),
+    .din                (cpudout        ),
+    .keymap_dout        (keymap_dout    ),
+    .oe_keymap          (oe_keymap      ),
+    .scancode_dout      (scancode_dout  ),
+    .oe_scancode        (oe_scancode    ),
+    .kbstatus_dout      (kbstatus_dout  ),
+    .oe_kbstatus        (oe_kbstatus    ),
+    .monochrome_switcher(monochrome_switcher));
 
   joystick_protocols los_joysticks (
-    .clk(sysclk),
+    .clk                (sysclk         ),
   //-- cpu interface
-    .a(cpuaddr),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .din(cpudout),
-    .dout(joystick_dout),
-    .oe(oe_joystick),
+    .a                  (cpuaddr        ),
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .din                (cpudout        ),
+    .dout               (joystick_dout  ),
+    .oe                 (oe_joystick    ),
   //-- interface with ZXUNO reg bank
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
   //-- actual joystick and keyboard signals
-    .kbdjoy_in(kbd_joy),
+    .kbdjoy_in          (kbd_joy        ),
     .db9joy1_in({joy1fire2, joy1fire1, joy1up, joy1down, joy1left, joy1right}),
     .db9joy2_in({joy2fire2, joy2fire1, joy2up, joy2down, joy2left, joy2right}),
     .kbdcol_in(kbdcol),
@@ -606,24 +602,22 @@ module zxuno (
   coreid identificacion_del_core (
     .clk(sysclk),
     .rst_n(rst_n & mrst_n & power_on_reset_n),
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .regaddr_changed(regaddr_changed),
-    .dout(coreid_dout),
-    .oe(oe_coreid)
-  );
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .regaddr_changed    (regaddr_changed),
+    .dout               (coreid_dout    ),
+    .oe                 (oe_coreid      ));
 
 `ifdef SCRATCH_REGISTER_OPTION
     scratch_register scratch (
-        .clk(sysclk),
-        .poweron_rst_n(power_on_reset_n),
-        .zxuno_addr(zxuno_addr),
-        .zxuno_regrd(zxuno_regrd),
-        .zxuno_regwr(zxuno_regwr),
-        .din(cpudout),
-        .dout(scratch_dout),
-        .oe(oe_scratch)
-    );
+    .clk                (sysclk         ),
+    .poweron_rst_n      (power_on_reset_n),
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .dout               (scratch_dout   ),
+    .oe                 (oe_scratch     ));
 `endif
 
 `ifdef AD724_CONTROL_SUPPORT
@@ -647,66 +641,66 @@ module zxuno (
 `endif
 
   control_enable_options device_enables (
-    .clk(sysclk),
-    .rst_n(mrst_n & power_on_reset_n),
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .din(cpudout),
-    .dout(devoptions_dout),
-    .oe(oe_devoptions),
-    .disable_ay(disable_ay),
-    .disable_turboay(disable_turboay),
-    .disable_7ffd(disable_7ffd),
-    .disable_1ffd(disable_1ffd),
-    .disable_romsel7f(disable_romsel7f),
-    .disable_romsel1f(disable_romsel1f),
-    .enable_timexmmu(enable_timexmmu),
-    .disable_spisd(disable_spisd),
-    .disable_timexscr(disable_timexscr),
-    .disable_ulaplus(disable_ulaplus),
-    .disable_radas(disable_radas),
-    .disable_specdrum(disable_specdrum),
-    .disable_mixer(disable_mixer)
-  );
+    .clk                (sysclk),
+
+    .rst_n              (mrst_n & power_on_reset_n),
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .dout               (devoptions_dout),
+    .oe                 (oe_devoptions  ),
+    .disable_ay         (disable_ay     ),
+    .disable_turboay    (disable_turboay),
+    .disable_7ffd       (disable_7ffd   ),
+    .disable_1ffd       (disable_1ffd   ),
+    .disable_romsel7f   (disable_romsel7f),
+    .disable_romsel1f   (disable_romsel1f),
+    .enable_timexmmu    (enable_timexmmu),
+    .disable_spisd      (disable_spisd  ),
+    .disable_timexscr   (disable_timexscr),
+    .disable_ulaplus    (disable_ulaplus),
+    .disable_radas      (disable_radas  ),
+    .disable_specdrum   (disable_specdrum),
+    .disable_mixer      (disable_mixer  ));
 
   scandoubler_ctrl control_scandoubler (
-    .clk(sysclk),
-    .a(cpuaddr),
-    .kbd_change_video_output(video_output_change),
-    .kbd_turbo_boost(turbo_boost),
-    .turbo_boost_allowed(speed_change_allowed),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .wr_n(wr_n),
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .din(cpudout),
-    .dout(scndblctrl_dout),
-    .oe(oe_scndblctrl),
-    .vga_enable(vga_enable),
-    .scanlines_enable(scanlines_enable),
-    .freq_option(freq_option),
-    .cpu_speed(cpu_speed),
-    .csync_option(csync_option)
-  );
+    .clk                (sysclk         ),
+    .a                  (cpuaddr        ),
+    .kbd_change_video_output(video_output_change),	// In
+    .kbd_turbo_boost    (turbo_boost    ),		// In
+    .turbo_boost_allowed(speed_change_allowed),		// In
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .wr_n               (wr_n           ),
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .dout               (scndblctrl_dout),
+    .oe                 (oe_scndblctrl  ),
+    .vga_enable         (vga_enable     ),
+    .scanlines_enable   (scanlines_enable),
+    .freq_option        (freq_option    ),		// Out
+    .cpu_speed          (cpu_speed      ),		// Out
+    .csync_option       (csync_option   ));
+
 
 `ifdef RASTER_INTERRUPT_SUPPORT
   rasterint_ctrl control_rasterint (
-    .clk(sysclk),
-    .rst_n(rst_n & mrst_n & power_on_reset_n),
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .din(cpudout),
-    .dout(rasterint_dout),
-    .oe(oe_rasterint),
-    .rasterint_enable(rasterint_enable),
+    .clk                (sysclk),
+
+    .rst_n              (rst_n & mrst_n & power_on_reset_n),
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .dout               (rasterint_dout ),
+    .oe                 (oe_rasterint   ),
+    .rasterint_enable   (rasterint_enable),
     .vretraceint_disable(vretraceint_disable),
-    .raster_line(raster_line),
-    .raster_int_in_progress(raster_int_in_progress)
-  );
+    .raster_line        (raster_line    ),
+    .raster_int_in_progress(raster_int_in_progress));
 `endif  
 
   // DESHABILITADO!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -732,50 +726,52 @@ module zxuno (
   ps2_mouse_kempston el_raton (
     .clk(sysclk),
     .rst_n(rst_n & mrst_n & power_on_reset_n),
-    .clkps2(mouseclk),
-    .dataps2(mousedata),
+ 
+    .clkps2             (mouseclk       ),
+    .dataps2            (mousedata      ),
   //---------------------------------
-    .a(cpuaddr),
-    .iorq_n(iorq_n),
-    .rd_n(rd_n),
-    .kmouse_dout(kmouse_dout),
-    .oe_kmouse(oe_kmouse),
+    .a                  (cpuaddr        ),
+    .iorq_n             (iorq_n         ),
+    .rd_n               (rd_n           ),
+    .kmouse_dout        (kmouse_dout    ),
+    .oe_kmouse          (oe_kmouse      ),
   //---------------------------------
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .din(cpudout),
-    .mousedata_dout(mousedata_dout),
-    .oe_mousedata(oe_mousedata),
-    .mousestatus_dout(mousestatus_dout),
-    .oe_mousestatus(oe_mousestatus)
-  );
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .mousedata_dout     (mousedata_dout ),
+    .oe_mousedata       (oe_mousedata   ),
+    .mousestatus_dout   (mousestatus_dout),
+    .oe_mousestatus     (oe_mousestatus ));
+  
 
 `ifdef MULTIBOOT_SUPPORT
   multiboot el_multiboot (
-    .clk(sysclk),
-  //.clk_icap(clk14),
-    .rst_n(rst_n & mrst_n & power_on_reset_n),
-    .zxuno_addr(zxuno_addr),
-    .regaddr_changed(regaddr_changed),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .din(cpudout),
-    .dout(multiboot_dout),
-    .oe(oe_multiboot)
-  );
+    .clk                (sysclk),
+
+    .rst_n              (rst_n & mrst_n & power_on_reset_n),
+    .zxuno_addr         (zxuno_addr     ),
+    .regaddr_changed    (regaddr_changed),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .dout               (multiboot_dout ),
+    .oe                 (oe_multiboot   ));
+
 `endif
 
 `ifdef SPECDRUM_COVOX_SUPPORT
   specdrum the_specdrum (
-    .clk(sysclk),
-    .rst_n(rst_n & mrst_n & power_on_reset_n),
-    .a(cpuaddr),
-    .iorq_n(iorq_n | disable_specdrum),
-    .wr_n(wr_n),
-    .d(cpudout),
-    .specdrum_out(specdrum)
-  );
+    .clk                (sysclk),
+
+    .rst_n              (rst_n & mrst_n & power_on_reset_n),
+    .a                  (cpuaddr        ),
+    .iorq_n             (iorq_n | disable_specdrum),
+    .wr_n               (wr_n           ),
+    .d                  (cpudout        ),
+    .specdrum_out       (specdrum       ));
+
 `endif
   
   disk_drive el_disco (
@@ -864,40 +860,57 @@ module zxuno (
     .audio_out_ay1_splitted({ay1_cha, ay1_chb, ay1_chc}),
     .audio_out_ay2_splitted({ay2_cha, ay2_chb, ay2_chc})
 	 );
+///////////////////////////////////
+// SOUND SAA1099
+///////////////////////////////////
+`ifdef SAA1099	
+    saa1099s el_saa (
+    .clk_sys            (sysclk         ),               // 8 MHz
+    .ce                 (clk7en         ),               // 8 MHz
+    .rst_n              (rst_n & mrst_n & power_on_reset_n),
+    .cs_n               ((cpuaddr[7:0] != 255) | iorq_n),
+    .a0                 (cpuaddr[8]     ),               // 0=data, 1=address
+    .wr_n               (wr_n           ),
+    .din                (cpudout        ),
+    .out_l              (saa_out_l      ),
+    .out_r              (saa_out_r      ));
+`endif
   
 ///////////////////////////////////
 // SOUND MIXERS
 ///////////////////////////////////
 
   // 9-bit mixer to generate different audio levels according to input sources
-	panner_and_mixer audio_mix (
-    .clk(sysclk),
-    .mrst_n(mrst_n),
-    .a(cpuaddr[7:0]),
-    .iorq_n(iorq_n | disable_mixer),
-    .rd_n(rd_n),
-    .wr_n(wr_n),
-    .din(cpudout),
-    .dout(mixer_dout),
-    .oe(oe_mixer),
-  // Audio sources to mix 
-    .mic(mic),
-    .spk(spk),
-    .ear(ear),
-    .ay1_cha(ay1_cha),
-    .ay1_chb(ay1_chb),
-    .ay1_chc(ay1_chc),
-    .ay2_cha(ay2_cha),
-    .ay2_chb(ay2_chb),
-    .ay2_chc(ay2_chc),
-    .specdrum(specdrum),
-    .midi_left(midi_left),
-    .midi_right(midi_right),
+   panner_and_mixer audio_mix (
+    .clk                (sysclk         ),
+    .mrst_n             (mrst_n         ),
+    .a                  (cpuaddr[7:0]   ),
+    .iorq_n             (iorq_n | disable_mixer),
+    .rd_n               (rd_n           ),
+    .wr_n               (wr_n           ),
+    .din                (cpudout        ),
+    .dout               (mixer_dout     ),
+    .oe                 (oe_mixer       ),
+  // Audio sources to mix
+    .mic                (mic            ),
+    .spk                (spk            ),
+    .ear                (ear            ),
+    .ay1_cha            (ay1_cha        ),
+    .ay1_chb            (ay1_chb        ),
+    .ay1_chc            (ay1_chc        ),
+    .ay2_cha            (ay2_cha        ),
+    .ay2_chb            (ay2_chb        ),
+    .ay2_chc            (ay2_chc        ),
+    .specdrum           (specdrum       ),
+    .midi_left          (midi_left      ),
+    .midi_right         (midi_right     ),
+    .saa_left           (saa_out_l      ),
+    .saa_right          (saa_out_r      ),
   
-	// PWM output mixed
-    .output_left(audio_out_left),
-    .output_right(audio_out_right)
-  );
+// PWM output mixed
+    .output_left        (audio_out_left ),
+    .output_right       (audio_out_right));
+
 
 `ifdef MIDI_SYNTH_OPTION
   i2s_decoder i2s_midi (
@@ -912,18 +925,18 @@ module zxuno (
 
 `ifdef UART_ESP8266_OPTION
   // UART para el ESP8266
+  assign wifi_switcher = f11_pressed;
   zxunouart #(.CLK(MASTERCLK)) uart_esp8266 (
-    .clk(sysclk),
-    .zxuno_addr(zxuno_addr),
-    .zxuno_regrd(zxuno_regrd),
-    .zxuno_regwr(zxuno_regwr),
-    .din(cpudout),
-    .dout(uart_dout),
-    .oe(oe_uart),
-    .uart_tx(uart_tx),
-    .uart_rx(uart_rx),
-    .uart_rts(uart_rts)
-  );
+    .clk                (sysclk         ),
+    .zxuno_addr         (zxuno_addr     ),
+    .zxuno_regrd        (zxuno_regrd    ),
+    .zxuno_regwr        (zxuno_regwr    ),
+    .din                (cpudout        ),
+    .dout               (uart_dout      ),
+    .oe                 (oe_uart        ),
+    .uart_tx            (uart_tx        ),
+    .uart_rx            (uart_rx        ),
+    .uart_rts           (uart_rts       ));
 `else
   assign uart_tx = 1'b0;
   assign uart_rts = 1'b0;  
@@ -960,9 +973,5 @@ module zxuno (
 //    .v8_h(v8_h)
 //    );
 
-  // Asignar cuando el visor no está disponible
-  assign r = rula;
-	assign g = gula;
-	assign b = bula;
 
 endmodule

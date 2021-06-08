@@ -103,8 +103,6 @@ module panner_and_mixer (
   input wire [7:0] specdrum,
   input wire [15:0] midi_left,
   input wire [15:0] midi_right,
-  input wire [ 7:0] saa_left,
-  input wire [ 7:0] saa_right,
  
   // --- OUTPUTs ---
   output wire output_left,
@@ -177,7 +175,6 @@ module panner_and_mixer (
   reg [10:0] ay2_cha_signed, ay2_chb_signed, ay2_chc_signed;
   reg [10:0] beeper_signed, specdrum_signed;
   reg [10:0] midi_left_signed, midi_right_signed;
-  reg [10:0] saa_left_signed, saa_right_signed;
   always @(posedge clk) begin
     // extender a 11 bits
     ay1_cha_signed  <= {3'b000, ay1_cha};
@@ -190,17 +187,15 @@ module panner_and_mixer (
     specdrum_signed <= {2'b00, specdrum, specdrum[7]};
     midi_left_signed <= midi_left[15:5] ^ 11'b10000000000;
     midi_right_signed <= midi_right[15:5] ^ 11'b10000000000;
-    saa_left_signed  <= {1'b0, saa_left, 2'b00};
-    saa_right_signed <= {1'b0, saa_right, 2'b00};
     
     mixleft  <= ((mixer[7])? ay1_cha_signed + ay2_cha_signed : 11'h000 ) +
                 ((mixer[5])? ay1_chb_signed + ay2_chb_signed : 11'h000 ) +
                 ((mixer[3])? ay1_chc_signed + ay2_chc_signed : 11'h000 ) +
-                ((mixer[1])? beeper_signed + midi_left_signed + specdrum_signed + saa_left_signed: 11'h000 );
+                ((mixer[1])? beeper_signed + midi_left_signed + specdrum_signed: 11'h000 );
     mixright <= ((mixer[6])? ay1_cha_signed + ay2_cha_signed : 11'h000 ) +
                 ((mixer[4])? ay1_chb_signed + ay2_chb_signed : 11'h000 ) +
                 ((mixer[2])? ay1_chc_signed + ay2_chc_signed : 11'h000 ) +
-                ((mixer[0])? beeper_signed + midi_right_signed + specdrum_signed + saa_right_signed: 11'h000 );
+                ((mixer[0])? beeper_signed + midi_right_signed + specdrum_signed: 11'h000 );
     left <= mixleft[10:2];
     right <= mixright[10:2];
   end
