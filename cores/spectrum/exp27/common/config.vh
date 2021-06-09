@@ -49,6 +49,7 @@
 // FPGA color clock generation needs AD724 control support enabled
 //`define AD724_CONTROL_SUPPORT
 //`define FPGA_GENERATES_COLOR_CLOCK_OPTION
+`define MONOCHROMERGB
 //`define SAA1099
 // ZXUNO core ID string. Must be padded with zero bytes to the right (16 bytes total)
   localparam COREID_STRING = {"EXP27-220521", 8'h00, 8'h00, 8'h00, 8'h00};
