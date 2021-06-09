@@ -178,7 +178,7 @@ module tld_zxuno_v4 (
   assign clkcolor4x = 1'b1;   // VSYNC a 1 si no se genera el reloj de color
 `endif
 
-
+`ifdef MONOCHROMERGB
   monochrome monochromergb (
     .monochrome_selection(monochrome_switcher),
     .ri(ri),
@@ -188,6 +188,11 @@ module tld_zxuno_v4 (
     .go(gi_monochrome),
     .bo(bi_monochrome)  
   );
+ `else
+   assign ri_monochrome = ri;
+	assign gi_monochrome = gi;
+	assign bi_monochrome = bi;
+ `endif
 
 	vga_scandoubler #(.CLKVIDEO(14000)) salida_vga (
 		.clk(sysclk),
@@ -208,7 +213,13 @@ module tld_zxuno_v4 (
 		.vsync(vsync)
    );	 
        
-   assign testled = (!flash_cs_n || !sd_cs_n);	
-	assign uart_reset = (!wifi_switcher) ? 1'b0 : 1'bz;
+   assign testled = (!flash_cs_n || !sd_cs_n);
+	
+	`ifdef UART_ESP8266_OPTION
+		assign uart_reset = (!wifi_switcher) ? 1'b0 : 1'bz;
+	`else
+	   assign uart_reset = 1'b0;
+	`endif
+	
 	
 endmodule
