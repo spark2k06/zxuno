@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-//    This file is part of the ZXUNO Spectrum core. 
+//    This file is part of the ZXUNO Spectrum core.
 //    Creation date is 15:18:53 2015-06-03 by Miguel Angel Rodriguez Jodar
 //    (c)2014-2020 ZXUNO association.
 //    ZXUNO official repository: http://svn.zxuno.com/svn/zxuno
@@ -34,8 +34,8 @@ module ps2_keyb(
     output wire rst_out_n,
     output wire nmi_out_n,
     output wire mrst_out_n,
-    output wire [12:0] user_fnt,  // 13 funciones especiales. Usaremos FF, STOP, PREVTRACK, PLAY, F1 F3 F4 F6 F7 F8 F9 F11 y F12
-    output wire video_output_change,    
+    output wire [13:0] user_fnt,  // 14 funciones especiales. Usaremos FF, STOP, PREVTRACK, PLAY, F1 F3 F4 F6 F7 F8 F9 F11 F12 y CTRL-F8
+    output wire video_output_change,
     //---------------------------------
     input wire [7:0] zxuno_addr,
     input wire zxuno_regrd,
@@ -57,7 +57,7 @@ module ps2_keyb(
     assign mrst_out_n = ~master_reset;
     assign rst_out_n = ~user_reset;
     assign nmi_out_n = ~user_nmi;
-    
+
     assign oe_keymap = (zxuno_addr == KEYMAP && zxuno_regrd == 1'b1);
     assign oe_scancode = (zxuno_addr == SCANCODE && zxuno_regrd == 1'b1);
     assign oe_kbstatus = (zxuno_addr == KBSTATUS && zxuno_regrd == 1'b1);
@@ -70,8 +70,8 @@ module ps2_keyb(
     wire extended;
     wire released;
     wire shift_pressed, ctrl_pressed, alt_pressed;
-    assign scancode_dout = kbcode;    
-    
+    assign scancode_dout = kbcode;
+
     /*
     | BSY | x | x | x | ERR | RLS | EXT | PEN |
     */
@@ -87,7 +87,7 @@ module ps2_keyb(
           kbstatus_dout[0] <= 1'b0;
           reading_kbstatus <= 1'b0;
       end
-    end        
+    end
 
     ps2_port lectura_de_teclado (
         .clk(clk),
@@ -122,9 +122,9 @@ module ps2_keyb(
         .user_nmi(user_nmi),
         .user_fnt(user_fnt),
 		  .monochrome_switcher(monochrome_switcher)
-		  
+
     );
-    
+
     keyboard_pressed_status teclado_limpio (
         .clk(clk),
         .rst(1'b0),

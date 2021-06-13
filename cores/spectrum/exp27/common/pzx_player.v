@@ -39,7 +39,7 @@ module pzx_player (
     input wire [1:0] cpu_speed,
     input wire [1:0] memory_register,
     input wire play_in,
-//    input wire stop_in,
+    input wire stop_in,
 	input wire rewindTo0Counter_in,
 	input wire resetTo0Counter_in,
     input wire jump_in,
@@ -136,18 +136,18 @@ module pzx_player (
     wire soft_stop_in = vdeckprev[1] & ~vdeckctrl[1];
 
     reg [1:0] edplay = 2'b00;
-//    reg [1:0] edstop = 2'b00;
+    reg [1:0] edstop = 2'b00;
     reg [1:0] edjump = 2'b00;
     reg [1:0] edrewind = 2'b00;
     reg [1:0] edresetcounter0 = 2'b00;
     wire play = (edplay == 2'b01) | soft_play_in;
-    wire stop = /*(edstop == 2'b01) |*/ soft_stop_in;
+    wire stop = (edstop == 2'b01) | soft_stop_in;
     wire jump = (edjump == 2'b01);
     wire rewindTo0Counter = (edrewind == 2'b01);
     wire resetTo0Counter = (edresetcounter0 == 2'b01);
     always @(posedge clk) begin
       edplay <= {edplay[0], play_in};
-//      edstop <= {edstop[0], stop_in};
+      edstop <= {edstop[0], stop_in};
       edjump <= {edjump[0], jump_in};
       edrewind <= {edrewind[0], rewindTo0Counter_in};
       edresetcounter0 <= {edresetcounter0[0], resetTo0Counter_in};

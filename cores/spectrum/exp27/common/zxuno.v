@@ -174,7 +174,7 @@ module zxuno (
   wire [7:0]  kbstatus_dout;
   wire        oe_kbstatus;
 
-  wire [12:0] user_fnt;
+  wire [13:0] user_fnt;
   wire ff_pressed        = user_fnt[12];
   wire stop_pressed      = user_fnt[11];
   wire prevtrack_pressed = user_fnt[10];
@@ -184,8 +184,9 @@ module zxuno (
   wire f4_pressed        = user_fnt[6];
   wire f6_pressed        = user_fnt[5];   // Establecer marca de 'contador a 0'
   wire f7_pressed        = user_fnt[4];   // PLAY del PZX
-  wire f8_pressed        = user_fnt[3];   // REWIND al principio del PZX, o a la última posición marcada en el fichero
-  wire f9_pressed        = user_fnt[2];   // REWIND a la marca del 'contador a 0' puesta por usuario con F6
+  wire f8_pressed        = user_fnt[3];   // REWIND a la marca del 'contador a 0' puesta por usuario con F6
+  wire f8_ctrl_pressed   = user_fnt[13];   // REWIND al principio del PZX, o a la última posición marcada en el fichero
+  wire f9_pressed        = user_fnt[2];   // STOP del PZX
   wire f11_pressed       = user_fnt[1];   // WiFi
   wire f12_pressed       = user_fnt[0];   // Turbo-boost (28 MHz)
 
@@ -290,10 +291,10 @@ module zxuno (
   wire pzx_output;
   wire in48kmode;
   wire play = play_pressed | f7_pressed;
-//  wire stop = stop_pressed | f9_pressed;
-  wire rewindTo0Counter = f9_pressed;
+  wire stop = stop_pressed | f9_pressed;
+  wire rewindTo0Counter = f8_pressed;
   wire resetTo0Counter = f6_pressed;
-  wire jump = prevtrack_pressed | f8_pressed;
+  wire jump = prevtrack_pressed | f8_ctrl_pressed;
   wire [7:0] data_from_pzx;
   wire [7:0] data_to_pzx;
   wire write_data_pzx;
@@ -805,7 +806,7 @@ module zxuno (
     .cpu_speed(cpu_speed),
     .memory_register(total_memory),
     .play_in(play),
-//    .stop_in(stop),
+    .stop_in(stop),
     .rewindTo0Counter_in(rewindTo0Counter),
     .resetTo0Counter_in(resetTo0Counter),
     .jump_in(jump),

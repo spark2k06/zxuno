@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-//    This file is part of the ZXUNO Spectrum core. 
+//    This file is part of the ZXUNO Spectrum core.
 //    Creation date is 17:42:40 2015-06-01 by Miguel Angel Rodriguez Jodar
 //    (c)2014-2020 ZXUNO association.
 //    ZXUNO official repository: http://svn.zxuno.com/svn/zxuno
@@ -43,9 +43,9 @@ module scancode_to_speccy (
     input wire cpuwrite,
     input wire cpuread,
     input wire rewind
-	 
+
     );
-    
+
     // las 40 teclas del Spectrum. Se inicializan a "no pulsadas".
     reg [4:0] row[0:7];
     initial begin
@@ -58,7 +58,7 @@ module scancode_to_speccy (
         row[6] = 5'b11111;
         row[7] = 5'b11111;
     end
-        
+
     // El gran mapa de teclado y sus registros de acceso
     reg [7:0] keymap1[0:2047];  // 2K x 8 bits
     reg [7:0] keymap2[0:2047];  // 2K x 8 bits
@@ -68,13 +68,13 @@ module scancode_to_speccy (
         $readmemh ("../keymaps/keyb1_es_hex.txt", keymap1);
         $readmemh ("../keymaps/keyb2_es_hex.txt", keymap2);
     end
-    
+
     reg [2:0] keyrow1 = 3'h0;
     reg [4:0] keycol1 = 5'h00;
     reg [2:0] keyrow2 = 3'h0;
     reg [4:0] keycol2 = 5'h00;
     reg [2:0] signalstate = 3'b000;
-    
+
     // Asi funciona la matriz de teclado cuando se piden semifilas
     // desde la CPU.
 		integer r;
@@ -85,22 +85,22 @@ module scancode_to_speccy (
 	  		  sp_col = sp_col & row[r];
 			end
 		end
-                    
-    parameter 
-        CLEANMATRIX     = 4'd0, 
-        IDLE            = 4'd1, 
-        READSPKEY       = 4'd2, 
+
+    parameter
+        CLEANMATRIX     = 4'd0,
+        IDLE            = 4'd1,
+        READSPKEY       = 4'd2,
         TRANSLATE1      = 4'd3,
         TRANSLATE2      = 4'd4,
         CPUTIME         = 4'd5,
         CPUREAD         = 4'd6,
         CPUWRITE        = 4'd7,
         CPUINCADD       = 4'd8;
-        
+
     reg [3:0] state = CLEANMATRIX;
     reg key_is_pending = 1'b0;
     wire [2:0] modifiers = {alt_pressed, ctrl_pressed, shift_pressed};
-    
+
     always @(posedge clk) begin
       if (scan_received == 1'b1)
           key_is_pending <= 1'b1;
@@ -138,7 +138,7 @@ module scancode_to_speccy (
               end
               TRANSLATE1: begin
                   // Actualiza las 8 semifilas del teclado con la primera tecla
-                  if (~released) begin            
+                  if (~released) begin
                     row[keyrow1] <= row[keyrow1] & ~keycol1;
                   end
                   else begin
@@ -148,7 +148,7 @@ module scancode_to_speccy (
               end
               TRANSLATE2: begin
                   // Actualiza las 8 semifilas del teclado con la segunda tecla
-                  if (~released) begin            
+                  if (~released) begin
                     row[keyrow2] <= row[keyrow2] & ~keycol2;
                   end
                   else begin
@@ -156,7 +156,7 @@ module scancode_to_speccy (
                   end
                   state <= IDLE;
               end
-              CPUTIME: begin            
+              CPUTIME: begin
                   if (rewind == 1'b1) begin
                       cpuaddr <= 12'h0000;
                       state <= IDLE;
@@ -198,7 +198,7 @@ module scancode_to_speccy (
           endcase
       end
     end
-endmodule	
+endmodule
 
 module keyboard_pressed_status (
     input wire clk,
@@ -209,17 +209,17 @@ module keyboard_pressed_status (
     input wire released,
     output reg kbclean
     );
-    
+
     reg [255:0] keybstat;  // keymap
     initial begin
       kbclean = 1'b1;
       keybstat = 256'h0;
     end
-    
+
 		always @(posedge clk)
       kbclean <= ~(|keybstat);
-		
-    always @(posedge clk) begin		    
+
+    always @(posedge clk) begin
       if (rst == 1'b1)
         keybstat <= 256'h0;
       else if (scan_received == 1'b1)
@@ -246,10 +246,10 @@ module kb_special_functions (
   output reg joyright,
   output reg joyfire,
   output reg video_output_change,
-  output reg [12:0] user_fnt,
+  output reg [13:0] user_fnt,
   output reg [1:0] monochrome_switcher
   );
-  
+
   parameter
     LEFT_SHIFT  = 9'h012,
     RIGHT_SHIFT = 9'h059,
@@ -288,7 +288,7 @@ module kb_special_functions (
     FF          = 9'h130,
 	 END			 = 9'h169
     ;
-  
+
   initial begin
     master_reset = 1'b0;
     user_reset = 1'b0;
@@ -299,14 +299,14 @@ module kb_special_functions (
     joyright = 1'b0;
     joyfire = 1'b0;
     video_output_change = 1'b0;
-    user_fnt = 9'h000;
+    user_fnt = 14'h0000;
     shift_pressed = 1'b0;
     ctrl_pressed = 1'b0;
     alt_pressed = 1'b0;
-	 monochrome_switcher = 2'b0;	 
-	 
+	 monochrome_switcher = 2'b0;
+
   end
-  
+
   always @(posedge clk) begin
     if (rst == 1'b1) begin
       user_nmi <= 1'b0;
@@ -316,7 +316,7 @@ module kb_special_functions (
       joyright <= 1'b0;
       joyfire <= 1'b0;
       video_output_change <= 1'b0;
-      user_fnt <= 13'h0000;
+      user_fnt <= 14'h0000;
       shift_pressed <= 1'b0;
       ctrl_pressed <= 1'b0;
       alt_pressed <= 1'b0;
@@ -324,18 +324,18 @@ module kb_special_functions (
     else begin
       if (video_output_change == 1'b1)
         video_output_change <= 1'b0;
-		 
+
       if (scan_received == 1'b1) begin
 		  if (released == 1'b1) begin
-									
+
 				case ({extended, scancode})
 				  END						  : monochrome_switcher <= monochrome_switcher + 1; // MonochromeRGB
 				  F11                   : user_fnt[1] <= ~user_fnt[1]; // WiFi ON/OFF
 				  F12                   : user_fnt[0] <= ~user_fnt[0]; // Turbo-boost ON/OFF
 				endcase
-				
+
 		  end
-		  
+
         case ({extended, scancode})
           LEFT_SHIFT,RIGHT_SHIFT: shift_pressed <= ~released;
           LEFT_CTRL,RIGHT_CTRL  : ctrl_pressed <= ~released;
@@ -373,22 +373,25 @@ module kb_special_functions (
                                     joydown <= ~released;
                                     joyright <= ~released;
                                   end
-          F1                    : user_fnt[8] <= ~released;			 
+          F1                    : user_fnt[8] <= ~released;
           F3                    : user_fnt[7] <= ~released;
           F4                    : user_fnt[6] <= ~released;
           F6                    : user_fnt[5] <= ~released;
           F7                    : user_fnt[4] <= ~released;
-          F8                    : user_fnt[3] <= ~released;
+          F8                    : begin
+                                      if (ctrl_pressed) user_fnt[13] <= (~released);
+                                      else user_fnt[3] <= (~released);
+                                  end
           F9                    : user_fnt[2] <= ~released;
-          //F11                   : user_fnt[1] <= ~released;			 
+          //F11                   : user_fnt[1] <= ~released;
           //F12                   : user_fnt[0] <= ~released;
           PLAY                  : user_fnt[9] <= ~released;
           PREVTRACK             : user_fnt[10] <= ~released;
           STOP                  : user_fnt[11] <= ~released;
-          FF                    : user_fnt[12] <= ~released;			 
+          FF                    : user_fnt[12] <= ~released;
           // 12 funciones especiales. Usaremos FF, STOP, PREVTRACK, PLAY, F1 F3 F4 F6 F7 F8 F9 F11 y F12
         endcase
       end
     end
-  end    
+  end
 endmodule
