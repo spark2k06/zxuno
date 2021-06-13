@@ -1,4 +1,4 @@
-//    This file is part of the ZXUNO Spectrum core. 
+//    This file is part of the ZXUNO Spectrum core.
 //    Creation date is 18:39:21 2020-02-09 by Miguel Angel Rodriguez Jodar
 //    (c)2014-2020 ZXUNO association.
 //    ZXUNO official repository: http://svn.zxuno.com/svn/zxuno
@@ -52,16 +52,16 @@
 `define MONOCHROMERGB
 //`define SAA1099
 // ZXUNO core ID string. Must be padded with zero bytes to the right (16 bytes total)
-  localparam COREID_STRING = {"EXP27-220521", 8'h00, 8'h00, 8'h00, 8'h00};
+  localparam COREID_STRING = {"EXP27-130621", 8'h00, 8'h00, 8'h00, 8'h00};
 
-// Power-on/FPGA PROG video configuration  
+// Power-on/FPGA PROG video configuration
   localparam
     VSYNC_OPTION     = 1'b0,   // 0=Sinclair simple vertical sync, 1=proper PAL vsync
     FREQ_OPTION      = 3'b000, // 0 to 7 (50 to almost 60 Hz)
     SCANLINES_OPTION = 1'b0,   // 0=no scanlines, 1=scanlines
     VIDEO_OPTION     = 1'b1;   // 0=RGB, 1=VGA
   localparam INITIAL_VIDEO_VALUE = {2'b00, VSYNC_OPTION, FREQ_OPTION, SCANLINES_OPTION, VIDEO_OPTION};
-  
+
 // ZXUNO address/data I/O ports for indirect access to ZXUNO registers
   localparam
     IOADDR = 16'hFC3B,
@@ -118,7 +118,7 @@
 
 // ZXUNO register for scandoubler/CPU speed options
   localparam SCANDBLCTRL = 8'h0B;
-	
+
 // I/O port	for CPU speed option (Prism compatible)
   localparam PRISMSPEEDCTRL = 16'h8e3b;  // PRISM speed control: bits D3-D0. Bits D7-D4 must be 0000
 

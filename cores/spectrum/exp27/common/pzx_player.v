@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-//    This file is part of the ZXUNO Spectrum core. 
+//    This file is part of the ZXUNO Spectrum core.
 //    Creation date is 11:43:22 2015-06-16 by Miguel Angel Rodriguez Jodar
 //    (c)2014-2020 ZXUNO association.
 //    ZXUNO official repository: http://svn.zxuno.com/svn/zxuno
@@ -39,7 +39,9 @@ module pzx_player (
     input wire [1:0] cpu_speed,
     input wire [1:0] memory_register,
     input wire play_in,
-    input wire stop_in,
+//    input wire stop_in,
+	input wire rewindTo0Counter_in,
+	input wire resetTo0Counter_in,
     input wire jump_in,
     output wire pulse_out,
     output wire playing,
@@ -50,16 +52,16 @@ module pzx_player (
     input wire [7:0] sramdin,
     output wire [7:0] sramdout
     );
-    
+
 //    parameter INITSRAM_ADDR = 21'h060000;
 //    parameter LENGTH_SRAM  = 21'h020000;
 
 // Para placas con 1MB de SRAM o más
 //    parameter INITSRAM_ADDR = 21'h080000;
 //    parameter ENDSRAM_ADDR  = 21'h080000;
-    
-`include "config.vh"    
-              
+
+`include "config.vh"
+
     parameter IDLE          = 6'd0,
               PROGRESS      = 6'd1,
               INCADD        = 6'd2,
@@ -93,13 +95,13 @@ module pzx_player (
               OUTPUTBIT1    = 6'd30,
               OUTPUTBIT2    = 6'd31,
               DATADOTAIL    = 6'd32;
-              
+
     parameter FULLSTOP      = 8'd0,
               STOP          = 8'd1,
               PULSE         = 8'd2,
               DATA          = 8'd3,
               BROWSE        = 8'd4;
-    
+
     wire [20:0] initsram_addr = (memory_register == 2'b00)? 21'h060000 : 21'h080000;
     wire [20:0] length_sram = (memory_register == 2'b00)? 21'h020000 :
                               (memory_register == 2'b01)? 21'h080000 :
@@ -107,12 +109,15 @@ module pzx_player (
     reg [20:0] a = 21'h000000;
     reg [20:0] tag_address = 21'h000000;
     assign sramaddr = a + initsram_addr;
-    
+
+    reg [20:0] counter0_address = 21'h000000;
+    reg flagResetCounter0 = 1'b0;
+
     assign oe = (zxuno_addr == SRAMDATA && zxuno_regrd == 1'b1);
     assign sramwe = (zxuno_addr == SRAMDATA && zxuno_regwr == 1'b1);
     assign sramdout = din;
     assign dout = sramdin;
-    
+
     reg [1:0] vdeckctrl = 2'b00;
     reg [1:0] vdeckprev = 2'b00;
     always @(posedge clk) begin
@@ -128,20 +133,26 @@ module pzx_player (
       end
     end
     wire soft_play_in = vdeckprev[0] & ~vdeckctrl[0];
-    wire soft_stop_in = vdeckprev[1] & ~vdeckctrl[1];   
+    wire soft_stop_in = vdeckprev[1] & ~vdeckctrl[1];
 
     reg [1:0] edplay = 2'b00;
-    reg [1:0] edstop = 2'b00;
+//    reg [1:0] edstop = 2'b00;
     reg [1:0] edjump = 2'b00;
+    reg [1:0] edrewind = 2'b00;
+    reg [1:0] edresetcounter0 = 2'b00;
     wire play = (edplay == 2'b01) | soft_play_in;
-    wire stop = (edstop == 2'b01) | soft_stop_in;
+    wire stop = /*(edstop == 2'b01) |*/ soft_stop_in;
     wire jump = (edjump == 2'b01);
+    wire rewindTo0Counter = (edrewind == 2'b01);
+    wire resetTo0Counter = (edresetcounter0 == 2'b01);
     always @(posedge clk) begin
       edplay <= {edplay[0], play_in};
-      edstop <= {edstop[0], stop_in};
+//      edstop <= {edstop[0], stop_in};
       edjump <= {edjump[0], jump_in};
+      edrewind <= {edrewind[0], rewindTo0Counter_in};
+      edresetcounter0 <= {edresetcounter0[0], resetTo0Counter_in};
     end
-        
+
     // Variables para la reproducción de audio
     reg play_enabled = 1'b0;
     reg [7:0] tag = 8'h00;
@@ -173,15 +184,17 @@ module pzx_player (
             pulse1[i] = 8'h00;
         end
     end
-    
+
     reg [5:0] state = IDLE;
     always @(posedge clk) begin
       if (rst_n == 1'b0 || stop) begin
           state <= IDLE;
           play_enabled <= 1'b0;
           a <= 21'h000000;
-          if (rst_n == 1'b0)
+          if (rst_n == 1'b0) begin
             tag_address <= 21'h000000;
+            counter0_address <= 21'h000000;
+          end
       end
       else if (play) begin
           play_enabled <= ~play_enabled;
@@ -191,12 +204,20 @@ module pzx_player (
           a <= tag_address;
           state <= READTAG;
       end
+      else if (rewindTo0Counter) begin
+          pulse <= 1'b0;
+          a <= counter0_address;
+          state <= READTAG;
+      end
+      else if (resetTo0Counter) begin
+          flagResetCounter0 <= 1'b1;
+      end
       else if (a == length_sram) begin
         a <= 21'h000000;
       end
       else begin
           case (state)
-          IDLE: 
+          IDLE:
               begin
                   if ((zxuno_addr == SRAMDATA || zxuno_addr == SRAMADDRINC) && (zxuno_regrd == 1'b1 || zxuno_regwr == 1'b1))
                       state <= PROGRESS;
@@ -211,7 +232,7 @@ module pzx_player (
                   end
               end
           PROGRESS:
-              begin            
+              begin
                   if (zxuno_regrd == 1'b0 && zxuno_regwr == 1'b0) begin
                       if (zxuno_addr == SRAMADDRINC)
                           state <= INCADD;
@@ -227,12 +248,16 @@ module pzx_player (
               //------------------------------------------
           READTAG:
               if (play_enabled == 1'b1 && sram_access_allowed == 1'b1) begin
+                  if (flagResetCounter0) begin
+                      counter0_address <= a;
+                      flagResetCounter0 <= 1'b0;
+                  end
                   tag <= sramdin;
                   a <= a + 21'd1;
                   state <= READLTAG1;
               end
           READLTAG1:
-              if (play_enabled == 1'b1 && sram_access_allowed == 1'b1) begin                
+              if (play_enabled == 1'b1 && sram_access_allowed == 1'b1) begin
                   lblock[7:0] <= sramdin;  // LSB
                   a <= a + 21'd1;
                   state <= READLTAG2;
@@ -354,7 +379,7 @@ module pzx_player (
                   lblock <= lblock - 1;
                   state <= DOPULSE;
               end
-          DOPULSE:  
+          DOPULSE:
               if (play_enabled == 1'b1) begin
                   if (duration==32'h00000000) begin  // caso especial de duration=0
                       next_pulse <= next_pulse ^ pulsecounter[0];
@@ -444,7 +469,7 @@ module pzx_player (
                   state <= READDPULSE0_1;
               end
           READDPULSE1_1: // Leer secuencia de pulsos para 1
-              if (play_enabled == 1'b1 && sram_access_allowed == 1'b1) begin    
+              if (play_enabled == 1'b1 && sram_access_allowed == 1'b1) begin
                   if (indexpulse == numberpulse1) begin
                       state <= READDATA1;
                   end
@@ -477,7 +502,7 @@ module pzx_player (
                       state <= DATADOTAIL;
                   end
                   else if (countbits == 0) begin
-                      state <= READDATA1;                    
+                      state <= READDATA1;
                   end
                   else if ((databyte[7] == 1'b0 && indexpulse >= numberpulse0) ||
                           (databyte[7] == 1'b1 && indexpulse >= numberpulse1)) begin
@@ -517,7 +542,7 @@ module pzx_player (
                   else begin
                       cduration <= cduration + 1;
                   end
-              end                
+              end
           default:
               begin
                   state <= IDLE;
@@ -527,7 +552,7 @@ module pzx_player (
           endcase
       end
     end
-    
+
     always @* begin
       if (play_enabled == 1'b0 || (state == DOPULSE && cduration >= adj_duration) || (state != DATADOTAIL && state != DOPULSE && state != OUTPUTBIT1 && state != OUTPUTBIT2))
         speed_change_allowed = 1'b1;
