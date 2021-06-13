@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-//    This file is part of the ZXUNO Spectrum core. 
+//    This file is part of the ZXUNO Spectrum core.
 //    Creation date is 14:16:16 2014-02-06 by Miguel Angel Rodriguez Jodar
 //    (c)2014-2020 ZXUNO association.
 //    ZXUNO official repository: http://svn.zxuno.com/svn/zxuno
@@ -28,7 +28,7 @@ module zxuno (
   // Relojes
   input wire sysclk,
   input wire power_on_reset_n,
-  
+
   // E/S
   output wire [2:0] r,
   output wire [2:0] g,
@@ -43,18 +43,18 @@ module zxuno (
   input wire ear_ext,
   output wire audio_out_left,
   output wire audio_out_right,
-  
+
   // MIDI
   output wire midi_out,
   input wire clkbd,
   input wire wsbd,
-  input wire dabd,    
-  
+  input wire dabd,
+
   // UART
   output wire uart_tx,
   input wire uart_rx,
   output wire uart_rts,
-  
+
   // SRAM
   output wire [20:0] sram_addr,
   inout wire [7:0] sram_data,
@@ -65,38 +65,38 @@ module zxuno (
   output wire flash_clk,
   output wire flash_di,
   input wire flash_do,
-  
+
   // SD/MMC
-  output wire sd_cs_n,    
-  output wire sd_clk,     
-  output wire sd_mosi,    
+  output wire sd_cs_n,
+  output wire sd_clk,
+  output wire sd_mosi,
   input wire sd_miso,
-  
+
   // DB9 JOYSTICK
   input wire joy1up,
   input wire joy1down,
   input wire joy1left,
   input wire joy1right,
   input wire joy1fire1,
-  input wire joy1fire2,   
-	 
+  input wire joy1fire2,
+
   input wire joy2up,
   input wire joy2down,
   input wire joy2left,
   input wire joy2right,
   input wire joy2fire1,
-  input wire joy2fire2,   
+  input wire joy2fire2,
 
   // MOUSE
   inout wire mouseclk,
   inout wire mousedata,
-  
+
   // SCANDOUBLER CTRL
   output wire clk14en_tovga,
   output wire vga_enable,
   output wire scanlines_enable,
   output wire [2:0] freq_option,
-  
+
   // AD724
   output wire ad724_xtal,
   output wire ad724_mode,
@@ -130,11 +130,11 @@ module zxuno (
   // Señales acceso RAM por parte de la CPU
   wire [7:0] memory_dout;
   wire oe_romyram;
-  
+
   // Señales de acceso del AY por parte de la CPU
   wire [7:0] ay_dout;
   wire bc1,bdir;
-  wire oe_ay;   
+  wire oe_ay;
 
   // Señales de acceso a registro de direcciones ZX-Uno
   wire [7:0] zxuno_addr_to_cpu;  // al bus de datos de entrada del Z80
@@ -162,7 +162,7 @@ module zxuno (
   wire [7:0] mixer_dout;
   wire oe_mixer;
   wire [ 7:0] saa_out_l, saa_out_r;
-  
+
   // Interfaz de acceso al teclado
   wire [4:0]  kbdcol;
   wire [7:0]  kbdrow = cpuaddr[15:8];                    // las filas del teclado son A8-A15 de la CPU;
@@ -173,8 +173,8 @@ module zxuno (
   wire        oe_keymap;
   wire [7:0]  kbstatus_dout;
   wire        oe_kbstatus;
-  
-  wire [12:0] user_fnt;
+
+  wire [13:0] user_fnt;
   wire ff_pressed        = user_fnt[12];
   wire stop_pressed      = user_fnt[11];
   wire prevtrack_pressed = user_fnt[10];
@@ -182,19 +182,20 @@ module zxuno (
   wire f1_pressed        = user_fnt[8];
   wire f3_pressed        = user_fnt[7];
   wire f4_pressed        = user_fnt[6];
-  wire f6_pressed        = user_fnt[5];
+  wire f6_pressed        = user_fnt[5];   // Establecer marca de 'contador a 0'
   wire f7_pressed        = user_fnt[4];   // PLAY del PZX
-  wire f8_pressed        = user_fnt[3];   // REWIND al principio del PZX, o a la última posición marcada en el fichero
+  wire f8_pressed        = user_fnt[3];   // REWIND a la marca del 'contador a 0' puesta por usuario con F6
+  wire f8_ctrl_pressed   = user_fnt[13];   // REWIND al principio del PZX, o a la última posición marcada en el fichero
   wire f9_pressed        = user_fnt[2];   // STOP del PZX
   wire f11_pressed       = user_fnt[1];   // WiFi
-  wire f12_pressed       = user_fnt[0];   // Turbo-boost (28 MHz)  
-  
+  wire f12_pressed       = user_fnt[0];   // Turbo-boost (28 MHz)
+
   // Interfaz joystick configurable
   wire oe_joystick;
   wire [4:0] kbd_joy;
-  wire [7:0] joystick_dout;   
+  wire [7:0] joystick_dout;
   wire [4:0] kbdcol_to_ula;
-  
+
   // Configuración ULA
   wire [1:0] timing_mode;
   wire issue2_keyboard;
@@ -210,7 +211,7 @@ module zxuno (
   // Scratch register
   wire 	     oe_scratch;
   wire [7:0] scratch_dout;
-  
+
   // AD724 control
   wire oe_ad724;
   wire [7:0] ad724_dout;
@@ -219,11 +220,11 @@ module zxuno (
   wire oe_memrep;
   wire [7:0] memrep_dout;
   wire [1:0] total_memory;
-  
+
   // Multiboot
   wire oe_multiboot;
   wire [7:0] multiboot_dout;
-  
+
   // Scandoubler control
   wire csync_option;
   wire [7:0] scndblctrl_dout;
@@ -231,7 +232,7 @@ module zxuno (
   wire speed_change_allowed;
   wire turbo_boost = ff_pressed | f12_pressed;
   wire video_output_change;
-  
+
   // Raster INT control
   wire rasterint_enable;
   wire vretraceint_disable;
@@ -256,23 +257,23 @@ module zxuno (
   wire disable_mixer;
   wire [7:0] devoptions_dout;
   wire oe_devoptions;
- 
+
   // NMI events
   wire [7:0] nmievents_dout;
   wire oe_nmievents;
   wire nmispecial_n;
   wire page_configrom_active;
-  
+
   // Kempston mouse
   wire [7:0] kmouse_dout;
   wire [7:0] mousedata_dout;
   wire [7:0] mousestatus_dout;
   wire oe_kmouse, oe_mousedata, oe_mousestatus;
-  
+
   // DMA device interface
   wire [7:0] dma_dout;
   wire oe_dma;
-  
+
   // UART
   wire [7:0] uart_dout;
   wire oe_uart;
@@ -280,7 +281,7 @@ module zxuno (
   // Disk drive
   wire [7:0] diskdrive_dout;
   wire oe_diskdrive;
-  
+
   // Lector PZX
   wire [20:0] pzx_addr;
   wire [7:0] pzx_dout;
@@ -291,22 +292,24 @@ module zxuno (
   wire in48kmode;
   wire play = play_pressed | f7_pressed;
   wire stop = stop_pressed | f9_pressed;
-  wire jump = prevtrack_pressed | f8_pressed;
+  wire rewindTo0Counter = f8_pressed;
+  wire resetTo0Counter = f6_pressed;
+  wire jump = prevtrack_pressed | f8_ctrl_pressed;
   wire [7:0] data_from_pzx;
   wire [7:0] data_to_pzx;
   wire write_data_pzx;
   wire ear = (pzx_playing == 1'b1)? pzx_output : ear_ext;
-  
+
   // Inyección de 0xFF directo al bus de datos cuando hay un acuse de recibo de interrupción
   wire oe_intack = (iorq_n == 1'b0 && m1_n == 1'b0);
-  
+
   // Salidas de video de la ULA
   wire [2:0] rula,gula,bula;
   wire [8:0] hcnt, vcnt;
 
   // Señales a conectar valores de depuracion
   wire [15:0] v16_a, v16_b, v16_c, v16_d, v16_e, v16_f, v16_g, v16_h;
-  wire [7:0] v8_a, v8_b, v8_c, v8_d, v8_e, v8_f, v8_g, v8_h; 
+  wire [7:0] v8_a, v8_b, v8_c, v8_d, v8_e, v8_f, v8_g, v8_h;
 
   // Asignación de dato para la CPU segun la decodificación de todos los dispositivos
   // conectados a ella.
@@ -340,7 +343,7 @@ module zxuno (
       oe_joystick    : cpudin = joystick_dout;
       default        : cpudin = ula_dout;  // must always be the last "default" option.
     endcase
-  end        
+  end
 
   clk_enables enables_de_todos_los_relojes (
     .clk                (sysclk         ),
@@ -417,7 +420,7 @@ module zxuno (
     .zxuno_regrd        (zxuno_regrd    ),
     .zxuno_regwr        (zxuno_regwr    ),
     .regaddr_changed    (regaddr_changed),
-  
+
 // I/O ports
     .ear                (ear            ),
     .mic                (mic            ),
@@ -434,8 +437,8 @@ module zxuno (
     .disable_radas      (disable_radas  ),
     .csync_option       (csync_option   ),
 
-  // Debug	  
-//     .button_up(f4_pressed), 
+  // Debug
+//     .button_up(f4_pressed),
 //     .button_down(f3_pressed),
 //     .posint(v8_a),
 
@@ -495,7 +498,7 @@ module zxuno (
     .clk(sysclk),   // Reloj para registros de configuración
     .mrst_n(mrst_n & power_on_reset_n),
     .rst_n(rst_n & power_on_reset_n),
-  
+
 // Interface con la CPU
     .a                  (cpuaddr        ),
     .din                (cpudout        ),                      // proveniente del bus de datos de salida de la CPU
@@ -701,7 +704,7 @@ module zxuno (
     .vretraceint_disable(vretraceint_disable),
     .raster_line        (raster_line    ),
     .raster_int_in_progress(raster_int_in_progress));
-`endif  
+`endif
 
   // DESHABILITADO!!!!!!!!!!!!!!!!!!!!!!!!!
 //    nmievents nmi_especial_de_antonio (
@@ -726,7 +729,7 @@ module zxuno (
   ps2_mouse_kempston el_raton (
     .clk(sysclk),
     .rst_n(rst_n & mrst_n & power_on_reset_n),
- 
+
     .clkps2             (mouseclk       ),
     .dataps2            (mousedata      ),
   //---------------------------------
@@ -744,7 +747,7 @@ module zxuno (
     .oe_mousedata       (oe_mousedata   ),
     .mousestatus_dout   (mousestatus_dout),
     .oe_mousestatus     (oe_mousestatus ));
-  
+
 
 `ifdef MULTIBOOT_SUPPORT
   multiboot el_multiboot (
@@ -773,7 +776,7 @@ module zxuno (
     .specdrum_out       (specdrum       ));
 
 `endif
-  
+
   disk_drive el_disco (
     .clk(sysclk),
     .rst_n(rst_n & mrst_n & power_on_reset_n),
@@ -804,6 +807,8 @@ module zxuno (
     .memory_register(total_memory),
     .play_in(play),
     .stop_in(stop),
+    .rewindTo0Counter_in(rewindTo0Counter),
+    .resetTo0Counter_in(resetTo0Counter),
     .jump_in(jump),
     .pulse_out(pzx_output),
     .playing(pzx_playing),
@@ -840,9 +845,9 @@ module zxuno (
   //   1   1   1  address
 
   assign bdir = (cpuaddr[15] && cpuaddr[1:0]==2'b01 && !iorq_n && !wr_n)? 1'b1 : 1'b0;
-  assign bc1 = (cpuaddr[15] && cpuaddr[1:0]==2'b01 && cpuaddr[14] && !iorq_n)? 1'b1 : 1'b0;                                                              
+  assign bc1 = (cpuaddr[15] && cpuaddr[1:0]==2'b01 && cpuaddr[14] && !iorq_n)? 1'b1 : 1'b0;
 
-  turbosound dos_ays (     
+  turbosound dos_ays (
     .clk(sysclk),
     .clk35en(clk35en),
     .clk175en(clk175en),
@@ -863,7 +868,7 @@ module zxuno (
 ///////////////////////////////////
 // SOUND SAA1099
 ///////////////////////////////////
-`ifdef SAA1099	
+`ifdef SAA1099
     saa1099s el_saa (
     .clk_sys            (sysclk         ),               // 8 MHz
     .ce                 (clk7en         ),               // 8 MHz
@@ -875,7 +880,7 @@ module zxuno (
     .out_l              (saa_out_l      ),
     .out_r              (saa_out_r      ));
 `endif
-  
+
 ///////////////////////////////////
 // SOUND MIXERS
 ///////////////////////////////////
@@ -906,7 +911,7 @@ module zxuno (
     .midi_right         (midi_right     ),
     .saa_left           (saa_out_l      ),
     .saa_right          (saa_out_r      ),
-  
+
 // PWM output mixed
     .output_left        (audio_out_left ),
     .output_right       (audio_out_right));
@@ -920,7 +925,7 @@ module zxuno (
     .sd(dabd),
     .left_out(midi_left),
     .right_out(midi_right)
-  );  
+  );
 `endif
 
 `ifdef UART_ESP8266_OPTION
@@ -939,9 +944,9 @@ module zxuno (
     .uart_rts           (uart_rts       ));
 `else
   assign uart_tx = 1'b0;
-  assign uart_rts = 1'b0;  
+  assign uart_rts = 1'b0;
 `endif
-  
+
   // Modulo de depuracion
 //  debug visor_valores_en_pantalla (
 //    .clk(sysclk),
