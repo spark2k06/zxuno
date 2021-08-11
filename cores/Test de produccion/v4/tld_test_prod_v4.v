@@ -41,6 +41,7 @@ module tld_test_prod_v4 (
    input wire joyright,
    input wire joyfire1,
    input wire joyfire2,
+   input wire joyfire3,
    //---------------------------
    output wire testled,
    //---------------------------
@@ -68,6 +69,7 @@ module tld_test_prod_v4 (
    wire clk100, clk14, clk7;
 
    wire mode, vga;
+   assign joyfire3 = 0;
    assign stdn = mode;
    assign stdnb = ~mode;	
 
