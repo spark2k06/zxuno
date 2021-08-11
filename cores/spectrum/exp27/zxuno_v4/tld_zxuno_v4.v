@@ -72,7 +72,8 @@ module tld_zxuno_v4 (
    input wire joyleft,
    input wire joyright,
    input wire joyfire,
-   input wire joybtn2
+   input wire joybtn2,
+   output wire joybtn3
    );
 	
 	wire [2:0] ri_monochrome, gi_monochrome, bi_monochrome;
@@ -214,6 +215,7 @@ module tld_zxuno_v4 (
    );	 
        
    assign testled = (!flash_cs_n || !sd_cs_n);
+   assign joybtn3 = 0;
 	
 	`ifdef UART_ESP8266_OPTION
 		assign uart_reset = (!wifi_switcher) ? 1'b0 : 1'bz;
