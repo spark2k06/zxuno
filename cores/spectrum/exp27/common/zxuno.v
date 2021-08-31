@@ -930,7 +930,12 @@ module zxuno (
 
 `ifdef UART_ESP8266_OPTION
   // UART para el ESP8266
-  assign wifi_switcher = f11_pressed;
+  
+	`ifdef F11_ESP8266_FEATURE
+		assign wifi_switcher = f11_pressed;
+	`else
+		assign wifi_switcher = 1'b0;		
+		
   zxunouart #(.CLK(MASTERCLK)) uart_esp8266 (
     .clk                (sysclk         ),
     .zxuno_addr         (zxuno_addr     ),
