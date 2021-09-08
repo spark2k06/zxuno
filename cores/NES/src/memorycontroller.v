@@ -22,7 +22,7 @@
 // Asynchronous SRAM controller for byte access
 // After outputting a byte to read, the result is available 70ns later.
 
-module MemoryController(
+module MemoryController  #(parameter RAMType = 0) (
   input clk,
   input read_a,             // Set to 1 to read from RAM
   input read_b,             // Set to 1 to read from RAM
@@ -34,7 +34,7 @@ module MemoryController(
   output reg busy,          // 1 while an operation is in progress
 
   output MemWR,         // Write Enable. WRITE when Low.
-  output [18:0] MemAdr,
+  output [20:0] MemAdr,
   inout [7:0] MemDB,
   input [13:0] debugaddr,
   output [15:0] debugdata
@@ -45,20 +45,48 @@ module MemoryController(
   reg sramWR  = 1'b1;
   
   reg [7:0] data_to_write;
-  reg [18:0] MemAdrReg;
   
   wire [7:0] vram_dout;
   wire [7:0] ram_dout;
   wire [7:0] prgrom_dout;
   wire [7:0] chrrom_dout;
   wire [7:0] prgram_dout;
-
-  wire prgrom_ena = addr[21:18] == 4'b0000;
-  wire chrrom_ena = addr[21:18] == 4'b1000;
-  wire vram_ena =   addr[21:18] == 4'b1100;
-  wire ram_ena =    addr[21:18] == 4'b1110;
-  wire prgram_ena = addr[21:18] == 4'b1111;
   
+  wire prgrom_ena;
+  wire chrrom_ena;
+  wire vram_ena;
+  wire ram_ena;
+  wire prgram_ena;  
+  
+// RAM en placa 512K o 2M
+generate
+  if (RAMType == 0) begin :R
+	  assign prgrom_ena = addr[21:18] == 4'b0000;
+	  assign chrrom_ena = addr[21:18] == 4'b1000;
+	  assign vram_ena =   addr[21:18] == 4'b1100;
+	  assign ram_ena =    addr[21:18] == 4'b1110;
+	  assign prgram_ena = addr[21:18] == 4'b1111;
+	  
+	  parameter ROMsz = 17;
+	  
+	  assign MemAdr[20:19] = 2'b00;
+	  
+  end else begin :R
+	  assign prgrom_ena = addr[21:20] == 2'b00;
+	  assign chrrom_ena = addr[21:20] == 2'b10;
+	  assign vram_ena =   addr[20:18] == 3'b100;
+	  assign ram_ena =    addr[20:18] == 3'b110;
+	  assign prgram_ena = addr[20:18] == 3'b111;
+	  
+	  parameter ROMsz = 19;	  
+	  
+  end
+endgenerate	  
+  
+  reg [R.ROMsz+1:0] MemAdrReg;
+  
+  assign MemAdr[R.ROMsz+1:0] = MemAdrReg;
+
   wire [7:0] memory_dout = prgrom_ena ? prgrom_dout :
                            chrrom_ena ? chrrom_dout : 
                            vram_ena ? vram_dout : 
@@ -72,7 +100,7 @@ module MemoryController(
   assign chrrom_dout = MemDB;
   assign prgrom_dout = MemDB;
   assign MemDB = (!sramWR) ? data_to_write : 8'bz;
-  assign MemAdr = MemAdrReg;
+//  assign MemAdr = MemAdrReg;
   assign MemWR = sramWR;
 
   reg [1:0] cycles;
@@ -83,9 +111,11 @@ module MemoryController(
     if (!busy) begin
       if (read_a || read_b || write) begin
 		  if (prgrom_ena) begin
-		    MemAdrReg <= {1'b0, addr[17:0]}; // PRGROM in SRAM
+		    MemAdrReg <= {1'b0, addr[R.ROMsz:0]}; // PRGROM in SRAM
+//		    MemAdrReg <= {1'b0, addr[19:0]}; // PRGROM in SRAM
 		  end else if (chrrom_ena) begin
-		    MemAdrReg <= {1'b1, addr[17:0]}; // CHRROM in SRAM
+		    MemAdrReg <= {1'b1, addr[R.ROMsz:0]}; // CHRROM in SRAM
+//		    MemAdrReg <= {1'b1, addr[19:0]}; // CHRROM in SRAM
 		  end
         RamWR <= write;
 		  sramWR <= !((write == 1) && (prgrom_ena || chrrom_ena));

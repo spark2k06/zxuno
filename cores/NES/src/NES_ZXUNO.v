@@ -1,4 +1,5 @@
 // ZXUNO port by DistWave (2016)
+// Modifications by Quest
 // fpganes
 // Copyright (c) 2012-2013 Ludvig Strigeus
 // This program is GPL Licensed. See COPYING for the full license.
@@ -11,8 +12,11 @@ module NES_ZXUNO(
   output vga_v, output vga_h, output [2:0] vga_r, output [2:0] vga_g, output [2:0] vga_b,
   // Memory
   output ram_WE_n,          // Write Enable. WRITE when Low.
-  output [18:0] ram_a,
-  inout [7:0] ram_d,
+  output [20:0] ram_a,
+  inout  [7:0] ram_d,
+//  output ext_ram_WE_n,   
+//  output [20:0] ext_ram_a,
+//  inout  [7:0] ext_ram_d,  
   output AUDIO_R,
   output AUDIO_L,
   input P_A,
@@ -21,6 +25,15 @@ module NES_ZXUNO(
   input P_D,
   input P_L,
   input P_R,
+  output P_Fire3,  
+  input P2_A,
+  input P2_tr,
+  input P2_U,
+  input P2_D,
+  input P2_L,
+  input P2_R, 
+  input  SW1,
+  input  SW2,
   input PS2_CLK,
   input PS2_DAT,
   input SPI_MISO,
@@ -33,6 +46,13 @@ module NES_ZXUNO(
 //output [6:0] sseg_a_to_dp,	// cathode of seven segment display( a,b,c,d,e,f,g,dp )
 //output [3:0] sseg_an			// anaode of seven segment display( AN3,AN2,AN1,AN0 )
   );
+
+// Parametro tipos de joys segun placa (param: joyType):
+// 0 = un joy, 1 = joySplitter AV (dos joys), 2 = UnoJamma/MfH 2M (dos joys, incompat. con 2m ext. editar UCF)
+// Parametro tipo SRAM (RAMType): 
+// 0 = 512K, 1 = 2M internos, 2 = 2M externos (ext requiere modificar UCF y señales)
+parameter joyType = 1;
+parameter RAMType = 1;
 
   wire osd_window;
   wire osd_pixel;
@@ -127,18 +147,48 @@ module NES_ZXUNO(
   wire [15:0] debugdata;
 
   wire [7:0] joystick1, joystick2;
-  assign joystick1 = {~P_R | joykeys1[3], ~P_L | joykeys1[2], ~P_D | joykeys1[1], ~P_U | joykeys1[0], joykeys1[7], joykeys1[6], ~P_tr | joykeys1[4], ~P_A | joykeys1[5]};
-  assign joystick2 = {joykeys2[3], joykeys2[2], joykeys2[1], joykeys2[0], joykeys2[7], joykeys2[6], joykeys2[4], joykeys2[5]};
+
+  
+  reg P_f3;
+  reg [7:0] joy1, joy2;
+  
+  
+generate //generar segun joyType
+  if (joyType == 2) begin
+		assign joystick1 = {~P_R | joykeys1[3],  ~P_L | joykeys1[2],  ~P_D | joykeys1[1],  ~P_U | joykeys1[0],  joykeys1[7]|~SW1, joykeys1[6]|~SW2, ~P_tr | joykeys1[4],  ~P_A | joykeys1[5]};
+		assign joystick2 = {~P2_R | joykeys2[3], ~P2_L | joykeys2[2], ~P2_D | joykeys2[1], ~P2_U | joykeys2[0], joykeys2[7]|~SW1, joykeys2[6]|~SW2, ~P2_tr | joykeys2[4], ~P2_A | joykeys2[5]};
+		assign P_Fire3 = 1'b0;
+  end else if (joyType == 1) begin
+	  assign P_Fire3 = P_f3;
+	  always @(posedge clk_ctrl) begin //2joysplit
+		if (~P_f3)
+				joy1 <= {~P_R | joykeys1[3], ~P_L | joykeys1[2], ~P_D | joykeys1[1], ~P_U | joykeys1[0], joykeys1[7], joykeys1[6], ~P_tr | joykeys1[4], ~P_A | joykeys1[5]};
+		if (P_f3) 
+				joy2 <= {~P_R | joykeys2[3], ~P_L | joykeys2[2], ~P_D | joykeys2[1], ~P_U | joykeys2[0], joykeys2[7], joykeys2[6], ~P_tr | joykeys2[4], ~P_A | joykeys2[5]};
+	  end  		
+	  assign joystick1 = joy1;
+	  assign joystick2 = joy2;
+  end else begin
+		assign joystick1 = {~P_R | joykeys1[3], ~P_L | joykeys1[2], ~P_D | joykeys1[1], ~P_U | joykeys1[0], joykeys1[7], joykeys1[6], ~P_tr | joykeys1[4], ~P_A | joykeys1[5]};  
+		assign joystick2 = {joykeys2[3], joykeys2[2], joykeys2[1], joykeys2[0], joykeys2[7], joykeys2[6], joykeys2[4], joykeys2[5]};
+		assign P_Fire3 = 1'b0;
+  end
+endgenerate  
+  
  
   always @(posedge clk) begin
     if (joypad_strobe) begin
       joypad_bits <= joystick1;
       joypad_bits2 <= joystick2;
     end
-    if (!joypad_clock[0] && last_joypad_clock[0])
+    if (!joypad_clock[0] && last_joypad_clock[0]) begin
+		P_f3 <= 1'b0; 
       joypad_bits <= {1'b0, joypad_bits[7:1]};
-    if (!joypad_clock[1] && last_joypad_clock[1])
+	 end
+    if (!joypad_clock[1] && last_joypad_clock[1]) begin
+		P_f3 <= 1'b1; 
       joypad_bits2 <= {1'b0, joypad_bits2[7:1]};
+	 end
     last_joypad_clock <= joypad_clock;
   end
   
@@ -188,21 +238,31 @@ module NES_ZXUNO(
 
   // This is the memory controller to access the board's SRAM
   wire ram_busy;
-  
-  MemoryController memory(clk,
+
+generate
+  if (RAMType == 2) begin //2mext
+		MemoryController  #(.RAMType(RAMType)) memory(clk,
                           memory_read_cpu && run_mem, 
                           memory_read_ppu && run_mem,
                           memory_write && run_mem || loader_write,
                           loader_write ? loader_addr : memory_addr,
                           loader_write ? loader_write_data : memory_dout,
-                          memory_din_cpu,
-                          memory_din_ppu,
-                          ram_busy,
-								  ram_WE_n,
-                          ram_a,
-                          ram_d,
-								  debugaddr,
-								  debugdata);
+                          memory_din_cpu, memory_din_ppu, ram_busy,
+								  ext_ram_WE_n, ext_ram_a, ext_ram_d,
+								  debugaddr, debugdata);
+	end else begin //int
+			MemoryController  #(.RAMType(RAMType)) memory(clk,
+                          memory_read_cpu && run_mem, 
+                          memory_read_ppu && run_mem,
+                          memory_write && run_mem || loader_write,
+                          loader_write ? loader_addr : memory_addr,
+                          loader_write ? loader_write_data : memory_dout,
+                          memory_din_cpu, memory_din_ppu, ram_busy,
+								  ram_WE_n, ram_a, ram_d,
+								  debugaddr, debugdata);
+	end
+endgenerate								  
+								  
 								  
   reg ramfail;
   always @(posedge clk) begin
@@ -253,6 +313,9 @@ module NES_ZXUNO(
 
 wire [31:0] rom_size;
 
+wire spi_miso_d;
+assign spi_miso_d = (SPI_CS == 1'b0)? SPI_MISO : 1'b0; 
+
 	CtrlModule control (
 			.clk(clk_ctrl), 
 			.reset_n(1'b1), 
@@ -262,13 +325,13 @@ wire [31:0] rom_size;
 			.osd_pixel(osd_pixel), 
 			.ps2k_clk_in(PS2_CLK), 
 			.ps2k_dat_in(PS2_DAT),
-			.spi_miso(SPI_MISO), 
+			.spi_miso(spi_miso_d), //SPI_MISO
 			.spi_mosi(SPI_MOSI), 
 			.spi_clk(SPI_CLK), 
 			.spi_cs(SPI_CS), 
 			.dipswitches(dipswitches),
 			.joykeys1(joykeys1),
-            .joykeys2(joykeys2),
+            		.joykeys2(joykeys2),
 			.size(rom_size), 
 			.host_divert_sdcard(host_divert_sdcard), 
 			.host_divert_keyboard(host_divert_keyboard), 
