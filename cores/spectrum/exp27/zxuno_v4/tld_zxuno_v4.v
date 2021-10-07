@@ -1,7 +1,7 @@
 `timescale 1ns / 1ns
 `default_nettype none
 
-//    This file is part of the ZXUNO Spectrum core. 
+//    This file is part of the ZXUNO Spectrum core.
 //    Creation date is 02:28:18 2014-02-06 by Miguel Angel Rodriguez Jodar
 //    (c)2014-2020 ZXUNO association.
 //    ZXUNO official repository: http://svn.zxuno.com/svn/zxuno
@@ -42,7 +42,7 @@ module tld_zxuno_v4 (
    output wire midi_out,
    input wire clkbd,
    input wire wsbd,
-   input wire dabd,    
+   input wire dabd,
 
    output wire uart_tx,
    input wire uart_rx,
@@ -51,22 +51,22 @@ module tld_zxuno_v4 (
 
    output wire stdn,
    output wire stdnb,
-   
+
    output wire [20:0] sram_addr,
    inout wire [7:0] sram_data,
    output wire sram_we_n,
-   
+
    output wire flash_cs_n,
    output wire flash_clk,
    output wire flash_mosi,
    input wire flash_miso,
-   
-   output wire sd_cs_n,    
-   output wire sd_clk,     
-   output wire sd_mosi,    
+
+   output wire sd_cs_n,
+   output wire sd_clk,
+   output wire sd_mosi,
    input wire sd_miso,
-   output wire testled,   // nos servir· como testigo de uso de la SPI
-	
+   output wire testled,   // nos servir√° como testigo de uso de la SPI
+
    input wire joyup,
    input wire joydown,
    input wire joyleft,
@@ -75,17 +75,17 @@ module tld_zxuno_v4 (
    input wire joybtn2,
    output wire joybtn3
    );
-	
+
 	wire [2:0] ri_monochrome, gi_monochrome, bi_monochrome;
 	wire [1:0] monochrome_switcher;
-	wire wifi_switcher;	
+	wire wifi_switcher;
 
 `include "../common/config.vh"
 
    wire sysclk, mcolorclk;
    wire disable_genclk;
-   wire [2:0] pll_frequency_option;	
-   
+   wire [2:0] pll_frequency_option;
+
    clock_generator relojes_maestros
    (// Clock in ports
     .CLK_IN1            (clk50mhz),
@@ -100,10 +100,10 @@ module tld_zxuno_v4 (
    wire vga_enable, scanlines_enable;
    wire clk14en_tovga;
    wire clkcolor4x, ad724_enable_gencolorclk;
-	
+
    zxuno #(.FPGA_MODEL(3'b001), .MASTERCLK(28000000)) la_maquina (
     .sysclk(sysclk),
-    .power_on_reset_n(1'b1),  // sÛlo para simulaciÛn. Para implementacion, dejar a 1
+    .power_on_reset_n(1'b1),  // s√≥lo para simulaci√≥n. Para implementacion, dejar a 1
     .r(ri),
     .g(gi),
     .b(bi),
@@ -111,18 +111,18 @@ module tld_zxuno_v4 (
     .vsync(vsync_pal),
     .csync(csync_pal),
 	 .monochrome_switcher(monochrome_switcher),
-	 .wifi_switcher(wifi_switcher),	 
+	 .wifi_switcher(wifi_switcher),
     .clkps2(clkps2),
     .dataps2(dataps2),
     .ear_ext(~ear),  // negada porque el hardware tiene un transistor inversor
     .audio_out_left(audio_out_left),
     .audio_out_right(audio_out_right),
-    
+
     .midi_out(midi_out),
     .clkbd(clkbd),
     .wsbd(wsbd),
     .dabd(dabd),
-    
+
     .uart_tx(uart_tx),
     .uart_rx(uart_rx),
     .uart_rts(uart_rts),
@@ -130,39 +130,41 @@ module tld_zxuno_v4 (
     .sram_addr(sram_addr),
     .sram_data(sram_data),
     .sram_we_n(sram_we_n),
-    
+
     .flash_cs_n(flash_cs_n),
     .flash_clk(flash_clk),
-    .flash_di(flash_mosi), 
+    .flash_di(flash_mosi),
     .flash_do(flash_miso),
-    
+
     .sd_cs_n(sd_cs_n),
     .sd_clk(sd_clk),
     .sd_mosi(sd_mosi),
     .sd_miso(sd_miso),
-    
+
     .joy1up(joyup),
     .joy1down(joydown),
     .joy1left(joyleft),
     .joy1right(joyright),
     .joy1fire1(joyfire),
-    .joy1fire2(joybtn2),    
-	 
+    .joy1fire2(joybtn2),
+
     .joy2up(1'b1),
     .joy2down(1'b1),
     .joy2left(1'b1),
     .joy2right(1'b1),
     .joy2fire1(1'b1),
-    .joy2fire2(1'b1),    
+    .joy2fire2(1'b1),
+
+    .joy1fire3(joybtn3),
 
     .mouseclk(mouseclk),
     .mousedata(mousedata),
-    
+
     .clk14en_tovga(clk14en_tovga),
     .vga_enable(vga_enable),
     .scanlines_enable(scanlines_enable),
     .freq_option(pll_frequency_option),
-        
+
     .ad724_xtal(stdnb),
     .ad724_mode(stdn),
     .ad724_enable_gencolorclk(ad724_enable_gencolorclk)
@@ -187,7 +189,7 @@ module tld_zxuno_v4 (
     .bi(bi),
     .ro(ri_monochrome),
     .go(gi_monochrome),
-    .bo(bi_monochrome)  
+    .bo(bi_monochrome)
   );
  `else
    assign ri_monochrome = ri;
@@ -212,16 +214,15 @@ module tld_zxuno_v4 (
 		.bo(b),
 		.hsync(hsync),
 		.vsync(vsync)
-   );	 
-       
+   );
+
    assign testled = (!flash_cs_n || !sd_cs_n);
-   assign joybtn3 = 0;
-	
+
 	`ifdef UART_ESP8266_OPTION
 		assign uart_reset = (!wifi_switcher) ? 1'b0 : 1'bz;
 	`else
 	   assign uart_reset = 1'b0;
 	`endif
-	
-	
+
+
 endmodule
