@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-//    This file is part of the ZXUNO Spectrum core. 
+//    This file is part of the ZXUNO Spectrum core.
 //    Creation date is 17:14:21 2015-06-30 by Miguel Angel Rodriguez Jodar
 //    (c)2014-2020 ZXUNO association.
 //    ZXUNO official repository: http://svn.zxuno.com/svn/zxuno
@@ -57,11 +57,11 @@ module ps2_mouse_kempston (
     wire nuevo_evento;
     wire [1:0] state_out;
     assign mousedata_dout = mousedata;
-    
-    wire kmouse_x_req    = (!iorq_n && !rd_n && a[7:0]==8'hDF && a[8]==1'b1 && a[9]==1'b1 && a[10]==1'b0);
-    wire kmouse_y_req    = (!iorq_n && !rd_n && a[7:0]==8'hDF && a[8]==1'b1 && a[9]==1'b1 && a[10]==1'b1);
-    wire kmouse_butt_req = (!iorq_n && !rd_n && a[7:0]==8'hDF && a[8]==1'b0);
-    
+
+    wire kmouse_x_req    = (!iorq_n && !rd_n && a[7:0]==8'hDF && a[8]==1'b1 && a[9]==1'b1 && a[10]==1'b0 && a[11]==1'b1);
+    wire kmouse_y_req    = (!iorq_n && !rd_n && a[7:0]==8'hDF && a[8]==1'b1 && a[9]==1'b1 && a[10]==1'b1 && a[11]==1'b1);
+    wire kmouse_butt_req = (!iorq_n && !rd_n && a[7:0]==8'hDF && a[8]==1'b0 && a[9]==1'b1 && a[10]==1'b0 && a[11]==1'b1);
+
     always @* begin
       oe_kmouse = (kmouse_x_req | kmouse_y_req | kmouse_butt_req);
       case (1'b1)
@@ -71,7 +71,7 @@ module ps2_mouse_kempston (
         default         : kmouse_dout = 8'hFF;
       endcase
     end
-    
+
     /*
     | BSY | 0 | 0 | 0 | ERR | 0 | 0 | DATA_AVL |
     */
@@ -86,14 +86,14 @@ module ps2_mouse_kempston (
             mousestatus_dout[0] <= 1'b0;
             reading_mousestatus <= 1'b0;
         end
-    end        
+    end
 
     ps2_port lectura_de_raton (
         .clk(clk),
         .enable_rcv(~ps2busy),
         .kb_or_mouse(1'b1),
         .ps2clk_ext(clkps2),
-        
+
         .ps2data_ext(dataps2),
         .kb_interrupt(nuevo_evento),
         .scancode(mousedata),

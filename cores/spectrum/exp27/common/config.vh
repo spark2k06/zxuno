@@ -46,6 +46,7 @@
 `define SPECDRUM_COVOX_SUPPORT
 `define MULTIBOOT_SUPPORT
 //`define PENTAGON_512K_SUPPORT
+//`define JOYSPLITTER_SUPPORT
 
 // FPGA color clock generation needs AD724 control support enabled
 //`define AD724_CONTROL_SUPPORT
@@ -53,7 +54,7 @@
 `define MONOCHROMERGB
 //`define SAA1099
 // ZXUNO core ID string. Must be padded with zero bytes to the right (16 bytes total)
-  localparam COREID_STRING = {"EXP27-130621", 8'h00, 8'h00, 8'h00, 8'h00};
+  localparam COREID_STRING = {"EXP27-071021", 8'h00, 8'h00, 8'h00, 8'h00};
 
 // Power-on/FPGA PROG video configuration
   localparam
@@ -86,7 +87,7 @@
 // ZXUNO registers for SPI devices (flash)
   localparam
       SPIPORT = 8'h02,     // registro de lectura/escritura SPI
-      CSPIN   = 8'h03;     // bit 0: estado/control de la señal FLASH_CS
+      CSPIN   = 8'h03;     // bit 0: estado/control de la seÃ±al FLASH_CS
 
 // ZXUNO registers for PS/2 keyboard handling
   localparam
@@ -107,7 +108,8 @@
 
 // I/O ports for Kempston and Fuller joystick interfaces
   localparam
-   KEMPSTONADDR    = 8'h1F,
+   KEMPSTONADDR1    = 8'h1F,
+   KEMPSTONADDR2    = 8'hDF,
    FULLERADDR      = 8'h7F;
 
 // I/O ports for SD card (ZXMMC and DIVMMC)

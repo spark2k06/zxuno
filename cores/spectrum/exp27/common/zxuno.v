@@ -80,12 +80,16 @@ module zxuno (
   input wire joy1fire1,
   input wire joy1fire2,
 
+  // DB9 JOYSTICK 2
   input wire joy2up,
   input wire joy2down,
   input wire joy2left,
   input wire joy2right,
   input wire joy2fire1,
   input wire joy2fire2,
+
+  // DB9 splitter selector
+  output wire joy1fire3,
 
   // MOUSE
   inout wire mouseclk,
@@ -108,14 +112,14 @@ module zxuno (
   parameter FPGA_MODEL = 3'b000;
   parameter MASTERCLK  = 28000000;
 
-  // Señales del generador de enables de reloj
+  // SeÃ±ales del generador de enables de reloj
   wire CPUContention;
   wire [3:0] cpu_speed;
   wire clkcpu_enable;
   wire clk14en, clk7en, clk7en_n, clk35en, clk35en_n, clk175en;
   assign clk14en_tovga = clk14en;
 
-  // Señales de la CPU
+  // SeÃ±ales de la CPU
   wire mreq_n,iorq_n,rd_n,wr_n,int_n,m1_n,nmi_n,rfsh_n,busak_n;
   wire enable_nmi_n;
   wire [15:0] cpuaddr;
@@ -123,29 +127,29 @@ module zxuno (
   wire [7:0] cpudout;
   wire [7:0] ula_dout;
 
-  // Señales acceso RAM por parte de la ULA
+  // SeÃ±ales acceso RAM por parte de la ULA
   wire [13:0] vram_addr;
   wire [7:0] vram_dout;
 
-  // Señales acceso RAM por parte de la CPU
+  // SeÃ±ales acceso RAM por parte de la CPU
   wire [7:0] memory_dout;
   wire oe_romyram;
 
-  // Señales de acceso del AY por parte de la CPU
+  // SeÃ±ales de acceso del AY por parte de la CPU
   wire [7:0] ay_dout;
   wire bc1,bdir;
   wire oe_ay;
 
-  // Señales de acceso a registro de direcciones ZX-Uno
+  // SeÃ±ales de acceso a registro de direcciones ZX-Uno
   wire [7:0] zxuno_addr_to_cpu;  // al bus de datos de entrada del Z80
   wire [7:0] zxuno_addr;   // direccion de registro actual
   wire regaddr_changed;    // indica que se ha escrito un nuevo valor en el registro de direcciones
-  wire oe_zxunoaddr;     // el dato en el bus de entrada del Z80 es válido
+  wire oe_zxunoaddr;     // el dato en el bus de entrada del Z80 es vÃ¡lido
   wire zxuno_regrd;     // Acceso de lectura en el puerto de datos de ZX-Uno
   wire zxuno_regwr;     // Acceso de escritura en el puerto de datos del ZX-Uno
-  wire in_boot_mode;   // Vale 1 cuando el sistema está en modo boot (ejecutando la BIOS)
+  wire in_boot_mode;   // Vale 1 cuando el sistema estÃ¡ en modo boot (ejecutando la BIOS)
 
-  // Señales de acceso al módulo Flash SPI
+  // SeÃ±ales de acceso al mÃ³dulo Flash SPI
   wire [ 7:0] spi_dout;
   wire        oe_spi;
   wire        wait_spi_n;
@@ -185,7 +189,7 @@ module zxuno (
   wire f6_pressed        = user_fnt[5];   // Establecer marca de 'contador a 0'
   wire f7_pressed        = user_fnt[4];   // PLAY del PZX
   wire f8_pressed        = user_fnt[3];   // REWIND a la marca del 'contador a 0' puesta por usuario con F6
-  wire f8_ctrl_pressed   = user_fnt[13];   // REWIND al principio del PZX, o a la última posición marcada en el fichero
+  wire f8_ctrl_pressed   = user_fnt[13];   // REWIND al principio del PZX, o a la Ãºltima posiciÃ³n marcada en el fichero
   wire f9_pressed        = user_fnt[2];   // STOP del PZX
   wire f11_pressed       = user_fnt[1];   // WiFi
   wire f12_pressed       = user_fnt[0];   // Turbo-boost (28 MHz)
@@ -196,7 +200,7 @@ module zxuno (
   wire [7:0] joystick_dout;
   wire [4:0] kbdcol_to_ula;
 
-  // Configuración ULA
+  // ConfiguraciÃ³n ULA
   wire [1:0] timing_mode;
   wire issue2_keyboard;
   wire disable_contention;
@@ -300,22 +304,22 @@ module zxuno (
   wire write_data_pzx;
   wire ear = (pzx_playing == 1'b1)? pzx_output : ear_ext;
 
-  // Inyección de 0xFF directo al bus de datos cuando hay un acuse de recibo de interrupción
+  // InyecciÃ³n de 0xFF directo al bus de datos cuando hay un acuse de recibo de interrupciÃ³n
   wire oe_intack = (iorq_n == 1'b0 && m1_n == 1'b0);
 
   // Salidas de video de la ULA
   wire [2:0] rula,gula,bula;
   wire [8:0] hcnt, vcnt;
 
-  // Señales a conectar valores de depuracion
+  // SeÃ±ales a conectar valores de depuracion
   wire [15:0] v16_a, v16_b, v16_c, v16_d, v16_e, v16_f, v16_g, v16_h;
   wire [7:0] v8_a, v8_b, v8_c, v8_d, v8_e, v8_f, v8_g, v8_h;
 
-  // Asignación de dato para la CPU segun la decodificación de todos los dispositivos
+  // AsignaciÃ³n de dato para la CPU segun la decodificaciÃ³n de todos los dispositivos
   // conectados a ella.
   always @* begin
     case (1'b1)
-      oe_intack      : cpudin = 8'hFF;  // valor del bus de datos durante una interrupción enmascarable aceptada
+      oe_intack      : cpudin = 8'hFF;  // valor del bus de datos durante una interrupciÃ³n enmascarable aceptada
       oe_zxunoaddr   : cpudin = zxuno_addr_to_cpu;
       oe_spi         : cpudin = spi_dout;
       oe_scancode    : cpudin = scancode_dout;
@@ -495,7 +499,7 @@ module zxuno (
 
   new_memory bootrom_rom_y_ram (
   // Relojes y reset
-    .clk(sysclk),   // Reloj para registros de configuración
+    .clk(sysclk),   // Reloj para registros de configuraciÃ³n
     .mrst_n(mrst_n & power_on_reset_n),
     .rst_n(rst_n & power_on_reset_n),
 
@@ -512,7 +516,7 @@ module zxuno (
     .rfsh_n             (rfsh_n         ),
     .busak_n            (busak_n        ),
     .enable_nmi_n       (enable_nmi_n   ),
-    .page_configrom_active(page_configrom_active),              // Para habilitar la ROM de ayuda y configuración
+    .page_configrom_active(page_configrom_active),              // Para habilitar la ROM de ayuda y configuraciÃ³n
 
 // Interface con la ULA
     .vramaddr           (vram_addr      ),
@@ -560,9 +564,9 @@ module zxuno (
     .dataps2            (dataps2        ),
     .rows               (kbdrow         ),
     .cols               (kbdcol         ),
-    .joy                (kbd_joy        ),                      // Implementación joystick en teclado numerico
+    .joy                (kbd_joy        ),                      // ImplementaciÃ³n joystick en teclado numerico
     .rst_out_n          (rst_n          ),                      // esto son salidas, no entradas
-    .nmi_out_n          (nmi_n          ),                      // Señales de reset y NMI
+    .nmi_out_n          (nmi_n          ),                      // SeÃ±ales de reset y NMI
     .mrst_out_n         (mrst_n         ),                      // generadas por pulsaciones especiales del teclado
     .user_fnt           (user_fnt       ),                      // funciones de usuario
     .video_output_change(video_output_change),
@@ -596,7 +600,8 @@ module zxuno (
   //-- actual joystick and keyboard signals
     .kbdjoy_in          (kbd_joy        ),
     .db9joy1_in({joy1fire2, joy1fire1, joy1up, joy1down, joy1left, joy1right}),
-    .db9joy2_in({joy2fire2, joy2fire1, joy2up, joy2down, joy2left, joy2right}),
+	.db9joy2_in({joy2fire2, joy2fire1, joy2up, joy2down, joy2left, joy2right}),
+	.joy1fire3(joy1fire3),
     .kbdcol_in(kbdcol),
     .kbdcol_out(kbdcol_to_ula),
     .vertical_retrace_int_n(int_n) // this is used as base clock for autofire
@@ -930,12 +935,13 @@ module zxuno (
 
 `ifdef UART_ESP8266_OPTION
   // UART para el ESP8266
-  
+
 	`ifdef F11_ESP8266_FEATURE
 		assign wifi_switcher = f11_pressed;
 	`else
-		assign wifi_switcher = 1'b0;		
-		
+		assign wifi_switcher = 1'b0;
+	`endif
+
   zxunouart #(.CLK(MASTERCLK)) uart_esp8266 (
     .clk                (sysclk         ),
     .zxuno_addr         (zxuno_addr     ),
