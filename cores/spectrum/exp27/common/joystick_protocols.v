@@ -70,7 +70,7 @@ module joystick_protocols (
     // Joystick multiplex (hardware joystick splitter)
 
     reg joySelector = 1'b0;
-    assign joy1fire3 = joySelector;
+    assign joy1fire3 = (joyconf[7] == 1'b1) ? joySelector : 1'b1;
     reg [5:0] db9joy1_muxed = 6'b111111;
     reg [5:0] db9joy2_muxed = 6'b111111;
     reg [18:0] joyMuxerCounter = 19'd0;
@@ -91,7 +91,7 @@ module joystick_protocols (
         end
     end
 `else
-    assign joy1fire3 = 1'b0;
+    assign joy1fire3 = 1'b1;
 `endif
 
     // Input format: FUDLR . 0=pressed, 1=released
