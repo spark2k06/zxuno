@@ -53,8 +53,8 @@ module pzx_player (
     output wire [7:0] sramdout
     );
 
-//    parameter INITSRAM_ADDR = 21'h060000;
-//    parameter LENGTH_SRAM  = 21'h020000;
+//    parameter INITSRAM_ADDR = 21'h032000;
+//    parameter LENGTH_SRAM  = 21'h04E000;
 
 // Para placas con 1MB de SRAM o más
 //    parameter INITSRAM_ADDR = 21'h080000;
@@ -102,13 +102,13 @@ module pzx_player (
               DATA          = 8'd3,
               BROWSE        = 8'd4;
 
-    wire [20:0] initsram_addr = (memory_register == 2'b00)? 21'h060000 : 21'h080000;
-    wire [20:0] length_sram = (memory_register == 2'b00)? 21'h020000 :
+    wire [20:0] initsram_addr = (memory_register == 2'b00)? 21'h032000 : 21'h080000;
+    wire [20:0] length_sram = (memory_register == 2'b00)? 21'h04E000 :
                               (memory_register == 2'b01)? 21'h080000 :
                                                           21'h180000;
     reg [20:0] a = 21'h000000;
     reg [20:0] tag_address = 21'h000000;
-    assign sramaddr = a + initsram_addr;
+    assign sramaddr = initsram_addr + a + ((a > 21'hDFFF && memory_register == 2'b00) ? 21'h18000 : 0);
 
     reg [20:0] counter0_address = 21'h000000;
     reg flagResetCounter0 = 1'b0;
