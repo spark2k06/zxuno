@@ -43,7 +43,8 @@ module joystick_protocols (
     output wire joy1fire3,
     input wire [4:0] kbdcol_in,
     output reg [4:0] kbdcol_out,
-    input wire vertical_retrace_int_n // this is used as base clock for autofire
+    input wire vertical_retrace_int_n, // this is used as base clock for autofire
+	 input wire joy_splitter
     );
 
 `include "config.vh"
@@ -70,7 +71,7 @@ module joystick_protocols (
     // Joystick multiplex (hardware joystick splitter)
 
     reg joySelector = 1'b0;
-    assign joy1fire3 = (joyconf[7] == 1'b1) ? joySelector : 1'b1;
+    assign joy1fire3 = (joy_splitter == 1'b1) ? joySelector : 1'b1;
     reg [5:0] db9joy1_muxed = 6'b111111;
     reg [5:0] db9joy2_muxed = 6'b111111;
     reg [18:0] joyMuxerCounter = 19'd0;
@@ -78,7 +79,7 @@ module joystick_protocols (
         if ( joyMuxerCounter == 19'd0 ) begin
             // 28 MHz / 140000 = 200 Hz, 100 Hz for each joystick.
             joyMuxerCounter <= 19'd140000;
-            if ((joyconf[7] == 1'b0) || (joySelector == 1'b0)) begin
+            if ((joy_splitter == 1'b0) || (joySelector == 1'b0)) begin
                 db9joy1_muxed <= db9joy1_in;
             end
             else begin
@@ -139,6 +140,7 @@ module joystick_protocols (
     end
     wire kbdjoyfire_processed = (joyconf[3]==1'b0)? kbdjoyfire1 : kbdjoyfire1 & autofire;
 
+/*
     // Config bit joyconf[7] is db9 joystick autofire enable. Except if splitter supported, where it is 'splitter enabled' bit.
 	// In that case joyconf[3] is autofire enable for both joysticks.
 `ifdef JOYSPLITTER_SUPPORT
@@ -146,6 +148,9 @@ module joystick_protocols (
 `else
     wire db9joyfire_processed = (joyconf[7]==1'b0)? db9joyfire1 : db9joyfire1 & autofire;
 `endif
+*/		
+		
+	 wire db9joyfire_processed = (joyconf[7]==1'b0)? db9joyfire1 : db9joyfire1 & autofire;
 
     always @* begin
       oe = 1'b0;

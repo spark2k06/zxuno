@@ -46,7 +46,7 @@
 `define SPECDRUM_COVOX_SUPPORT
 `define MULTIBOOT_SUPPORT
 //`define PENTAGON_512K_SUPPORT
-//`define JOYSPLITTER_SUPPORT
+`define JOYSPLITTER_SUPPORT
 
 // FPGA color clock generation needs AD724 control support enabled
 //`define AD724_CONTROL_SUPPORT

@@ -111,6 +111,8 @@ module zxuno (
 
   parameter FPGA_MODEL = 3'b000;
   parameter MASTERCLK  = 28000000;
+  
+  wire joy_splitter;
 
   // Señales del generador de enables de reloj
   wire CPUContention;
@@ -604,7 +606,8 @@ module zxuno (
 	.joy1fire3(joy1fire3),
     .kbdcol_in(kbdcol),
     .kbdcol_out(kbdcol_to_ula),
-    .vertical_retrace_int_n(int_n) // this is used as base clock for autofire
+    .vertical_retrace_int_n(int_n), // this is used as base clock for autofire
+	 .joy_splitter(joy_splitter)
   );
 
   coreid identificacion_del_core (
@@ -648,6 +651,7 @@ module zxuno (
   assign ad724_enable_gencolorclk = 1'b0;
 `endif
 
+
   control_enable_options device_enables (
     .clk                (sysclk),
 
@@ -670,7 +674,9 @@ module zxuno (
     .disable_ulaplus    (disable_ulaplus),
     .disable_radas      (disable_radas  ),
     .disable_specdrum   (disable_specdrum),
-    .disable_mixer      (disable_mixer  ));
+    .disable_mixer      (disable_mixer  ),
+	 .joy_splitter       (joy_splitter  ));
+
 
   scandoubler_ctrl control_scandoubler (
     .clk                (sysclk         ),

@@ -75,6 +75,7 @@ module tld_zxuncore (
    input wire joybtn2
    );
 		
+	wire [5:0] ri_monochrome, gi_monochrome, bi_monochrome;
 	wire [1:0] monochrome_switcher;
 	wire wifi_switcher;	
 
@@ -93,8 +94,9 @@ module tld_zxuncore (
     .mcolorclk          (mcolorclk)
     );
 
-   wire [2:0] ri, gi, bi, ro, go, bo;
-	reg [5:0] raux, gaux, baux;
+   wire [2:0] ri, gi, bi;
+   wire [5:0] ro, go, bo;
+   
    wire hsync_pal, vsync_pal, csync_pal;
    wire vga_enable, scanlines_enable;
    wire clk14en_tovga;
@@ -178,15 +180,32 @@ module tld_zxuncore (
   assign clkcolor4x = 1'b1;   // VSYNC a 1 si no se genera el reloj de color
 `endif
 
+`ifdef MONOCHROMERGB
+  monochrome monochromergb (
+    .monochrome_selection(monochrome_switcher),
+    .ri({ri,ri}),
+    .gi({gi,gi}),
+    .bi({bi,bi}),
+    .ro(ri_monochrome),
+    .go(gi_monochrome),
+    .bo(bi_monochrome)  
+  );
+  
+`else
+   assign ri_monochrome = {ri,ri};
+	assign gi_monochrome = {gi,gi};
+	assign bi_monochrome = {bi,bi};
+`endif 
+
 	vga_scandoubler #(.CLKVIDEO(14000)) salida_vga (
 		.clk(sysclk),
     .clkcolor4x(clkcolor4x | ~ad724_enable_gencolorclk),
     .clk14en(clk14en_tovga),
     .enable_scandoubling(vga_enable),
     .disable_scaneffect(~scanlines_enable),
-		.ri(ri),
-		.gi(gi),
-		.bi(bi),
+		.ri(ri_monochrome),
+		.gi(gi_monochrome),
+		.bi(bi_monochrome),
 		.hsync_ext_n(hsync_pal),
 		.vsync_ext_n(vsync_pal),
       .csync_ext_n(csync_pal),
@@ -197,53 +216,10 @@ module tld_zxuncore (
 		.vsync(vsync)
    );
 	
- 
- `ifdef MONOCHROMERGB
-	
-	always @ (monochrome_switcher, ro, go, bo) begin
-		case(monochrome_switcher)			
-			// Verde
-			2'b01	: begin 
-				raux = 6'b0;
-				gaux = ((ro << 1) + (go << 2) + bo);
-				baux = 6'b0;
-			end
-			// Ambar
-			2'b10	: begin
-				raux = ((ro << 1) + (go << 2) + bo);
-				gaux = ((ro << 1) + (go << 2) + bo) >> 1;
-				baux = 6'b0;
-			end
-			// Blanco y negro
-			2'b11	: begin
-				raux = ((ro << 1) + (go << 2) + bo);
-				gaux = ((ro << 1) + (go << 2) + bo);
-				baux = ((ro << 1) + (go << 2) + bo);
-			end			
-			// Color
-			default: begin
-				raux = {ro, ro};
-				gaux = {go, go};
-				baux = {bo, bo};
-			end			
-		endcase
-	end
-	
-	assign r = raux;
-	assign g = gaux;
-	assign b = baux;
-	
-	//assign r = (monochrome_switcher) ? ((ro << 1) + (go << 2) + bo) : {ro, ro};
-   //assign g = (monochrome_switcher[0]) ? ((ro << 1) + (go << 2) + bo) : {go, go}; //  + 4'b1110
-	//assign b = (monochrome_switcher[0]) ? ((ro << 1) + (go << 2) + bo) : {bo, bo};
-		
- `else
-	assign r = {ro, ro};
-   assign g = {go, go};
-   assign b = {go, go};
- `endif
- 
-       
+   assign r = ro;
+   assign g = go;
+   assign b = bo;
+
    assign testled = (!flash_cs_n || !sd_cs_n);
 	
 	`ifdef UART_ESP8266_OPTION

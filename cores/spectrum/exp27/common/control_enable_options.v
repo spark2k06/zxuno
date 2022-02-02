@@ -44,7 +44,8 @@ module control_enable_options(
     output wire disable_ulaplus,
     output wire disable_radas,
     output wire disable_specdrum,
-    output wire disable_mixer
+    output wire disable_mixer,
+	 output wire joy_splitter
     );
 
 `include "config.vh"
@@ -92,6 +93,11 @@ module control_enable_options(
     assign disable_specdrum = 1'b1;
 `endif    
     assign disable_mixer = devopts2[4];
+`ifdef JOYSPLITTER_SUPPORT
+    assign joy_splitter = devopts2[5];
+`else
+    assign joy_splitter = 1'b0;
+`endif
     
     always @(posedge clk) begin
         if (rst_n == 1'b0) begin
