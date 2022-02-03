@@ -198,7 +198,7 @@ module zxuno (
 
   // Interfaz joystick configurable
   wire oe_joystick;
-  wire [4:0] kbd_joy;
+  wire [5:0] kbd_joy;
   wire [7:0] joystick_dout;
   wire [4:0] kbdcol_to_ula;
 

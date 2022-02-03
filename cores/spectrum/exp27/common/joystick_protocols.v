@@ -37,7 +37,7 @@ module joystick_protocols (
     input wire zxuno_regrd,
     input wire zxuno_regwr,
     //-- actual joystick and keyboard signals
-    input wire [4:0] kbdjoy_in,
+    input wire [5:0] kbdjoy_in,
     input wire [5:0] db9joy1_in,
     input wire [5:0] db9joy2_in,
     output wire joy1fire3,
@@ -113,12 +113,12 @@ module joystick_protocols (
 `ifdef JOYSPLITTER_SUPPORT
     always @* begin
         {db9joyfire2,db9joyfire1,db9joyup,db9joydown,db9joyleft,db9joyright} <= ~db9joy1_muxed;
-        {kbdjoyfire2,kbdjoyfire1,kbdjoyup,kbdjoydown,kbdjoyleft,kbdjoyright} <= {1'b0, kbdjoy_in} | ~db9joy2_muxed | ~db9joy2_in;
+        {kbdjoyfire2,kbdjoyfire1,kbdjoyup,kbdjoydown,kbdjoyleft,kbdjoyright} <= kbdjoy_in | ~db9joy2_muxed | ~db9joy2_in;
     end
 `else
     always @* begin
         {db9joyfire2,db9joyfire1,db9joyup,db9joydown,db9joyleft,db9joyright} <= ~db9joy1_in;
-        {kbdjoyfire2,kbdjoyfire1,kbdjoyup,kbdjoydown,kbdjoyleft,kbdjoyright} <= {1'b0, kbdjoy_in} | ~db9joy2_in;
+        {kbdjoyfire2,kbdjoyfire1,kbdjoyup,kbdjoydown,kbdjoyleft,kbdjoyright} <= kbdjoy_in | ~db9joy2_in;
     end
 `endif
 

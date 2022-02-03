@@ -30,7 +30,7 @@ module ps2_keyb(
     //---------------------------------
     input wire [7:0] rows,
     output wire [4:0] cols,
-    output wire [4:0] joy,
+    output wire [5:0] joy,
     output wire rst_out_n,
     output wire nmi_out_n,
     output wire mrst_out_n,
@@ -116,12 +116,13 @@ module ps2_keyb(
         .joyleft(joy[1]),
         .joyright(joy[0]),
         .joyfire(joy[4]),
+        .joyfire2(joy[5]),
         .video_output_change(video_output_change),
         .master_reset(master_reset),
         .user_reset(user_reset),
         .user_nmi(user_nmi),
         .user_fnt(user_fnt),
-		  .monochrome_switcher(monochrome_switcher)
+        .monochrome_switcher(monochrome_switcher)
 
     );
 

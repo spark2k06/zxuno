@@ -245,6 +245,7 @@ module kb_special_functions (
   output reg joyleft,
   output reg joyright,
   output reg joyfire,
+  output reg joyfire2,
   output reg video_output_change,
   output reg [13:0] user_fnt,
   output reg [1:0] monochrome_switcher
@@ -257,6 +258,8 @@ module kb_special_functions (
     RIGHT_CTRL  = 9'h114,
     LEFT_ALT    = 9'h011,
     RIGHT_ALT   = 9'h111,
+    LEFT_GUI    = 9'h11F,
+    RIGHT_GUI   = 9'h127,
     BACKSPACE   = 9'h066,
     SUPR        = 9'h171,
     SUPRNUMPAD  = 9'h071,
@@ -273,6 +276,7 @@ module kb_special_functions (
     F10         = 9'h009,
     F11         = 9'h078,
     F12         = 9'h007,
+    PAD0        = 9'h070,
     PAD1        = 9'h069,
     PAD2        = 9'h072,
     PAD3        = 9'h07A,
@@ -298,6 +302,7 @@ module kb_special_functions (
     joyleft = 1'b0;
     joyright = 1'b0;
     joyfire = 1'b0;
+    joyfire2 = 1'b0;
     video_output_change = 1'b0;
     user_fnt = 14'h0000;
     shift_pressed = 1'b0;
@@ -315,6 +320,7 @@ module kb_special_functions (
       joyleft <= 1'b0;
       joyright <= 1'b0;
       joyfire <= 1'b0;
+      joyfire2 <= 1'b0;
       video_output_change <= 1'b0;
       user_fnt <= 14'h0000;
       shift_pressed <= 1'b0;
@@ -343,6 +349,7 @@ module kb_special_functions (
                                     alt_pressed <= ~released;
                                     joyfire <= ~released;
                                   end
+          LEFT_GUI,RIGHT_GUI, PAD0 : joyfire2 <= ~released;
           BACKSPACE             : if (released == 1'b0 && ctrl_pressed == 1'b1 && alt_pressed == 1'b1)
                                     master_reset <= 1'b1;
                                   else
@@ -352,7 +359,7 @@ module kb_special_functions (
                                   else
                                     user_reset <= 1'b0;
           F5                    : user_nmi <= ~released;
-          SCRLK                 : video_output_change <= ~released;
+          SCRLK                 : video_output_change <= ~released;          
           PAD8                  : joyup <= ~released;
           PAD5,PAD2             : joydown <= ~released;
           PAD4                  : joyleft <= ~released;
