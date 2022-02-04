@@ -72,7 +72,8 @@ module tld_zxuno_v4 (
    input wire joyleft,
    input wire joyright,
    input wire joyfire,
-   input wire joybtn2
+   input wire joybtn2,
+   output wire joybtn3
    );
 	
 	wire [2:0] ri_monochrome, gi_monochrome, bi_monochrome;
@@ -154,6 +155,8 @@ module tld_zxuno_v4 (
     .joy2fire1(1'b1),
     .joy2fire2(1'b1),    
 
+    .joy1fire3(joybtn3),
+
     .mouseclk(mouseclk),
     .mousedata(mousedata),
     
@@ -178,7 +181,7 @@ module tld_zxuno_v4 (
   assign clkcolor4x = 1'b1;   // VSYNC a 1 si no se genera el reloj de color
 `endif
 
-
+`ifdef MONOCHROMERGB
   monochrome monochromergb (
     .monochrome_selection(monochrome_switcher),
     .ri(ri),
@@ -186,8 +189,13 @@ module tld_zxuno_v4 (
     .bi(bi),
     .ro(ri_monochrome),
     .go(gi_monochrome),
-    .bo(bi_monochrome)  
+    .bo(bi_monochrome)
   );
+ `else
+   assign ri_monochrome = ri;
+	assign gi_monochrome = gi;
+	assign bi_monochrome = bi;
+ `endif
 
 	vga_scandoubler #(.CLKVIDEO(14000)) salida_vga (
 		.clk(sysclk),

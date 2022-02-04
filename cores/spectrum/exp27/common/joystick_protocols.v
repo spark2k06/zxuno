@@ -79,7 +79,7 @@ module joystick_protocols (
         if ( joyMuxerCounter == 19'd0 ) begin
             // 28 MHz / 140000 = 200 Hz, 100 Hz for each joystick.
             joyMuxerCounter <= 19'd140000;
-            if ((joy_splitter == 1'b0) || (joySelector == 1'b0)) begin
+            if ((joy_splitter == 1'b0) || (joySelector == 1'b1)) begin
                 db9joy1_muxed <= db9joy1_in;
             end
             else begin
