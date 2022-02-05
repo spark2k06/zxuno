@@ -77,7 +77,7 @@ module spi (
                data_to_spi <= {data_to_spi[6:0],1'b0};
                data_from_spi <= {data_from_spi[6:0],spi_do};
             end
-            contador <= contador + 5'd1;
+            contador <= contador + 1;
          end
          else begin
             if (!enviar_dato)
@@ -92,7 +92,7 @@ module spi (
                 spi_transfer_in_progress <= 1'b0;            
             if (spi_clk==1'b1)
                data_from_spi <= {data_from_spi[6:0],spi_do};
-            contador <= contador + 5'd1;
+            contador <= contador + 1;
          end
          else begin
             if (!recibir_dato)
@@ -102,7 +102,13 @@ module spi (
    end
    
    always @* begin
-      dout = data_to_cpu;
-      oe = recibir_dato;
+      if (recibir_dato) begin
+         dout = data_to_cpu;
+         oe = 1'b1;
+      end
+      else begin
+         dout = 8'hZZ;
+         oe = 1'b0;
+      end
    end   
 endmodule

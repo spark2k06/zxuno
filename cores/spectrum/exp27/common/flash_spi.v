@@ -1,4 +1,4 @@
-`timescale 1ns / 1ns
+`timescale 1ns / 1ps
 `default_nettype none
 
 //    This file is part of the ZXUNO Spectrum core. 
@@ -52,8 +52,7 @@ module flash_and_sd (
 
 `include "config.vh"
 
-   wire sclk, mosi;
-   reg miso;
+   wire sclk,miso,mosi;
    wire spi_transfer_in_progress;
    assign wait_n = ~spi_transfer_in_progress;
    
@@ -67,27 +66,17 @@ module flash_and_sd (
    assign sd_clk = sclk;
    assign sd_mosi = mosi;
    
-   always @* begin
-     case ({sd_cs_n, flash_cs_n})
-       2'b00 : miso = 1'b1;   // esta situacion en realidad nunca se dará
-       2'b01 : miso = sd_miso;
-       2'b10 : miso = flash_do;
-       2'b11 : miso = 1'b1;
-       default: miso = 1'b1;       
-     endcase
-   end
+   assign miso = (sd_cs_n == 1'b0)? sd_miso : flash_do;
 
    // Control del pin CS de la flash y de la SD
    always @(posedge clk) begin
       if (addr == CSPIN && iow && in_boot_mode) begin
          flashpincs <= din[0];
-         if (din[0] == 1'b0)
-           sdpincs <= 1'b1;   // si accedemos a la flash para cambiar su estado CS, automaticamente deshabilitamos la SD
+         sdpincs <= 1'b1;   // si accedemos a la flash para cambiar su estado CS, automaticamente deshabilitamos la SD
       end
       else if (!disable_spisd && !iorq_n && (a[7:0]==SDCS || a[7:0]==DIVCS) && !wr_n) begin
          sdpincs <= din[0];
-         if (din[0] == 1'b0)
-           flashpincs <= 1'b1; // y lo mismo hacemos si es la SD a la que estamos accediendo
+         flashpincs <= 1'b1; // y lo mismo hacemos si es la SD a la que estamos accediendo
       end
    end
    
@@ -106,19 +95,6 @@ module flash_and_sd (
    end
    
    // Instanciación del modulo SPI   
-//   spi mi_spi (
-//      .clk(clk),
-//      .enviar_dato(enviar_dato),
-//      .recibir_dato(recibir_dato),
-//      .din(din),
-//      .dout(dout),
-//      .oe(oe),
-//      .spi_transfer_in_progress(spi_transfer_in_progress),
-//   
-//      .spi_clk(sclk),
-//      .spi_di(mosi),
-//      .spi_do(miso)
-//      );
 
    spi mi_spi (
       .clk(clk),

@@ -1,4 +1,4 @@
-`timescale 1ns / 1ns
+`timescale 1ns / 1ps
 `default_nettype none
 
 //    This file is part of the ZXUNO Spectrum core. 
@@ -31,49 +31,45 @@ module spi (
   input wire [7:0] din,   // del bus de datos de salida de la CPU
   output reg [7:0] dout,  // al bus de datos de entrada de la CPU
   output wire oe,         // el dato en dout es válido
-  output reg spi_transfer_in_progress,
+  output wire spi_transfer_in_progress,
    
   output wire sclk,       // Interface SPI
   output wire mosi,       //
   input wire miso         //
   );
   
-  reg [7:0] spireg = 8'hFF;
-  reg [4:0] count = 5'b10000;
-  reg data_from_miso = 1'b0;
-  assign mosi = spireg[7];
-  assign sclk = count[0];
-  assign oe = recibir_dato;
+  reg enviar_dato_bf = 1'b0;
+  reg recibir_dato_bf = 1'b0;
+  wire enviar = ~enviar_dato_bf & enviar_dato;
+  wire recibir =~recibir_dato_bf & recibir_dato;
   always @(posedge clk) begin
-    if (enviar_dato == 1'b1 && spi_transfer_in_progress == 1'b0) begin
-      spireg <= din;
-      count <= 5'b11110;
-    end
-    else if (recibir_dato == 1'b1 && spi_transfer_in_progress == 1'b0) begin
-      dout <= spireg;
-      count <= 5'b11100;
-    end
-    else if (count == 5'b11110)
-      count <= 5'b00000;
-    else if (count == 5'b11100) begin
-      count <= 5'b00000;
-      spireg <= 8'hFF;
-    end
-    else if (clken == 1'b1) begin
-      if (spi_transfer_in_progress == 1'b1) begin
-        if (sclk == 1'b1)   // con SCLK a 1, en la transición de 1 a 0, el registro se desplaza
-          spireg <= {spireg[6:0], data_from_miso};
-        else                // con SCLK a 0, en la transición de 0 a 1, MISO se samplea
-          data_from_miso <= miso;        
-        count <= count + 5'd1;
-      end
-    end
+    enviar_dato_bf <= enviar_dato;
+    recibir_dato_bf <= recibir_dato;
   end
   
-  always @* begin
-    if (count >= 5'b0000 && count < 5'b10000)
-      spi_transfer_in_progress = 1'b1;
-    else
-      spi_transfer_in_progress = 1'b0;
+  reg [7:0] spireg = 8'hFF;
+  reg [4:0] count = 5'b10000;
+  assign mosi = spireg[7];
+  assign sclk = count[0];
+  assign spi_transfer_in_progress = ~count[4];
+  assign oe = recibir_dato;
+  always @(posedge clk) begin
+    if (enviar == 1'b1) begin
+      spireg <= din;
+      count <= 5'b00000;
+    end
+    else if (recibir == 1'b1) begin
+      dout <= spireg;
+      spireg <= 8'hFF;
+      count <= 5'b00000;
+    end
+    else if (clken == 1'b1) begin
+      if (count[4] == 1'b0) begin
+        count <= count + 5'd1;
+        if (sclk == 1'b1) begin  // tengo mis dudas sobre si usar 0 o 1 aquí. En principio, debería ser 0, pero funciona con 1 (???)
+          spireg <= {spireg[6:0], miso};
+        end
+      end
+    end
   end
 endmodule

@@ -39,16 +39,6 @@ module tld_zxuno_v4 (
    output wire audio_out_left,
    output wire audio_out_right,
 
-   output wire midi_out,
-   input wire clkbd,
-   input wire wsbd,
-   input wire dabd,    
-
-   output wire uart_tx,
-   input wire uart_rx,
-   output wire uart_rts,
-   output wire uart_reset,
-
    output wire stdn,
    output wire stdnb,
    
@@ -117,15 +107,6 @@ module tld_zxuno_v4 (
     .ear_ext(~ear),  // negada porque el hardware tiene un transistor inversor
     .audio_out_left(audio_out_left),
     .audio_out_right(audio_out_right),
-    
-    .midi_out(midi_out),
-    .clkbd(clkbd),
-    .wsbd(wsbd),
-    .dabd(dabd),
-    
-    .uart_tx(uart_tx),
-    .uart_rx(uart_rx),
-    .uart_rts(uart_rts),
 
     .sram_addr(sram_addr),
     .sram_data(sram_data),
@@ -214,9 +195,8 @@ module tld_zxuno_v4 (
 		.bo(b),
 		.hsync(hsync),
 		.vsync(vsync)
-   );	 
-       
-   assign testled = (!flash_cs_n || !sd_cs_n);	
-	assign uart_reset = (!wifi_switcher) ? 1'b0 : 1'bz;
-	
+   );
+
+   assign testled = (!flash_cs_n || !sd_cs_n);
+
 endmodule
