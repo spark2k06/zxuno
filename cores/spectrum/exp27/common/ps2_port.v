@@ -156,6 +156,7 @@ module ps2_host_to_kb (
     `define RCVIDLE       3'b101
     `define SENDFINISHED  3'b110
 
+    reg initial_kb_reset = 1'b1;
     reg busy = 1'b0;
     reg error = 1'b0;
     assign ps2busy = busy;
@@ -197,6 +198,16 @@ module ps2_host_to_kb (
 
     always @(posedge clk) begin
         // Carga de rdata desde el exterior
+	`ifdef INITIAL_KB_RESET
+	if (initial_kb_reset) begin // Reset inicial de teclado para establecer el SET 2
+		initial_kb_reset <= 1'b0;
+		rdata <= 8'hFF;
+            	busy <= 1'b1;
+            	error <= 1'b0;
+            	timeoutcnt <= 24'h000000;
+            	state <= `PULLCLKLOW;				
+	end
+	`endif
         if (dataload) begin
             rdata <= data;
             busy <= 1'b1;
