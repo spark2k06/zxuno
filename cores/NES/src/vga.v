@@ -13,9 +13,14 @@ module VgaDriver(input clk,
 // Horizontal and vertical counters
 reg [9:0] h, v;
 wire hpicture = (h < 512);                    // 512 lines of picture
-wire hsync_on = (h == 512 + 23 + 35);         // HSync ON, 23+35 pixels front porch
-wire hsync_off = (h == 512 + 23 + 35 + 82);   // Hsync off, 82 pixels sync
-wire hend = (h == 681);                       // End of line, 682 pixels.
+wire hsync_on = (h == 512 + 23);         // HSync ON, 23+35 pixels front porch
+wire hsync_off = (h == 512 + 23 + 82);   // Hsync off, 82 pixels sync
+//wire hend = (h == 681);                       // End of line, 682 pixels.
+
+// Frame timing is slightly out of sync with the NES frame by 2 clocks
+// here we take back 1 clock each from line 480 and 500, which are off screen
+// and corrects the slight error.
+wire hend = (v == 480 || v == 500) ? (h == 680) : (h == 681); // End of line, 682 pixels.
 
 wire vpicture = (v < 480);                    // 480 lines of picture
 wire vsync_on  = hsync_on && (v == 480 + 10); // Vsync ON, 10 lines front porch.
@@ -24,14 +29,21 @@ wire vend = (v == 523);                       // End of picture, 524 lines. (Sho
 wire inpicture = hpicture && vpicture;
 assign vga_hcounter = h;
 assign vga_vcounter = v;
-wire [9:0] new_h = (hend || sync) ? 0 : h + 1;
+
+// Forcing a sync'ed frame every frame knocks out the more sensitive VGA monitors,
+// so only doing this when it gets too far out.
+wire [9:0] new_h = hend ? 0 : h + 1;
 assign next_pixel_x = {sync ? 1'b0 : hend ? !v[0] : v[0], new_h[8:0]};
 
 always @(posedge clk) begin
   h <= new_h;
   if (sync) begin
-    vga_v <= 1;
-    vga_h <= 1;
+		// new NES video frame starts here, front porch has already been done, so
+		// beginning the VGA frame here is not a good idea.  Instead reset v and h
+		// positions, but only h when it's more than 35 pixels out.
+		if (h > 35) begin
+			h <= 0;
+		end
     v <= 0;
   end else begin
     vga_h <= hsync_on ? 0 : hsync_off ? 1 : vga_h;
