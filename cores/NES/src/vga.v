@@ -15,7 +15,6 @@ reg [9:0] h, v;
 wire hpicture = (h < 512);                    // 512 lines of picture
 wire hsync_on = (h == 512 + 23);         // HSync ON, 23+35 pixels front porch
 wire hsync_off = (h == 512 + 23 + 82);   // Hsync off, 82 pixels sync
-//wire hend = (h == 681);                       // End of line, 682 pixels.
 
 // Frame timing is slightly out of sync with the NES frame by 2 clocks
 // here we take back 1 clock each from line 480 and 500, which are off screen
