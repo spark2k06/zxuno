@@ -56,7 +56,8 @@ module pal_sync_generator (
     output reg hsync,
     output reg vsync,
     output reg csync,
-    output wire int_n
+    output wire int_n,
+    output reg [8:0] end_count_v = 9'd311
     );
 
 `include "config.vh"
@@ -68,7 +69,6 @@ module pal_sync_generator (
     reg [8:0] vc_sync = 9'd0;
 
     reg [8:0] end_count_h = 9'd447;
-    reg [8:0] end_count_v = 9'd311;
     reg [8:0] begin_hblank = 9'd320;
     reg [8:0] end_hblank = 9'd415;
     reg [8:0] begin_hsync = 9'd344;

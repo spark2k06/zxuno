@@ -36,8 +36,7 @@ module zxuno (
   output wire hsync,
   output wire vsync,
   output wire csync,
-  output wire [1:0] monochrome_switcher,
-  output wire wifi_switcher,
+  output wire [1:0] monochrome_switcher,  
   inout wire clkps2,
   inout wire dataps2,
   input wire ear_ext,
@@ -54,6 +53,7 @@ module zxuno (
   output wire uart_tx,
   input wire uart_rx,
   output wire uart_rts,
+  output wire uart_reset,
 
   // SRAM
   output wire [20:0] sram_addr,
@@ -110,10 +110,57 @@ module zxuno (
 `include "..\common\config.vh"
 
   parameter FPGA_MODEL = 3'b000;
-  parameter MASTERCLK  = 28000000;
+  parameter MASTERCLK  = 28000000;  
   
+  wire wifi_switcher;
   wire joy_splitter;
+  
+  `ifdef UART_ESP8266_OPTION
+  
+  reg [22:0] uart_counter = 22'h3FFFFF;
+  reg is_uart = 1'b0;
+  //reg show_uart = 1'b0;
+  reg [0:255] icon_uart = 		{16'b0000000000000000,
+										 16'b0000000000000000,
+										 16'b0000000000000000,
+										 16'b0000000000000000,
+										 16'b0000111111110000,
+										 16'b0000000000000000,
+										 16'b0000011111100000,
+										 16'b0000000000000000,
+										 16'b0000001111000000,
+										 16'b0000000000000000,
+										 16'b0000000110000000,
+										 16'b0000000110000000, 
+										 16'b0000000000000000,
+										 16'b0000000000000000,
+										 16'b0000000000000000,
+										 16'b0000000000000000};
 
+  reg [0:255] icon_no_uart =  {16'b0000011111100000,
+										 16'b0000100000010000,
+										 16'b0011000000001100,
+										 16'b0010000000000100, 
+										 16'b0100111111111110,
+										 16'b1000000000110010,
+										 16'b1000011111100001,
+										 16'b1000000110000001,
+										 16'b1000001111000001,
+										 16'b1000011000000001,
+										 16'b1000110110000010,
+										 16'b0101100110000010,
+										 16'b0011000000000100,
+										 16'b0011000000001100,
+										 16'b0000110000110000,
+										 16'b0000001111000000};
+  
+  wire pinta_uart = (hcnt >= 249 && hcnt <= 264) && (vcnt >= end_count_v - 21 && vcnt <= end_count_v - 6);
+  wire [2:0] ruart = pinta_uart ? wifi_switcher ? icon_uart[((vcnt - end_count_v - 27) * 16) + (hcnt - 249)] ? 3'b000 : rula : icon_no_uart[((vcnt - end_count_v - 27) * 16) + (hcnt - 249)] ? 3'b111 : rula : rula;
+  wire [2:0] guart = pinta_uart ? wifi_switcher ? icon_uart[((vcnt - end_count_v - 27) * 16) + (hcnt - 249)] ? 3'b111 : gula : icon_no_uart[((vcnt - end_count_v - 27) * 16) + (hcnt - 249)] ? 3'b000 : gula : gula;
+  wire [2:0] buart = pinta_uart ? wifi_switcher ? icon_uart[((vcnt - end_count_v - 27) * 16) + (hcnt - 249)] ? 3'b000 : bula : icon_no_uart[((vcnt - end_count_v - 27) * 16) + (hcnt - 249)] ? 3'b000 : bula : bula; 
+  
+  `endif
+  
   // Señales del generador de enables de reloj
   wire CPUContention;
   wire [3:0] cpu_speed;
@@ -312,6 +359,7 @@ module zxuno (
   // Salidas de video de la ULA
   wire [2:0] rula,gula,bula;
   wire [8:0] hcnt, vcnt;
+  wire [8:0] end_count_v;
 
   // Señales a conectar valores de depuracion
   wire [15:0] v16_a, v16_b, v16_c, v16_d, v16_e, v16_f, v16_g, v16_h;
@@ -449,14 +497,15 @@ module zxuno (
 //     .posint(v8_a),
 
   // Video
-    .r                  (r              ),
-    .g                  (g              ),
-    .b                  (b              ),
+    .r                  (rula           ),
+    .g                  (gula           ),
+    .b                  (bula           ),
     .hcnt               (hcnt           ),
     .vcnt               (vcnt           ),
     .hsync              (hsync          ),
     .vsync              (vsync          ),
-    .csync              (csync          ));
+    .csync              (csync          ),
+    .end_count_v			(end_count_v	 ));
 
   zxunoregs addr_reg_zxuno (
     .clk(sysclk),
@@ -944,8 +993,10 @@ module zxuno (
 
 	`ifdef F11_ESP8266_FEATURE
 		assign wifi_switcher = f11_pressed;
+		assign uart_reset = (!wifi_switcher && uart_counter == 23'd0) ? 1'b0 : 1'bz;
 	`else
-		assign wifi_switcher = 1'b0;
+		assign wifi_switcher = 1'b1;
+		assign uart_reset = 1'bz;
 	`endif
 
   zxunouart #(.CLK(MASTERCLK)) uart_esp8266 (
@@ -959,9 +1010,29 @@ module zxuno (
     .uart_tx            (uart_tx        ),
     .uart_rx            (uart_rx        ),
     .uart_rts           (uart_rts       ));
+	 
+always @(posedge sysclk) begin
+	if (~is_uart && uart_counter != 23'd0) begin
+		uart_counter = uart_counter - 22'd1;
+		if (~uart_rx)
+			is_uart <= 1'b1;
+	end
+	if (is_uart) begin
+		if (~uart_rx || ~uart_tx)
+			uart_counter = 22'h3FFFFF;			
+		else if (uart_counter != 23'd0)
+			uart_counter = uart_counter - 22'd1;
+	end
+end
+
+assign r = pinta_uart && (uart_counter != 23'd0) ? ruart : rula;
+assign g = pinta_uart && (uart_counter != 23'd0) ? guart : gula;
+assign b = pinta_uart && (uart_counter != 23'd0) ? buart : bula;
+	 
 `else
   assign uart_tx = 1'b0;
   assign uart_rts = 1'b0;
+  assign uart_reset = 1'b0;
 `endif
 
   // Modulo de depuracion

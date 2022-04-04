@@ -76,8 +76,7 @@ module tld_zxuncore (
    );
 		
 	wire [5:0] ri_monochrome, gi_monochrome, bi_monochrome;
-	wire [1:0] monochrome_switcher;
-	wire wifi_switcher;	
+	wire [1:0] monochrome_switcher;	
 
 `include "../common/config.vh"
 
@@ -111,8 +110,7 @@ module tld_zxuncore (
     .hsync(hsync_pal),
     .vsync(vsync_pal),
     .csync(csync_pal),
-	 .monochrome_switcher(monochrome_switcher),
-	 .wifi_switcher(wifi_switcher),	 
+    .monochrome_switcher(monochrome_switcher),	 
     .clkps2(clkps2),
     .dataps2(dataps2),
     .ear_ext(~ear),  // negada porque el hardware tiene un transistor inversor
@@ -127,6 +125,7 @@ module tld_zxuncore (
     .uart_tx(uart_tx),
     .uart_rx(uart_rx),
     .uart_rts(uart_rts),
+    .uart_reset(uart_reset),
 
     .sram_addr(sram_addr),
     .sram_data(sram_data),
@@ -220,12 +219,6 @@ module tld_zxuncore (
    assign g = go;
    assign b = bo;
 
-   assign testled = (!flash_cs_n || !sd_cs_n);
-	
-	`ifdef UART_ESP8266_OPTION
-		assign uart_reset = (!wifi_switcher) ? 1'b0 : 1'bz;
-	`else
-	   assign uart_reset = 1'b0;
-	`endif
+   assign testled = (!flash_cs_n || !sd_cs_n);	
 	
 endmodule
