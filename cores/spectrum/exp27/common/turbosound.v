@@ -36,6 +36,7 @@ module turbosound (
     output reg [7:0] dout,
     output reg oe,
     output reg midi_out,
+    input wire [7:0] port_din,
     output wire [7:0] audio_out_ay1,
     output wire [7:0] audio_out_ay2,
     output wire [23:0] audio_out_ay1_splitted,
@@ -90,7 +91,7 @@ module turbosound (
 	  .channel_a(audio_out_ay1_splitted[23:16]),
 	  .channel_b(audio_out_ay1_splitted[15:8]),
 	  .channel_c(audio_out_ay1_splitted[7:0]),
-    .port_a_din(8'h00),
+    .port_a_din(port_din),
 	  .port_a_dout(port_a_ay1),
 	  .port_a_oe_n()
   );
@@ -109,7 +110,7 @@ module turbosound (
 	  .channel_a(audio_out_ay2_splitted[23:16]),
 	  .channel_b(audio_out_ay2_splitted[15:8]),
 	  .channel_c(audio_out_ay2_splitted[7:0]),
-    .port_a_din(8'h00),
+    .port_a_din(port_din),
 	  .port_a_dout(port_a_ay2),
 	  .port_a_oe_n()
   );

@@ -210,7 +210,7 @@ module zxuno (
   wire [7:0] ay2_audio;
   wire [7:0] ay1_cha, ay1_chb, ay1_chc;
   wire [7:0] ay2_cha, ay2_chb, ay2_chc;
-  wire [7:0] specdrum;
+  wire [8:0] specdrum_left, specdrum_right;
   wire [15:0] midi_left, midi_right;
   wire [7:0] mixer_dout;
   wire oe_mixer;
@@ -833,7 +833,8 @@ module zxuno (
     .iorq_n             (iorq_n | disable_specdrum),
     .wr_n               (wr_n           ),
     .d                  (cpudout        ),
-    .specdrum_out       (specdrum       ));
+    .specdrum_out_left  (specdrum_left  ),
+    .specdrum_out_right (specdrum_right ));
 
 `endif
 
@@ -900,12 +901,23 @@ module zxuno (
 ///////////////////////////////////
   // BDIR BC2 BC1 MODE
   //   0   1   0  inactive
-  //   0   1   1  read
-  //   1   1   0  write
-  //   1   1   1  address
+  //   0   1   1  read        rd FFFD   F6
+  //   1   1   0  write       wr BFFD   F6
+  //   1   1   1  address     wr FFFD   F5
 
-  assign bdir = (cpuaddr[15] && cpuaddr[1:0]==2'b01 && !iorq_n && !wr_n)? 1'b1 : 1'b0;
-  assign bc1 = (cpuaddr[15] && cpuaddr[1:0]==2'b01 && cpuaddr[14] && !iorq_n)? 1'b1 : 1'b0;
+  wire portBFFD = cpuaddr[15] && cpuaddr[1:0]==2'b01;
+  wire portFFFD = cpuaddr[15] && cpuaddr[14] && cpuaddr[1:0]==2'b01;
+
+  wire portF5 = cpuaddr[7:0] == 8'hF5;
+  wire portF6 = cpuaddr[7:0] == 8'hF6;
+
+  assign bdir = !iorq_n && (((portF5 || portF6) && !wr_n) || ((portBFFD || portFFFD) && !wr_n));
+  assign bc1  = !iorq_n && (portF5 && !wr_n) || (portF6 && !rd_n) || (portFFFD && (!rd_n || !wr_n));
+
+  wire[7:0] ay_port_din // = { joy1fire1, 3'b111, joy1right, joy1left, joy1down, joy1up };
+    = cpuaddr[8] ? { joy1fire1, 3'b111, joy1right, joy1left, joy1down, joy1up }
+//  : cpuaddr[9] ? { joy2fire1, 3'b111, joy2right, joy2left, joy2down, joy2up }
+    : 8'hFF;
 
   turbosound dos_ays (
     .clk(sysclk),
@@ -920,6 +932,7 @@ module zxuno (
     .dout(ay_dout),
     .oe(oe_ay),
     .midi_out(midi_out),
+    .port_din(ay_port_din),
     .audio_out_ay1(ay1_audio),
     .audio_out_ay2(ay2_audio),
     .audio_out_ay1_splitted({ay1_cha, ay1_chb, ay1_chc}),
@@ -966,7 +979,8 @@ module zxuno (
     .ay2_cha            (ay2_cha        ),
     .ay2_chb            (ay2_chb        ),
     .ay2_chc            (ay2_chc        ),
-    .specdrum           (specdrum       ),
+    .specdrum_left      (specdrum_left  ),
+    .specdrum_right     (specdrum_right ),
     .midi_left          (midi_left      ),
     .midi_right         (midi_right     ),
     .saa_left           (saa_out_l      ),

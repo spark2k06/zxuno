@@ -100,7 +100,8 @@ module panner_and_mixer (
   input wire [7:0] ay2_cha,
   input wire [7:0] ay2_chb,
   input wire [7:0] ay2_chc,
-  input wire [7:0] specdrum,
+  input wire [8:0] specdrum_left,
+  input wire [8:0] specdrum_right,
   input wire [15:0] midi_left,
   input wire [15:0] midi_right,
   input wire [ 7:0] saa_left,
@@ -175,7 +176,7 @@ module panner_and_mixer (
 
   reg [10:0] ay1_cha_signed, ay1_chb_signed, ay1_chc_signed;
   reg [10:0] ay2_cha_signed, ay2_chb_signed, ay2_chc_signed;
-  reg [10:0] beeper_signed, specdrum_signed;
+  reg [10:0] beeper_signed, specdrum_left_signed, specdrum_right_signed;
   reg [10:0] midi_left_signed, midi_right_signed;
   reg [10:0] saa_left_signed, saa_right_signed;
   always @(posedge clk) begin
@@ -187,7 +188,8 @@ module panner_and_mixer (
     ay2_chb_signed  <= {3'b000, ay2_chb};
     ay2_chc_signed  <= {3'b000, ay2_chc};
     beeper_signed   <= {3'b000, beeper};
-    specdrum_signed <= {2'b00, specdrum, specdrum[7]};
+    specdrum_left_signed <= {1'b0, specdrum_left, specdrum_left[8]};
+    specdrum_right_signed <= {1'b0, specdrum_right, specdrum_right[8]};
     midi_left_signed <= midi_left[15:5] ^ 11'b10000000000;
     midi_right_signed <= midi_right[15:5] ^ 11'b10000000000;
     saa_left_signed  <= {1'b0, saa_left, 2'b00};
@@ -196,11 +198,11 @@ module panner_and_mixer (
     mixleft  <= ((mixer[7])? ay1_cha_signed + ay2_cha_signed : 11'h000 ) +
                 ((mixer[5])? ay1_chb_signed + ay2_chb_signed : 11'h000 ) +
                 ((mixer[3])? ay1_chc_signed + ay2_chc_signed : 11'h000 ) +
-                ((mixer[1])? beeper_signed + midi_left_signed + specdrum_signed + saa_left_signed: 11'h000 );
+                ((mixer[1])? beeper_signed + midi_left_signed + specdrum_left_signed + saa_left_signed: 11'h000 );
     mixright <= ((mixer[6])? ay1_cha_signed + ay2_cha_signed : 11'h000 ) +
                 ((mixer[4])? ay1_chb_signed + ay2_chb_signed : 11'h000 ) +
                 ((mixer[2])? ay1_chc_signed + ay2_chc_signed : 11'h000 ) +
-                ((mixer[0])? beeper_signed + midi_right_signed + specdrum_signed + saa_right_signed: 11'h000 );
+                ((mixer[0])? beeper_signed + midi_right_signed + specdrum_right_signed + saa_right_signed: 11'h000 );
     left <= mixleft[10:2];
     right <= mixright[10:2];
   end

@@ -30,13 +30,34 @@ module specdrum (
    input wire iorq_n,
    input wire wr_n,
    input wire [7:0] d,
-   output reg [7:0] specdrum_out
+   output wire[8:0] specdrum_out_left,
+   output wire[8:0] specdrum_out_right
    );
 
-   always @(posedge clk) begin
-      if (rst_n == 1'b0)
-        specdrum_out <= 8'h00;
-      else if (iorq_n == 1'b0 && (a[7:0] == 8'hDF || a[7:0] == 8'hFB) && wr_n == 1'b0)
-        specdrum_out <= d;
-   end
+wire specdrum    = a[7:0] == 8'hDF;
+wire covox       = a[7:0] == 8'hFB;
+wire soundrive_a = a[7:0] == 8'h0F;
+wire soundrive_b = a[7:0] == 8'h1F;
+wire soundrive_c = a[7:0] == 8'h4F;
+wire soundrive_d = a[7:0] == 8'h5F;
+
+reg[7:0] l0, l1, r0, r1;
+
+always @(posedge clk, negedge rst_n)
+  if(!rst_n) begin
+    l0 <= 8'h00;
+    l1 <= 8'h00;
+    r0 <= 8'h00;
+    r1 <= 8'h00;
+  end
+  else if(!iorq_n && !wr_n) begin
+      if(specdrum || covox || soundrive_a) l0 <= d;
+      if(specdrum || covox || soundrive_b) l1 <= d;
+      if(specdrum || covox || soundrive_c) r0 <= d;
+      if(specdrum || covox || soundrive_d) r1 <= d;
+  end
+
+assign specdrum_out_left = { 1'b0, l0 }+{ 1'b0, l1 };
+assign specdrum_out_right = { 1'b0, r0 }+{ 1'b0, r1 };
+
 endmodule
