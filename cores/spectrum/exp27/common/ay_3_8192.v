@@ -72,7 +72,7 @@ module ay_3_8192 (
     period_b        = 12'h000;
     period_c        = 12'h000;
     noise_period    = 5'b00000;
-    enable_chan     = 8'hFF;
+    enable_chan     = 8'h00;
     ampmode_a       = 1'b0;
     ampmode_b       = 1'b0;
     ampmode_c       = 1'b0;
@@ -249,13 +249,13 @@ module ay_3_8192 (
         else begin
           counter_noise <= counter_noise + 5'b00001;
         end
-      end // del if que guarda que sólo se hagan cosas cuando toca    
+      end // del if que guarda que sï¿½lo se hagan cosas cuando toca    
     end  // del no reset
   end  // del always @(posedge.....)
 
   ////////////// Channel mixer /////////////////////////////////////////
 
-  // al parecer, cuando se deshabilita el tono o el ruido, la señal se queda a 1, así puede seguir operando la envolvente
+  // al parecer, cuando se deshabilita el tono o el ruido, la seï¿½al se queda a 1, asï¿½ puede seguir operando la envolvente
   // Por eso el datasheet insiste en que para deshabilitar de verdad un canal, hay que poner su volumen a 0
   wire tone_noise_a = (tone_a | enable_tone_a_n) & (tone_noise | enable_noise_a_n);
   wire tone_noise_b = (tone_b | enable_tone_b_n) & (tone_noise | enable_noise_b_n);
@@ -314,7 +314,7 @@ module ay_3_8192 (
   always @* begin
     envelope = 4'b1111;
     if (env_shape_first_period == 1'b1) begin   // primer ciclo de la envolvente
-      if (attack == 1'b1)                       // en el primer ciclo sólo se tiene en cuenta attack
+      if (attack == 1'b1)                       // en el primer ciclo sï¿½lo se tiene en cuenta attack
         envelope = envelope_sample_seq[3:0];
       else
         envelope = ~envelope_sample_seq[3:0];
@@ -323,7 +323,7 @@ module ay_3_8192 (
       if (cont == 1'b0)                         // CONTINUE = 0. dos primeras envolventes del datasheet. Tras el primer periodo, se quedan a 0
         envelope = 4'b0000;
       else begin                                
-        if (hold == 1'b1) begin                 // CONTINUE = 1, HOLD = 1. Se queda la envolvente con 0 o 15 según los valores de attack y alternate
+        if (hold == 1'b1) begin                 // CONTINUE = 1, HOLD = 1. Se queda la envolvente con 0 o 15 segï¿½n los valores de attack y alternate
           case ({attack,altern})
             2'b00, 2'b11: envelope = 4'b0000;
             2'b01, 2'b10: envelope = 4'b1111;
