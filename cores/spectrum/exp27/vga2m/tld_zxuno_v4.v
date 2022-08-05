@@ -109,7 +109,7 @@ module tld_zxuno_v4 (
     .vsync(vsync_pal),
     .csync(csync_pal),
 	 .monochrome_switcher(monochrome_switcher),
-	 .wifi_switcher(wifi_switcher),
+
     .clkps2(clkps2),
     .dataps2(dataps2),
     .ear_ext(~ear),  // negada porque el hardware tiene un transistor inversor
