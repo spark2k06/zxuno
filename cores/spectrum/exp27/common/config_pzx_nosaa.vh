@@ -55,7 +55,7 @@
 //`define SAA1099
 `define INITIAL_KB_RESET
 // ZXUNO core ID string. Must be padded with zero bytes to the right (16 bytes total)
-  localparam COREID_STRING = {"EXP27-310722", 8'h00, 8'h00, 8'h00, 8'h00};
+  localparam COREID_STRING = {"EXP27-050822", 8'h00, 8'h00, 8'h00, 8'h00};
 
 // Power-on/FPGA PROG video configuration
   localparam
@@ -78,7 +78,9 @@
 // TIMEX I/O ports
   localparam
     TIMEXPORT    = 8'hFF,
-    TIMEXMMU     = 8'hF4;
+    TIMEXMMU     = 8'hF4,
+    TIMEXAYADDR  = 8'hF5,
+    TIMEXAYDATA  = 8'hF6;
 
 // ZXUNO registers for master configuration and memory handling
   localparam

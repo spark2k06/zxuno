@@ -486,6 +486,7 @@ module zxuno (
     .disable_contention (disable_contention),
     .doc_ext_option     (doc_ext_option ),
     .enable_timexmmu    (enable_timexmmu),
+    .disable_ay         (disable_ay     ),
     .disable_timexscr   (disable_timexscr),
     .disable_ulaplus    (disable_ulaplus),
     .disable_radas      (disable_radas  ),
@@ -908,8 +909,8 @@ module zxuno (
   wire portBFFD = cpuaddr[15] && cpuaddr[1:0]==2'b01;
   wire portFFFD = cpuaddr[15] && cpuaddr[14] && cpuaddr[1:0]==2'b01;
 
-  wire portF5 = cpuaddr[7:0] == 8'hF5;
-  wire portF6 = cpuaddr[7:0] == 8'hF6;
+  wire portF5 = cpuaddr[7:0] == TIMEXAYADDR;
+  wire portF6 = cpuaddr[7:0] == TIMEXAYDATA;
 
   assign bdir = !iorq_n && (((portF5 || portF6) && !wr_n) || ((portBFFD || portFFFD) && !wr_n));
   assign bc1  = !iorq_n && (portF5 && !wr_n) || (portF6 && !rd_n) || (portFFFD && (!rd_n || !wr_n));
