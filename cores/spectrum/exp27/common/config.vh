@@ -78,7 +78,9 @@
 // TIMEX I/O ports
   localparam
     TIMEXPORT    = 8'hFF,
-    TIMEXMMU     = 8'hF4;
+    TIMEXMMU     = 8'hF4,
+    TIMEXAYADDR  = 8'hF5,
+    TIMEXAYDATA  = 8'hF6;
 
 // ZXUNO registers for master configuration and memory handling
   localparam
