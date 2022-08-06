@@ -30,7 +30,7 @@
 //`define MIDI_SYNTH_OPTION
 //`define UART_ESP8266_OPTION
 //`define F11_ESP8266_FEATURE
-`define PZX_PLAYER_OPTION
+//`define PZX_PLAYER_OPTION
 `define VGA_OUTPUT_OPTION
 `define CPU_TURBO_OPTION
 `define DIVMMC_SUPPORT
@@ -40,7 +40,7 @@
 // Radastan mode needs ULAplus support enabled
 `define ULAPLUS_SUPPORT
 `define ULA_RADASTAN_SUPPORT
-//`define ULA_SNOW_SUPPORT
+`define ULA_SNOW_SUPPORT
 `define RASTER_INTERRUPT_SUPPORT
 `define TURBOSUND_SUPPORT
 `define SPECDRUM_COVOX_SUPPORT

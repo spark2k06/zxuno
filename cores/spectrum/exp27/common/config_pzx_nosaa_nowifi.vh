@@ -52,7 +52,7 @@
 //`define AD724_CONTROL_SUPPORT
 //`define FPGA_GENERATES_COLOR_CLOCK_OPTION
 `define MONOCHROMERGB
-`define SAA1099
+//`define SAA1099
 //`define INITIAL_KB_RESET
 // ZXUNO core ID string. Must be padded with zero bytes to the right (16 bytes total)
   localparam COREID_STRING = {"EXP27-050822", 8'h00, 8'h00, 8'h00, 8'h00};
