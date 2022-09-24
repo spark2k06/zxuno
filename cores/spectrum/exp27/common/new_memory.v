@@ -42,7 +42,6 @@ module new_memory (
    input wire rfsh_n,
    input wire busak_n,
    output wire enable_nmi_n,
-   input wire page_configrom_active,
 
    // Interface con la ULA
    input wire [13:0] vramaddr,
@@ -62,7 +61,6 @@ module new_memory (
    input wire [7:0] addr,
    input wire ior,
    input wire iow,
-   output wire in_boot_mode,
    
    // Interface con modulo de habilitacion de opciones
    input wire disable_7ffd,
@@ -71,7 +69,7 @@ module new_memory (
    input wire disable_romsel1f,
    input wire enable_timexmmu,
    
-   // Interface con el módulo lector PZX
+   // Interface con el mï¿½dulo lector PZX
    input wire [20:0] pzx_addr,
    output wire enable_pzx,
    output wire in48kmode,
@@ -93,34 +91,17 @@ module new_memory (
    reg issue2_keyboard = 1'b0;
    initial timing_mode = 2'b01;
    reg disable_cont = 1'b0;
-   reg masterconf_frozen = 1'b0;
-   reg [1:0] negedge_configrom = 2'b00;
    reg rom48k_selected = 1'b1;  // forced to 1 so Derby++ can work, as it maps 48K ROM into ROM 1, not ROM 3.
 
    assign issue2_keyboard_enabled = issue2_keyboard;
-   assign in_boot_mode = ~masterconf_frozen;
    assign disable_contention = disable_cont;
 
    always @(posedge clk) begin
-      negedge_configrom <= {negedge_configrom[0], page_configrom_active};
-      if (!mrst_n) begin
+      if (!mrst_n)
          {timing_mode[1],disable_cont,timing_mode[0],issue2_keyboard,divmmc_nmi_is_disabled,divmmc_is_enabled,initial_boot_mode} <= 7'b0000001;
-         masterconf_frozen <= 1'b0;
-      end
-      else if (page_configrom_active == 1'b1) begin
-        masterconf_frozen <= 1'b0;
-        initial_boot_mode <= 1'b1;
-      end
-      else if (negedge_configrom == 2'b10) begin
-        masterconf_frozen <= 1'b1;
-        initial_boot_mode <= 1'b0;
-      end
       else if (addr==MASTERCONF && iow) begin
          {timing_mode[1],disable_cont,timing_mode[0],issue2_keyboard,divmmc_nmi_is_disabled,divmmc_is_enabled} <= din[6:1];
-         if (!masterconf_frozen) begin
-            masterconf_frozen <= din[7];
-            initial_boot_mode <= din[0];
-         end
+         initial_boot_mode <= din[0];
       end
    end
 
@@ -166,7 +147,7 @@ module new_memory (
          if (!mreq_n && !rd_n && !m1_n && (a==16'h0000 || 
                                            a==16'h0008 && rom48k_selected ||
                                            a==16'h0038 && rom48k_selected ||
-                                          (a==16'h0066 && rom48k_selected && divmmc_nmi_is_disabled==1'b0 && page_configrom_active==1'b0) ||
+                                          (a==16'h0066 && rom48k_selected && divmmc_nmi_is_disabled==1'b0) ||
                                            a==16'h04C6 && rom48k_selected ||
                                            a==16'h0562 && rom48k_selected)) begin  // automapper diferido (siguiente ciclo)
            divmmc_status_after_m1 <= 1'b1;
@@ -175,11 +156,11 @@ module new_memory (
             divmmc_is_paged <= 1'b1;
             divmmc_status_after_m1 <= 1'b1;
          end
-         else if (!mreq_n && !rd_n && !m1_n && a[15:3]==13'b0001_1111_1111_1) begin  // desconexión de automapper diferido
+         else if (!mreq_n && !rd_n && !m1_n && a[15:3]==13'b0001_1111_1111_1) begin  // desconexiï¿½n de automapper diferido
             divmmc_status_after_m1 <= 1'b0;
          end
       end
-      if (m1_n==1'b1) begin  // tras el ciclo M1, aquí es cuando realmente se hace el mapping
+      if (m1_n==1'b1) begin  // tras el ciclo M1, aquï¿½ es cuando realmente se hace el mapping
          divmmc_is_paged <= divmmc_status_after_m1;
       end
    end
@@ -263,8 +244,8 @@ module new_memory (
 //        rom48k_selected = 1'b1;
 //   end
 
-   // Calculo de la dirección en la SRAM a la que se va a acceder
-   // y señales de acceso de lectura y escritura
+   // Calculo de la direcciï¿½n en la SRAM a la que se va a acceder
+   // y seï¿½ales de acceso de lectura y escritura
 
    always @* begin
       oe_memory_n = mreq_n | rd_n;
@@ -279,17 +260,17 @@ module new_memory (
 
       //------------------------------------------------------------------------------------------------------------------
       if (!mreq_n && a[15:14]==2'b00) begin   // la CPU quiere acceder al espacio de ROM, $0000-$3FFF
-         if (initial_boot_mode) begin   // en el modo boot, sólo se accede a la ROM interna
+         if (initial_boot_mode) begin   // en el modo boot, sï¿½lo se accede a la ROM interna
             oe_memory_n = 1'b1;
             oe_bootrom_n = 1'b0;
             we2_n = 1'b1;
             ram_busy = 1'b0;
          end
-         else begin  // estamos en modo normal de ejecución
+         else begin  // estamos en modo normal de ejecuciï¿½n
             // Lo que mas prioridad tiene es la linea externa ROMCS. Si esta activa, no se tiene en cuenta nada mas
             if (inhibit_rom == 1'b0) begin
-                // DIVMMC tiene más prioridad que la MMU del Timex, así que se evalua primero.
-                if (divmmc_rom_active) begin  // DivMMC ha entrado en modo automapper o está mapeado a la fuerza
+                // DIVMMC tiene mï¿½s prioridad que la MMU del Timex, asï¿½ que se evalua primero.
+                if (divmmc_rom_active) begin  // DivMMC ha entrado en modo automapper o estï¿½ mapeado a la fuerza
                    if (a[13]==1'b0) begin // Si estamos en los primeros 8K
                       if (mapram_mode == 1'b0 || conmem == 1'b1) begin
                          addr_port2 = {8'b00011000,a[12:0]};
@@ -314,14 +295,14 @@ module new_memory (
                    end
                 end
 
-                // DivMMC no está activo, asi que comprobamos qué página toca de HOME. Luego comprobamos si hay que paginar DOC
+                // DivMMC no estï¿½ activo, asi que comprobamos quï¿½ pï¿½gina toca de HOME. Luego comprobamos si hay que paginar DOC
                 // o EXT y se hace un override a lo que haya definido en HOME
                 else begin
-                    if (!amstrad_allram_page_mode) begin   // en el modo normal de paginación, hay 4 bancos de ROMs
+                    if (!amstrad_allram_page_mode) begin   // en el modo normal de paginaciï¿½n, hay 4 bancos de ROMs
                        addr_port2 = {5'b00010,banco_rom,a[13:0]}; // que vienen de los bancos de SRAM del 8 al 11
                        we2_n = 1'b1;
                     end
-                    else begin   // en el modo especial de paginación, tenemos el all-RAM
+                    else begin   // en el modo especial de paginaciï¿½n, tenemos el all-RAM
                        case (plus3_memory_arrangement)
                           2'b00 : addr_port2 = {4'b0000,PAGE0,a[13:0]};
                           2'b01,
@@ -340,16 +321,16 @@ module new_memory (
                         we2_n = mreq_n | wr_n;
                     end
                 end
-             end // del modo normal de ejecución
+             end // del modo normal de ejecuciï¿½n
           end // de la comprobacion de ROMCS
       end // de a[15:14] == 2'b00
       
       //------------------------------------------------------------------------------------------------------------------
       else if (!mreq_n && a[15:14]==2'b01) begin   // la CPU quiere acceder al espacio de RAM de $4000-$7FFF
-         if (initial_boot_mode || !amstrad_allram_page_mode) begin   // en modo normal de paginación, o en modo boot, hacemos lo mismo, que es
-            addr_port2 = {4'b0000,PAGE5,a[13:0]};      // paginar el banco 5 de RAM aquí
+         if (initial_boot_mode || !amstrad_allram_page_mode) begin   // en modo normal de paginaciï¿½n, o en modo boot, hacemos lo mismo, que es
+            addr_port2 = {4'b0000,PAGE5,a[13:0]};      // paginar el banco 5 de RAM aquï¿½
          end
-         else begin   // en el modo especial de paginación del +3...
+         else begin   // en el modo especial de paginaciï¿½n del +3...
             case (plus3_memory_arrangement)
                2'b00 : addr_port2 = {4'b0000,PAGE1,a[13:0]};
                2'b01,
@@ -374,7 +355,7 @@ module new_memory (
          if (initial_boot_mode || !amstrad_allram_page_mode) begin
             addr_port2 = {4'b0000,PAGE2,a[13:0]};
          end
-         else begin   // en el modo especial de paginación del +3...
+         else begin   // en el modo especial de paginaciï¿½n del +3...
             case (plus3_memory_arrangement)
                2'b00 : addr_port2 = {4'b0000,PAGE2,a[13:0]};
                2'b01,
@@ -396,7 +377,7 @@ module new_memory (
 
       //------------------------------------------------------------------------------------------------------------------
       else if (!mreq_n && a[15:14]==2'b11) begin   // la CPU quiere acceder al espacio de RAM de $C000-$FFFF
-         if (initial_boot_mode) begin  // en el modo de boot, este area contiene una página de 16K de la SRAM, la que sea
+         if (initial_boot_mode) begin  // en el modo de boot, este area contiene una pï¿½gina de 16K de la SRAM, la que sea
             addr_port2 = {mastermapper,a[13:0]};
          end
          else begin
@@ -428,7 +409,7 @@ module new_memory (
          end
       end // de a[15:14] == 2'b11
       
-      else begin  // realmente a esta parte nunca se habría de llegar, pero para completar la cadena de if-else if...
+      else begin  // realmente a esta parte nunca se habrï¿½a de llegar, pero para completar la cadena de if-else if...
         oe_memory_n = 1'b1;
         oe_bootrom_n = 1'b1;
       end
@@ -443,7 +424,7 @@ module new_memory (
             a[15:13]==3'b111 && timex_mmu[7]==1'b1)
                 access_to_screen = 1'b0;
         else if (!amstrad_allram_page_mode) begin
-           if (a[15:14]==2'b01 || (a[15:14]==2'b11 && banco_ram[0]==1'b1) ) begin // Hay contienda en las páginas impares de memoria
+           if (a[15:14]==2'b01 || (a[15:14]==2'b11 && banco_ram[0]==1'b1) ) begin // Hay contienda en las pï¿½ginas impares de memoria
                access_to_screen = 1'b1;
            end
         end
@@ -480,7 +461,7 @@ module new_memory (
       .dout(bootrom_dout)
     );    
 
-   // Elección del dato a entregar a la CPU
+   // Elecciï¿½n del dato a entregar a la CPU
    always @* begin
       if (!oe_bootrom_n) begin
          dout = bootrom_dout;
@@ -499,7 +480,7 @@ module new_memory (
          dout = timex_mmu;
       end
       else if (addr==MASTERCONF && ior) begin
-         dout = {masterconf_frozen,timing_mode[1],disable_cont,timing_mode[0],issue2_keyboard,divmmc_nmi_is_disabled,divmmc_is_enabled,initial_boot_mode};
+         dout = {0,timing_mode[1],disable_cont,timing_mode[0],issue2_keyboard,divmmc_nmi_is_disabled,divmmc_is_enabled,initial_boot_mode};
          oe = 1'b1;
       end
       else if (addr==MASTERMAPPER && ior) begin

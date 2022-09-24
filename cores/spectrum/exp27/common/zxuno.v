@@ -196,7 +196,6 @@ module zxuno (
   wire oe_zxunoaddr;     // el dato en el bus de entrada del Z80 es válido
   wire zxuno_regrd;     // Acceso de lectura en el puerto de datos de ZX-Uno
   wire zxuno_regwr;     // Acceso de escritura en el puerto de datos del ZX-Uno
-  wire in_boot_mode;   // Vale 1 cuando el sistema está en modo boot (ejecutando la BIOS)
 
   // Señales de acceso al módulo Flash SPI
   wire [ 7:0] spi_dout;
@@ -315,7 +314,6 @@ module zxuno (
   wire [7:0] nmievents_dout;
   wire oe_nmievents;
   wire nmispecial_n;
-  wire page_configrom_active;
 
   // Kempston mouse
   wire [7:0] kmouse_dout;
@@ -538,7 +536,6 @@ module zxuno (
     .oe                 (oe_spi         ),
     .wait_n             (wait_spi_n     ),
 
-    .in_boot_mode       (in_boot_mode   ),
     .flash_cs_n         (flash_cs_n     ),
     .flash_clk          (flash_clk      ),
     .flash_di           (flash_di       ),
@@ -568,7 +565,6 @@ module zxuno (
     .rfsh_n             (rfsh_n         ),
     .busak_n            (busak_n        ),
     .enable_nmi_n       (enable_nmi_n   ),
-    .page_configrom_active(page_configrom_active),              // Para habilitar la ROM de ayuda y configuración
 
 // Interface con la ULA
     .vramaddr           (vram_addr      ),
@@ -588,7 +584,6 @@ module zxuno (
     .addr               (zxuno_addr     ),
     .ior                (zxuno_regrd    ),
     .iow                (zxuno_regwr    ),
-    .in_boot_mode       (in_boot_mode   ),
 
 // Interface con modulo de habilitacion de opciones
     .disable_7ffd       (disable_7ffd   ),
@@ -886,7 +881,6 @@ module zxuno (
   board_capabilities capreg (
     .clk(sysclk),
     .poweron_rst_n(power_on_reset_n),
-    .in_boot_mode(in_boot_mode),
     .zxuno_addr(zxuno_addr),
     .zxuno_regrd(zxuno_regrd),
     .zxuno_regwr(zxuno_regwr),
