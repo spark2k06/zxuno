@@ -26,15 +26,15 @@
 module flash_and_sd (
    input wire clk,         //
    input wire [15:0] a,    //
-   input wire iorq_n,      // Se�ales de control de E/S est�ndar
+   input wire iorq_n,      // Señales de control de E/S estándar
    input wire rd_n,        // para manejar los puertos ZXMMC y DIVMMC
    input wire wr_n,        //
-   input wire [7:0] addr,  // numero de registro almacenado en puerto ZXUNOADDR. Este m�dulo atiende a $02 y $03
+   input wire [7:0] addr,  // numero de registro almacenado en puerto ZXUNOADDR. Este módulo atiende a $02 y $03
    input wire ior,         // lectura a un registro ZXUNO
    input wire iow,         // escritura a un registro ZXUNO
    input wire [7:0] din,   // del bus de datos de salida de la CPU
    output wire [7:0] dout, // al bus de datos de entrada de la CPU
-   output wire oe,         // el dato en dout es v�lido
+   output wire oe,         // el dato en dout es válido
    output wire wait_n,     // pausa para la CPU. Mejora estabilidad
    
    output wire flash_cs_n, //
@@ -93,7 +93,7 @@ module flash_and_sd (
          enviar_dato = 1'b0;
    end
    
-   // Instanciaci�n del modulo SPI   
+   // Instanciación del modulo SPI   
 
    spi mi_spi (
       .clk(clk),
