@@ -26,18 +26,17 @@
 module flash_and_sd (
    input wire clk,         //
    input wire [15:0] a,    //
-   input wire iorq_n,      // Señales de control de E/S estándar
+   input wire iorq_n,      // SeÃ±ales de control de E/S estÃ¡ndar
    input wire rd_n,        // para manejar los puertos ZXMMC y DIVMMC
    input wire wr_n,        //
-   input wire [7:0] addr,  // numero de registro almacenado en puerto ZXUNOADDR. Este módulo atiende a $02 y $03
+   input wire [7:0] addr,  // numero de registro almacenado en puerto ZXUNOADDR. Este mÃ³dulo atiende a $02 y $03
    input wire ior,         // lectura a un registro ZXUNO
    input wire iow,         // escritura a un registro ZXUNO
    input wire [7:0] din,   // del bus de datos de salida de la CPU
    output wire [7:0] dout, // al bus de datos de entrada de la CPU
-   output wire oe,         // el dato en dout es válido
+   output wire oe,         // el dato en dout es vÃ¡lido
    output wire wait_n,     // pausa para la CPU. Mejora estabilidad
    
-   input wire in_boot_mode,// Esta interfaz sólo es válida en modo boot
    output wire flash_cs_n, //
    output wire flash_clk,  // Interface SPI con la Flash
    output wire flash_di,   //
@@ -70,7 +69,7 @@ module flash_and_sd (
 
    // Control del pin CS de la flash y de la SD
    always @(posedge clk) begin
-      if (addr == CSPIN && iow && in_boot_mode) begin
+      if (addr == CSPIN && iow) begin
          flashpincs <= din[0];
          sdpincs <= 1'b1;   // si accedemos a la flash para cambiar su estado CS, automaticamente deshabilitamos la SD
       end
@@ -84,17 +83,17 @@ module flash_and_sd (
    reg enviar_dato;
    reg recibir_dato;
    always @* begin
-      if ((addr==SPIPORT && ior && in_boot_mode) || (!disable_spisd && !iorq_n && (a[7:0]==SDSPI || a[7:0]==DIVSPI) && !rd_n))
+      if ((addr==SPIPORT && ior) || (!disable_spisd && !iorq_n && (a[7:0]==SDSPI || a[7:0]==DIVSPI) && !rd_n))
          recibir_dato = 1'b1;
       else
          recibir_dato = 1'b0;
-      if ((addr==SPIPORT && iow && in_boot_mode) || (!disable_spisd && !iorq_n && (a[7:0]==SDSPI || a[7:0]==DIVSPI) && !wr_n))
+      if ((addr==SPIPORT && iow) || (!disable_spisd && !iorq_n && (a[7:0]==SDSPI || a[7:0]==DIVSPI) && !wr_n))
          enviar_dato = 1'b1;
       else
          enviar_dato = 1'b0;
    end
    
-   // Instanciación del modulo SPI   
+   // InstanciaciÃ³n del modulo SPI   
 
    spi mi_spi (
       .clk(clk),
