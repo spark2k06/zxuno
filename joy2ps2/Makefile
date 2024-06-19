@@ -1,9 +1,9 @@
 PRG            = joy2ps2
-OBJ            = main.o PS2Keyboard.o direct.o
+OBJ            = main.o PS2Keyboard.o direct.o famicom.o
 PROGRAMMER     = blaster
 PORT           = /dev/parport0
-MCU_TARGET     = atmega168
-AVRDUDE_TARGET = atmega168
+MCU_TARGET     = atmega328
+AVRDUDE_TARGET = atmega328
 OPTIMIZE       = -Os
 DEFS           =
 LIBS           =
